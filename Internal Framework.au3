@@ -10,7 +10,7 @@ Global $oMyError = ObjEvent("AutoIt.Error","MyErrFunc"); Initialize
 #include "Framework\AutoItObject\FastObject.au3"
 
 ; ### UDF COVERTED-OBJECTS
-#include "Framework\XML\XML_Object.au3"
+#include "Framework\XML\XML_Object.au3" ; working except cookies & login untestet -> next.
 
 ; ### COPROCESS - MULTI PROCESS USAGE
 
@@ -24,22 +24,32 @@ Global $oMyError = ObjEvent("AutoIt.Error","MyErrFunc"); Initialize
 	MsgBox(0, "", $oXML.__Name & @CRLF & $oXML.__Description )
 
 	;Show informations about methods or propertys
-	MsgBox(0, "", $oXML.__showdetails("start"))
+	MsgBox(0, "", $oXML.__showdetails("code"))
 
 	$oXML.start() ;starts the oxml object
+
 	$oXML.url = "https://google.de" ;sets the url
 	$oXML.action("GET",$oXML.url) ;performs a get command
 	$oXML.response() ;saves response to .RESPONSE
-	ConsoleWrite( "![$oXML.RESPONSE] for ["&$oXML.url&"]" & @CRLF & $oXML.RESPONSE & @CRLF )
+	;ConsoleWrite( "![$oXML.RESPONSE] for ["&$oXML.url&"]" & @CRLF & $oXML.RESPONSE & @CRLF )
 
 	;translate test:
 	Local $trans
-	$oXML.gTranslate( "hallo ich soll ein englischer text werden", "GET", "ja" )
+	$oXML.gTranslate( "hallo ich soll ein englischer text werden" )
 	$trans = $oXML.getTranslateResult()
 
 	ConsoleWrite( "!Translate:" & @CRLF & "----------------------------------------" & @CRLF & $trans & @CRLF )
 
 	$oXML.close() ;free up memory
+
+
+	$oXML.start(); reopen for another test
+	Local $trans
+	$oXML.gTranslate( "ich will auch übersetzt werden" )
+	$trans = $oXML.getTranslateResult()
+	ConsoleWrite( "!Translate2:" & @CRLF & "----------------------------------------" & @CRLF & $trans & @CRLF )
+	$oXML.close() ;free up memory
+
 #EndRegion
 
 

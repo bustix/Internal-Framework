@@ -134,7 +134,7 @@ Func __XML_CleanTranslateResult($oSelf)
 	$sData = StringReplace( $sData, '\"', "" )
 	$t = StringSplit( $sData, @CRLF )
 	$sData = ""
-	For $i = 1 To $t[0];-6-
+	For $i = 1 To $t[0]-6
 		If $t[$i] <> "" Then
 			$sData &= $t[$i] & @CRLF
 		EndIf
