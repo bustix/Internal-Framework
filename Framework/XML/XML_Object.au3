@@ -13,6 +13,7 @@ Func _CreateXMLObject()	; create XML Class
 	$XML_Object_Creation.method	("post", 						"_XML_Post" )
 	$XML_Object_Creation.method	("get", 						"_XML_Get" )
 	$XML_Object_Creation.method	("action", 						"_XML_Action" )
+	$XML_Object_Creation.method	("_send", 						"_XML_SendWithAgent" )
 	$XML_Object_Creation.method	("response",					"_XML_ResponseText" )
 	$XML_Object_Creation.method	("agent", 						"_XML_Agent" )
 	$XML_Object_Creation.method	("close", 						"_XML_Close" )
