@@ -26,40 +26,31 @@ Func _XML_ResponseText($oSelf)
 EndFunc
 
 Func _XML_Action($oSelf, $a, $post, $flag= False )
-	Local $obj = $oSelf._XML_OBJECT
-	$obj.Open($a, $post, $flag)
+	$oSelf._XML_OBJECT.Open($a, $post, $flag)
 	$oSelf._send()
-	;$obj.Send()
 	Return SetError( 0, 0, $obj )
 EndFunc
 
 Func _XML_Post($oSelf, $post, $flag= False )
-	Local $obj = $oSelf._XML_OBJECT
-	$oSelf.Open("POST", $post, $flag)
+	$oSelf._XML_OBJECT.Open("POST", $post, $flag)
 	$oSelf._send();
-	;$obj.Send()
 	Return SetError( 0, 0, 0 )
 EndFunc
 
 Func _XML_Get($oSelf, $get, $flag = False )
-	Local $obj = $oSelf._XML_OBJECT
-	$obj.Open("GET", $get)
+	$oSelf._XML_OBJECT.Open("GET", $get)
 	$oSelf._send();
-	;$obj.Send()
 	Return SetError( 0, 0, 0 )
 EndFunc
 
 Func _XML_SendWithAgent($oSelf, $Agent="")
-	Local $obj = $oSelf._XML_OBJECT
 	$oSelf.agent();
-	$obj.Send();
+	$oSelf._XML_OBJECT.Send();
 EndFunc
 
 Func _XML_Agent($oSelf, $agent="mozilla/5.0");$agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:65.0) Gecko/20100101 Firefox/65.0")
 	Local $obj = $oSelf._XML_OBJECT
-	;HttpSetUserAgent($agent)
 	#cs
-
 	Host: translate.googleapis.com
 	User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:66.0) Gecko/20100101 Firefox/66.0
 	Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
@@ -67,14 +58,12 @@ Func _XML_Agent($oSelf, $agent="mozilla/5.0");$agent = "Mozilla/5.0 (Windows NT 
 	Accept-Encoding: gzip, deflate, br
 	Connection: keep-alive
 	Upgrade-Insecure-Requests: 1
-
 	#ce
 	If ($agent="mozilla/5.0") Then
 		$obj.setRequestHeader('Host', 						'translate.googleapis.com' )
 		$obj.setRequestHeader('User-Agent', 				'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:66.0) Gecko/20100101 Firefox/66.0')
 		$obj.setRequestHeader('Accept',						'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8')
 	EndIf
-
 EndFunc
 
 Func _XML_SetURL($oSelf, $url)
@@ -152,9 +141,8 @@ Func _XML_SetCleanTranslateResult($oSelf, $t)
 EndFunc
 
 Func _XML_GetLastTranslateURL($oSelf)
-	Local $obj = $oSelf._XML_OBJECT
-	If ($obj.tUrl = "") Then Return SetError(-1, 0, "Use gTranslate first" )
-	Return $obj.tUrl
+	If ($oSelf.tUrl = "") Then Return SetError(-1, 0, "Use gTranslate first" )
+	Return $oSelf.tUrl
 EndFunc
 
 Func _XML_EncodeURI($oSelf, $string) ; Encode by Prog@ndy
