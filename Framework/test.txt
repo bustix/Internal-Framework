@@ -1,0 +1,3 @@
+﻿CustNo|CustName|OrderID|SalesOrderId|PartNumber|Serial Number|First SN|ShipDate|Days Elapsed|Days Left|Company|US|APAC|EU|Invoice No|Order Type
+
+ | | | | |KO1450|Komplett Services AS|4500236217|<a title="1111806554" href="../Warehouse/SerialNumber/Default.aspx?WO=1111806554">1111806554</a>|210-GQ-0750-V2|1803160718804925|1803160718804925|06.28.2018
