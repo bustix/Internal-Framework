@@ -1,7 +1,9 @@
 #include-once
 
+; XMLHTTP
+
 Func _XML_Startup($oSelf)
-	Local $obj = ObjCreate("Microsoft.XMLHTTP")
+	Local $obj = ObjCreate("MSXML2.ServerXMLHTTP");ObjCreate("Microsoft.XMLHTTP")
 	$oSelf._XML_OBJECT = $obj
 	If IsObj($oSelf._XML_OBJECT) Then Return 1
 	Return SetError(-1,0,"no Object")
@@ -63,3 +65,18 @@ Func _XML_Agent($oSelf, $agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:6
 	$obj.setRequestHeader('Content-Type',	'text/html; charset=utf-8')
 EndFunc
 
+#cs
+; New MSXML2.ServerXMLHTTP Test
+
+Local $objHTTP
+$objHTTP = objCreate( "MSXML2.ServerXMLHTTP" )
+
+$objHTTP.open ( "GET", "http://google.de", false )
+
+$objHTTP.setRequestHeader( "Content-type", "application/x-www-form-urlencoded" );
+$objHTTP.SetRequestHeader( "Cookie", "test=Hey!" );
+
+$objHTTP.send ( "test=Hey!" )
+
+MsgBox(0, "Result", $objHTTP.responseText )
+#ce

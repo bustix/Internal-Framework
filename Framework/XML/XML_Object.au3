@@ -43,10 +43,11 @@ EndFunc
 
 #cs
 $oHTTP = _XML_Startup()
-#cs
+
 $oHTTP.Open("POST", $url, False)
 $oHTTP.Send()
 #ce
+#cs
 $oHTTP = _XML_Action($oHTTP, "POST", $url, False)
 $oHTTP = _XML_Get($oHTTP,$url,False)
 $sData = $oHTTP.ResponseText
