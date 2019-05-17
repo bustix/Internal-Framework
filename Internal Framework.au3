@@ -21,21 +21,21 @@ Global $oMyError = ObjEvent("AutoIt.Error","MyErrFunc"); Initialize
 #Region ###	XML EXAMPLE ### - WORKING
 
 	;Show informations about the XML Object
-;	MsgBox(0, "", $oXML.__Name & @CRLF & $oXML.__Description )
+	MsgBox(0, "", $oXML.__Name & @CRLF & $oXML.__Description )
 
 	;Show informations about methods or propertys
-;	MsgBox(0, "", $oXML.__showdetails("start"))
+	MsgBox(0, "", $oXML.__showdetails("start"))
 
 	$oXML.start() ;starts the oxml object
-	$oXML.url = "http://google.de" ;sets the url
+	$oXML.url = "https://google.de" ;sets the url
 	$oXML.action("GET",$oXML.url) ;performs a get command
 	$oXML.response() ;saves response to .RESPONSE
-;	ConsoleWrite( "![$oXML.RESPONSE]" & @CRLF & $oXML.RESPONSE & @CRLF )
+	ConsoleWrite( "![$oXML.RESPONSE] for ["&$oXML.url&"]" & @CRLF & $oXML.RESPONSE & @CRLF )
 
 	;translate test:
 	Local $trans
-	$oXML.gTranslate( "hallo ich soll ein englischer text werden" )
-	$trans = $oXML.getTranslateResult1()
+	$oXML.gTranslate( "hallo ich soll ein englischer text werden", "GET", "ja" )
+	$trans = $oXML.getTranslateResult()
 
 	ConsoleWrite( "!Translate:" & @CRLF & "----------------------------------------" & @CRLF & $trans & @CRLF )
 
@@ -58,5 +58,4 @@ Func MyErrFunc()
              "	err.helpcontext is: " & @TAB & $oMyError.helpcontext 		& @CRLF & _
              "	@ScriptLineNumber is: "  & @TAB & @ScriptLineNumber     	& @CRLF & @CRLF _
 			 )
-	;ConsoleWrite("!>COM Error !"&@CRLF&"!>"&@TAB&"Number: "&Hex($oMyError.Number,8)&@CRLF&"!>"&@TAB&"Windescription: "&StringRegExpReplace($oMyError.windescription,"\R$","")&@CRLF&"!>"&@TAB&"Source: "&$oMyError.source&@CRLF&"!>"&@TAB&"Description: "&$oMyError.description&@CRLF&"!>"&@TAB&"Helpfile: "&$oMyError.helpfile&@CRLF&"!>"&@TAB&"Helpcontext: "&$oMyError.helpcontext&@CRLF&"!>"&@TAB&"Lastdllerror: "&$oMyError.lastdllerror&@CRLF&"!>"&@TAB&"Scriptline: "&$oMyError.scriptline&@CRLF&@CRLF)
 Endfunc
