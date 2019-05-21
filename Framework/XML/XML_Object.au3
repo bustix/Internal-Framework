@@ -1,8 +1,7 @@
 #include-once
 #include "XML_Core.au3"
 
-Global $oXML ;Object var to use in the main script - global initialiser
-_CreateXMLObject()
+Global $oXML = _CreateXMLObject() ;Object var to use in the main script - global initialiser
 
 Func _CreateXMLObject()	; create XML Class
 	Local $XML_Object_Creation = _ShortObjectCreater("[XML Object]", "Send POST/GET Requests or Translate Text."&@CRLF&"Call .__showdetails('methodname/property') for more informations.")
@@ -94,7 +93,7 @@ Func _CreateXMLObject()	; create XML Class
 	$XML_Object_Creation.method	("cLogin",						"_XML_LoginWithCookie" )
 
 
-
+	Return $XML_Object_Creation.save()
 ; create XML Object
 	$oXML = $XML_Object_Creation.save()
 	$XML_Object_Creation = "" ;free up space
