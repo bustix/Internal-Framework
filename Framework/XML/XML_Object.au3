@@ -42,7 +42,6 @@ Func _CreateXMLObject()	; create XML Class
 	$XML_Object_Creation.method	("getUrl", 						"_XML_GetURL" )
 	$XML_Object_Creation.prop	("url")
 
-
 ;set translate url + translate tUrl property
 	$XML_Object_Creation.method	("gTranslate",					"_XML_GoogleTranslateText" )
 	$XML_Object_Creation.prop	("tUrl")
@@ -57,7 +56,6 @@ Func _CreateXMLObject()	; create XML Class
 	$XML_Object_Creation.method	("_setCleanTranslationResult",	"_XML_SetCleanTranslateResult" )
 	$XML_Object_Creation.method	("_getCleanTranslationResult",	"_XML_GetCleanTranslateResult" )
 	$XML_Object_Creation.prop	("_cleanTranslateResult")
-
 	$XML_Object_Creation.method	("getLastTranslateURL",			"_XML_GetLastTranslateURL" )
 
 ; encode - set/get + property
@@ -92,9 +90,5 @@ Func _CreateXMLObject()	; create XML Class
 
 	$XML_Object_Creation.method	("cLogin",						"_XML_LoginWithCookie" )
 
-
 	Return $XML_Object_Creation.save()
-; create XML Object
-	$oXML = $XML_Object_Creation.save()
-	$XML_Object_Creation = "" ;free up space
 EndFunc
