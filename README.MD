@@ -12,6 +12,6 @@ On [T]o-Do:<br/>
 [T] CoProcess / Multithreading {not yet decided which one to use/ maybe multiple functions} - Also add functionality to all created objects<br/>
 [T] WebDriver {Edge,Chrome,FF}<br/>
 [*] More to come after finding usefull stuff to add.<br/>
-<br/>
+<br/><br/>
 Currently in [W]orking/ [P]artially working:<br/>
 [W] XML<br/>
