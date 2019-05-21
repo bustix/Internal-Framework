@@ -1,32 +1,17 @@
-[FASTER OBJECT]
+[INTERNAL-FRAMEWORK]
 
--Shorten the object creation and add functionality
+This combines all of the includes for the Objects created with FasterObject (Which relies on AutoItObject.au3 by Prog@ndy)
+I'm currently in the gathering phase of useful UDF's which i would like to extend/ add to the Project, if you have some additions, feel free to create to message me.
 
-
-
-[XML OBJECT]
--Current functionality:
-
-~coming soon
-
--Results:
-
-![.getResponse()] for [https://google.de]  [stringleft(100) to shorten result]
--Result:	<!doctype html><html itemscope="" itemtype="http://schema.org/WebPage" lang="de"><head><meta content
-
-![.gTranslate( 'hallo ich soll ein englischer text werden' )]:
-----------------------------------------
--Result:	hello I should be an English text
-
-![.gTranslate( 'ich will auch übersetzt werden' )]
-----------------------------------------
--Result:	I want to be translated too
-
-
-![.getResponseHeader('server')] for [https://eu.evga.com/]
--Result:	Microsoft-IIS/10.0
-
-![LAST ERROR]
--Last Error Text:	No Error
--Last Error @error:	0
--Last Error @extended:	0
+On [T]o-Do:<br/>
+[T] HTML-Parser / {Parser + Converter}<br/>
+[T] XML-Parser / {Parser + Converter}<br/>
+[T] Javascript-Parser<br/>
+[T] Code-Injector for Websites before displaying them in the Browser {no clue on how to proceed yet, but we are going to find an solution}<br/>
+[T] HTTP-Functionality {Get-Post}<br/>
+[T] CoProcess / Multithreading {not yet decided which one to use/ maybe multiple functions} - Also add functionality to all created objects<br/>
+[T] WebDriver {Edge,Chrome,FF}<br/>
+[*] More to come after finding usefull stuff to add.<br/>
+<br/><br/>
+Currently in [W]orking/ [P]artially working:<br/>
+[W] XML<br/>
