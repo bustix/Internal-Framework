@@ -12,6 +12,9 @@ Global $oMyError = ObjEvent("AutoIt.Error","MyErrFunc"); Initialize
 ; ### UDF COVERTED-OBJECTS
 #include "Framework\XML\XML_Object.au3" ; working except cookies & login untestet -> next.
 
+; ### UDF Create Thread
+#include "Framework\MULTI_PROCESS\thread.au3\THREAD_Object.au3"
+
 ; ### COPROCESS - MULTI PROCESS USAGE
 
 
@@ -66,27 +69,29 @@ Global $oMyError = ObjEvent("AutoIt.Error","MyErrFunc"); Initialize
 							"-Last Error @error:	" & ._getErrorNum() & @CRLF & _
 							"-Last Error @extended:	" & ._getErrorExt() &@CRLF &@CRLF )
 			.close()
+
+		#cs
+		Host: translate.googleapis.com
+		User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:66.0) Gecko/20100101 Firefox/66.0
+		Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+		Accept-Language: de,en-US;q=0.7,en;q=0.3
+		Accept-Encoding: gzip, deflate, br
+		Connection: keep-alive
+		Upgrade-Insecure-Requests: 1
+
+		Accept				text/html,application/xhtml+xm…plication/xml;q=0.9,*/*;q=0.8
+		Accept-Encoding		gzip, deflate, br
+		Accept-Language		de,en-US;q=0.7,en;q=0.3
+		Connection			keep-alive´
+		#ce
+
 	EndWith
-	#cs
-	Host: translate.googleapis.com
-	User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:66.0) Gecko/20100101 Firefox/66.0
-	Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
-	Accept-Language: de,en-US;q=0.7,en;q=0.3
-	Accept-Encoding: gzip, deflate, br
-	Connection: keep-alive
-	Upgrade-Insecure-Requests: 1
 
-	Accept				text/html,application/xhtml+xm…plication/xml;q=0.9,*/*;q=0.8
-	Accept-Encoding		gzip, deflate, br
-	Accept-Language		de,en-US;q=0.7,en;q=0.3
-	Connection			keep-alive
-
-	#ce
-
-#cs
 #EndRegion
-#ce
 
+#Region ###	THREAD EXAMPLE ### - WORKING
+
+#EndRegion
 Exit
 
 
