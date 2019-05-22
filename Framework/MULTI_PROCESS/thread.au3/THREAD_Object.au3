@@ -1,7 +1,7 @@
 #include-once
 #include "THREAD_Core.au3"
 
-Global $oTHREAD = _CreateTHREADObject() ;Object var to use in the main script - global initialiser
+;Global $oTHREAD = _CreateTHREADObject() ;Object var to use in the main script - global initialiser
 
 Func _CreateTHREADObject()	; create XML Class
 	Local $THREAD_Object_Creation = _ShortObjectCreater("[THREAD Object]", "Create Threads out of functions."&@CRLF&"Call .__showdetails('methodname/property') for more informations.")

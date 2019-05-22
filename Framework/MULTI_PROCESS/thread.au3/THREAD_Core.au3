@@ -51,7 +51,7 @@ Global Const $__THREAD_CONST_WHATEVER 	= "[##%R!E)P]L[A(C!E%##]"
 	; Link ..........:
 	; Example .......: Yes
 	; ===============================================================================================================================
-	Func _THREAD_Delete($oSelf, $handle )
+	Func _THREAD_Delete($oSelf, $hThread )
 		Return DllCall("kernel32.dll", "bool", "TerminateThread", "handle", $hThread, "dword", 0)
 	EndFunc
 

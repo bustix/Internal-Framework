@@ -1,7 +1,7 @@
 #include-once
 #include "XML_Core.au3"
 
-Global $oXML = _CreateXMLObject() ;Object var to use in the main script - global initialiser
+;Global $oXML = _CreateXMLObject() ;Object var to use in the main script - global initialiser
 
 Func _CreateXMLObject()	; create XML Class
 	Local $XML_Object_Creation = _ShortObjectCreater("[XML Object]", "Send POST/GET Requests or Translate Text."&@CRLF&"Call .__showdetails('methodname/property') for more informations.")

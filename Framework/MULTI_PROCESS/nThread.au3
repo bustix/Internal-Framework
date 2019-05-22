@@ -174,18 +174,6 @@ EndFunc
 
 
 #include <WinAPI.au3>
-$tagMSGBOXPARAMS = _
-        "UINT cbSize;" & _
-        "HWND hwndOwner;" & _
-        "ptr hInstance;" & _
-        "ptr lpszText;" & _
-        "ptr lpszCaption;" & _
-        "DWORD dwStyle;" & _
-        "ptr lpszIcon;" & _
-        "UINT_PTR dwContextHelpId;" & _
-        "ptr lpfnMsgBoxCallback;" & _
-        "DWORD dwLanguageId;"
-
 
 
 ; creates a struct for an Unicode-String
@@ -203,6 +191,49 @@ Func _Thread_GetProcAddress($hModule,$sProcname)
     Return $result[0]
 EndFunc
 
+#cs
+$tagMSGBOXPARAMS = _
+        "UINT cbSize;" & _
+        "HWND hwndOwner;" & _
+        "ptr hInstance;" & _
+        "ptr lpszText;" & _
+        "ptr lpszCaption;" & _
+        "DWORD dwStyle;" & _
+        "ptr lpszIcon;" & _
+        "UINT_PTR dwContextHelpId;" & _
+        "ptr lpfnMsgBoxCallback;" & _
+        "DWORD dwLanguageId;"
+#ce
+#include "VarDump.au3"
+#include <WinAPIDiag.au3>
+#include "NomadMemory.au3"
+#include <WinAPIConstants.au3>
+#include <WinAPIProc.au3>
+#include <WinAPIRes.au3>
+
+Local $x = 0
+
+If $x = 0 Then
+
+Local $me = @AutoItPID, $t, $r, $s, $test, $a, $test2, $test3, $i
+$s = "_m"
+$t = ProcessExists($me)
+$r = _MemoryModuleGetBaseAddress($t, $s)
+$test = _WinAPI_GetModuleHandle(@AutoItExe)
+$test2 = _WinAPI_LoadLibraryEx(@AutoItExe,$LOAD_LIBRARY_AS_DATAFILE)
+$test3= _WinAPI_GetProcAddress ($test, "" )
+
+$i = _WinAPI_GetModuleInformation($test)
+MsgBox(0, "result", $i )
+
+
+MsgBox(0,"PID: "&$me & "/" & $t, "filename:		" & $me & @CRLF & "searching for:	" & $s & @CRLF & "found:		" & $r & @CRLF & "test:		" & $test & @CRLF & "test2:		" & $test2& @CRLF & "test3:		" & $test3)
+
+
+
+Exit
+
+ElseIf $x = 1 Then
 ; Struct to send to the Thread
 ; in this case the MsgBox-Params
 $MSGBOXPARAMS = DllStructCreate($tagMSGBOXPARAMS)
@@ -227,3 +258,11 @@ MsgBox(0, "Thread-Info", "Handle: " & $hThread & @CRLF & "Thread-ID: " & $Thread
 _Thread_Wait($hThread)
 $code = _Thread_GetExitCode($hThread)
 MsgBox(0, 'Thread ended', "Threaded MsgBox returned: " & $code)
+
+EndIf
+
+Func _m($t="x")
+	Return MsgBox(0, "test", $t )
+EndFunc
+
+

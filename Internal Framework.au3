@@ -1,6 +1,6 @@
 ;#AutoIt3Wrapper_AU3Check_Parameters=-d -w 1 -w 2 -w 3 -w 4 -w 5 -w 6
-#AutoIt3Wrapper_UseX64=n
 ;#RequireAdmin
+#AutoIt3Wrapper_UseX64=n
 Opt("MustDeclareVars", 1)
 
 ;Error Handler for the Objects to prevent crashes
@@ -17,8 +17,9 @@ Global $oMyError = ObjEvent("AutoIt.Error","MyErrFunc"); Initialize
 
 ; ### COPROCESS - MULTI PROCESS USAGE
 
-
+#cs
 #Region ###	XML EXAMPLE ### - WORKING
+	Global $oXML = _CreateXMLObject() ;Object var to use in the main script - global initialiser
 	With $oXML
 		Local $r
 		;Show informations about the XML Object
@@ -86,12 +87,53 @@ Global $oMyError = ObjEvent("AutoIt.Error","MyErrFunc"); Initialize
 		#ce
 
 	EndWith
-
 #EndRegion
 
+#ce
+
+#cs - too much problems, continue with multiprocessing.
 #Region ###	THREAD EXAMPLE ### - WORKING
 
+	Global $oTHREAD = _CreateTHREADObject() ;Object var to use in the main script - global initialiser
+	With $oTHREAD
+
+		.tStart('_test_one')
+		.tStart('_test_two')
+		MsgBox(0, 'hi', 'from main thread' )
+		.tStop('_test_one')
+		.tStop('_test_two')
+
+	EndWith
+
+	Exit ; described as needed, otherwise the main process won't exit
+
+	Func _test_one($hThread)
+		MsgBox(0, "hi", "from one" )
+	EndFunc
+	Func _test_two($hThread)
+		MsgBox(0, "hi", "from two" )
+	EndFunc
+
 #EndRegion
+#ce
+
+#Region ###	THREAD EXAMPLE ### - earm no where to be done.
+
+	Global $oTHREAD = _CreateTHREADObject() ;Object var to use in the main script - global initialiser
+	With $oTHREAD
+
+		.tStart('_test_one')
+		.tStart('_test_two')
+		MsgBox(0, 'hi', 'from main thread' )
+		.tStop('_test_one')
+		.tStop('_test_two')
+
+	EndWith
+
+
+#EndRegion
+
+
 Exit
 
 
