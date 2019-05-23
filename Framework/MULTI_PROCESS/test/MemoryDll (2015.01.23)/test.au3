@@ -2,10 +2,11 @@
 #include <GUIConstantsEx.au3>
 #include <File.au3>
 #include "MemoryDll.au3"
+#include "memorydll_2.au3"
 #include <WinAPI.au3>
 
 #AutoIt3Wrapper_UseX64=n
-
+MemoryDllInit()
 Func testt()
 	MsgBox(64, @Compiled, @ScriptFullPath & @CRLF & "trying to load current autoit exe and call a function out of it..")
 
@@ -141,95 +142,6 @@ Func BinaryRead($Filename)
 EndFunc   ;==>BinaryRead
 
 
-Func MemoryFuncCall($RetType, $FunctionPointer, $Type1 = "int", $Param1 = 0, $Type2 = "int", $Param2 = 0, $Type3 = "int", $Param3 = 0, $Type4 = "int", $Param4 = 0, $Type5 = "int", $Param5 = 0, _
-	$Type6 = "int", $Param6 = 0, $Type7 = "int", $Param7 = 0, $Type8 = "int", $Param8 = 0, $Type9 = "int", $Param9 = 0, $Type10 = "int", $Param10 = 0, _
-	$Type11 = "int", $Param11 = 0, $Type12 = "int", $Param12 = 0, $Type13 = "int", $Param13 = 0, $Type14 = "int", $Param14 = 0, $Type15 = "int", $Param15 = 0, _
-	$Type16 = "int", $Param16 = 0, $Type17 = "int", $Param17 = 0, $Type18 = "int", $Param18 = 0, $Type19 = "int", $Param19 = 0, $Type20 = "int", $Param20 = 0)
-	Local $Ret
-	Local Const $MaxParams = 20
-	If (@NumParams < 2) Or (@NumParams > $MaxParams * 2 + 2) Or (Mod(@NumParams, 2) = 1) Then
-		SetError(2)
-		Return 0
-	EndIf
-	If Not IsDllStruct($_MDCodeBuffer) Then MemoryDllInit()
-	If $FunctionPointer = 0 Then
-		SetError(1)
-		Return 0
-	EndIf
-	Local $Ret[1] = [$FunctionPointer]
-	Switch @NumParams
-		Case 13 To $MaxParams * 2 + 2
-			Local $DllParams = (@NumParams - 3) / 2, $i, $PartRet
-			$Ret = DllCall("user32.dll", $RetType, "CallWindowProc", "ptr", DllStructGetPtr($_MDCodeBuffer) + $_MDWarpN, _
-			"uint", $Ret[0], _
-			"uint", $DllParams, _
-			$Type1, $Param1, _
-			$Type2, $Param2)
-			$Ret[1] = $Ret[4]
-			$Ret[2] = $Ret[5]
-			ReDim $Ret[3]
-			For $i = 3 To $DllParams Step 3
-				$PartRet = DllCall("user32.dll", $RetType, "CallWindowProc", "ptr", DllStructGetPtr($_MDCodeBuffer) + $_MDWarpN, _
-				"uint", 0, _
-				Eval('Type' & $i), Eval('Param' & $i), _
-				Eval('Type' & ($i + 1)), Eval('Param' & ($i + 1)), _
-				Eval('Type' & ($i + 2)), Eval('Param' & ($i + 2)))
-				ReDim $Ret[$i + 3]
-				$Ret[$i + 2] = $PartRet[5]
-				$Ret[$i + 1] = $PartRet[4]
-				$Ret[$i] = $PartRet[3]
-			Next
-			$Ret[0] = $PartRet[0]
-			ReDim $Ret[$DllParams + 1]
-		Case 10
-			$Ret = DllCall("user32.dll", $RetType, "CallWindowProc", "ptr", $Ret[0], _
-			$Type1, $Param1, _
-			$Type2, $Param2, _
-			$Type3, $Param3, _
-			$Type4, $Param4)
-			$Ret[1] = $Ret[2]
-			$Ret[2] = $Ret[3]
-			$Ret[3] = $Ret[4]
-			$Ret[4] = $Ret[5]
-			ReDim $Ret[5]
-		Case 8
-			$Ret = DllCall("user32.dll", $RetType, "CallWindowProc", "ptr", DllStructGetPtr($_MDCodeBuffer) + $_MDWarp3, _
-			"uint", $Ret[0], _
-			$Type1, $Param1, _
-			$Type2, $Param2, _
-			$Type3, $Param3)
-			$Ret[1] = $Ret[3]
-			$Ret[2] = $Ret[4]
-			$Ret[3] = $Ret[5]
-			ReDim $Ret[4]
-		Case 6
-			$Ret = DllCall("user32.dll", $RetType, "CallWindowProc", "ptr", DllStructGetPtr($_MDCodeBuffer) + $_MDWarp2, _
-			"int", 0, _
-			"uint", $Ret[0], _
-			$Type1, $Param1, _
-			$Type2, $Param2)
-			$Ret[1] = $Ret[4]
-			$Ret[2] = $Ret[5]
-			ReDim $Ret[3]
-		Case 4
-			$Ret = DllCall("user32.dll", $RetType, "CallWindowProc", "ptr", DllStructGetPtr($_MDCodeBuffer) + $_MDWarp1, _
-			"int", 0, _
-			"int", 0, _
-			"uint", $Ret[0], _
-			$Type1, $Param1)
-			$Ret[1] = $Ret[5]
-			ReDim $Ret[2]
-		Case 2
-			$Ret = DllCall("user32.dll", $RetType, "CallWindowProc", "ptr", DllStructGetPtr($_MDCodeBuffer) + $_MDWarp0, _
-			"int", 0, _
-			"int", 0, _
-			"int", 0, _
-			"int", $Ret[0])
-			ReDim $Ret[1]
-	EndSwitch
-	SetError(0)
-	Return $Ret
-EndFunc   ;==>MemoryFuncCall
 
 ; ============================================================================================================================
 ;  Functions : MemoryDllOpen(), MemoryDllGetFuncAddress(), MemoryDllClose()

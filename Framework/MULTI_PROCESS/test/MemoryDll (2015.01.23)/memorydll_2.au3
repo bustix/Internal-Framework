@@ -16,35 +16,95 @@ Func MemoryFuncInit()
 	DllCall($_MDKernel32Dll, "int", "WriteProcessMemory", "ptr", -1, "ptr", $_MFHookPtr + 5, "ushort*", 0xE0FF, "uint", 2, "uint*", 0)
 EndFunc
 
-Func MemoryFuncCall($RetType, $Address, $Type1 = "", $Param1 = 0, $Type2 = "", $Param2 = 0, $Type3 = "", $Param3 = 0, $Type4 = "", $Param4 = 0, $Type5 = "", $Param5 = 0, $Type6 = "", $Param6 = 0, $Type7 = "", $Param7 = 0, $Type8 = "", $Param8 = 0, $Type9 = "", $Param9 = 0, $Type10 = "", $Param10 = 0, $Type11 = "", $Param11 = 0, $Type12 = "", $Param12 = 0, $Type13 = "", $Param13 = 0, $Type14 = "", $Param14 = 0, $Type15 = "", $Param15 = 0, $Type16 = "", $Param16 = 0, $Type17 = "", $Param17 = 0, $Type18 = "", $Param18 = 0, $Type19 = "", $Param19 = 0, $Type20 = "", $Param20 = 0)
-	If Not IsDllStruct($_MFHookBak) Then MemoryFuncInit()
-
-	MemoryFuncSet($Address)
+Func MemoryFuncCall($RetType, $FunctionPointer, $Type1 = "int", $Param1 = 0, $Type2 = "int", $Param2 = 0, $Type3 = "int", $Param3 = 0, $Type4 = "int", $Param4 = 0, $Type5 = "int", $Param5 = 0, _
+	$Type6 = "int", $Param6 = 0, $Type7 = "int", $Param7 = 0, $Type8 = "int", $Param8 = 0, $Type9 = "int", $Param9 = 0, $Type10 = "int", $Param10 = 0, _
+	$Type11 = "int", $Param11 = 0, $Type12 = "int", $Param12 = 0, $Type13 = "int", $Param13 = 0, $Type14 = "int", $Param14 = 0, $Type15 = "int", $Param15 = 0, _
+	$Type16 = "int", $Param16 = 0, $Type17 = "int", $Param17 = 0, $Type18 = "int", $Param18 = 0, $Type19 = "int", $Param19 = 0, $Type20 = "int", $Param20 = 0)
 	Local $Ret
+	Local Const $MaxParams = 20
+	If (@NumParams < 2) Or (@NumParams > $MaxParams * 2 + 2) Or (Mod(@NumParams, 2) = 1) Then
+		SetError(2)
+		Return 0
+	EndIf
+	If Not IsDllStruct($_MDCodeBuffer) Then MemoryDllInit()
+	If $FunctionPointer = 0 Then
+		SetError(1)
+		Return 0
+	EndIf
+	Local $Ret[1] = [$FunctionPointer]
 	Switch @NumParams
-	Case 2
-		$Ret = DllCall($_MDKernel32Dll, $RetType, $_MFHookApi)
-	Case 4
-		$Ret = DllCall($_MDKernel32Dll, $RetType, $_MFHookApi, $Type1, $Param1)
-	Case 6
-		$Ret = DllCall($_MDKernel32Dll, $RetType, $_MFHookApi, $Type1, $Param1, $Type2, $Param2)
-	Case 8
-		$Ret = DllCall($_MDKernel32Dll, $RetType, $_MFHookApi, $Type1, $Param1, $Type2, $Param2, $Type3, $Param3)
-	Case 10
-		$Ret = DllCall($_MDKernel32Dll, $RetType, $_MFHookApi, $Type1, $Param1, $Type2, $Param2, $Type3, $Param3, $Type4, $Param4)
-	Case 12
-		$Ret = DllCall($_MDKernel32Dll, $RetType, $_MFHookApi, $Type1, $Param1, $Type2, $Param2, $Type3, $Param3, $Type4, $Param4, $Type5, $Param5)
-	Case Else
-		Local $DllCallStr = 'DllCall($_MDKernel32Dll, $RetType, $_MFHookApi', $n, $i
-		For $i = 4 To @NumParams Step 2
-			$n = ($i - 2) / 2
-			$DllCallStr &= ', $Type' & $n & ', $Param' & $n
-		Next
-		$DllCallStr &= ')'
-		$Ret = Execute($DllCallStr)
+		Case 13 To $MaxParams * 2 + 2
+			Local $DllParams = (@NumParams - 3) / 2, $i, $PartRet
+			$Ret = DllCall("user32.dll", $RetType, "CallWindowProc", "ptr", DllStructGetPtr($_MDCodeBuffer) + $_MDWarpN, _
+			"uint", $Ret[0], _
+			"uint", $DllParams, _
+			$Type1, $Param1, _
+			$Type2, $Param2)
+			$Ret[1] = $Ret[4]
+			$Ret[2] = $Ret[5]
+			ReDim $Ret[3]
+			For $i = 3 To $DllParams Step 3
+				$PartRet = DllCall("user32.dll", $RetType, "CallWindowProc", "ptr", DllStructGetPtr($_MDCodeBuffer) + $_MDWarpN, _
+				"uint", 0, _
+				Eval('Type' & $i), Eval('Param' & $i), _
+				Eval('Type' & ($i + 1)), Eval('Param' & ($i + 1)), _
+				Eval('Type' & ($i + 2)), Eval('Param' & ($i + 2)))
+				ReDim $Ret[$i + 3]
+				$Ret[$i + 2] = $PartRet[5]
+				$Ret[$i + 1] = $PartRet[4]
+				$Ret[$i] = $PartRet[3]
+			Next
+			$Ret[0] = $PartRet[0]
+			ReDim $Ret[$DllParams + 1]
+		Case 10
+			$Ret = DllCall("user32.dll", $RetType, "CallWindowProc", "ptr", $Ret[0], _
+			$Type1, $Param1, _
+			$Type2, $Param2, _
+			$Type3, $Param3, _
+			$Type4, $Param4)
+			$Ret[1] = $Ret[2]
+			$Ret[2] = $Ret[3]
+			$Ret[3] = $Ret[4]
+			$Ret[4] = $Ret[5]
+			ReDim $Ret[5]
+		Case 8
+			$Ret = DllCall("user32.dll", $RetType, "CallWindowProc", "ptr", DllStructGetPtr($_MDCodeBuffer) + $_MDWarp3, _
+			"uint", $Ret[0], _
+			$Type1, $Param1, _
+			$Type2, $Param2, _
+			$Type3, $Param3)
+			$Ret[1] = $Ret[3]
+			$Ret[2] = $Ret[4]
+			$Ret[3] = $Ret[5]
+			ReDim $Ret[4]
+		Case 6
+			$Ret = DllCall("user32.dll", $RetType, "CallWindowProc", "ptr", DllStructGetPtr($_MDCodeBuffer) + $_MDWarp2, _
+			"int", 0, _
+			"uint", $Ret[0], _
+			$Type1, $Param1, _
+			$Type2, $Param2)
+			$Ret[1] = $Ret[4]
+			$Ret[2] = $Ret[5]
+			ReDim $Ret[3]
+		Case 4
+			$Ret = DllCall("user32.dll", $RetType, "CallWindowProc", "ptr", DllStructGetPtr($_MDCodeBuffer) + $_MDWarp1, _
+			"int", 0, _
+			"int", 0, _
+			"uint", $Ret[0], _
+			$Type1, $Param1)
+			$Ret[1] = $Ret[5]
+			ReDim $Ret[2]
+		Case 2
+			$Ret = DllCall("user32.dll", $RetType, "CallWindowProc", "ptr", DllStructGetPtr($_MDCodeBuffer) + $_MDWarp0, _
+			"int", 0, _
+			"int", 0, _
+			"int", 0, _
+			"int", $Ret[0])
+			ReDim $Ret[1]
 	EndSwitch
+	SetError(0)
 	Return $Ret
-EndFunc
+EndFunc   ;==>MemoryFuncCall
 
 Func MemoryFuncSet($Address)
 	DllCall($_MDKernel32Dll, "int", "WriteProcessMemory", "ptr", -1, "ptr", $_MFHookPtr + 1, "uint*", $Address, "uint", 4, "uint*", 0)
@@ -77,7 +137,7 @@ Func MemoryDllExit()
 	MemoryFuncExit()
 	$_MDCodeBuffer = 0
 EndFunc
-
+#cs
 Func MemoryDllOpen($DllBinary)
 	If Not IsDllStruct($_MDCodeBuffer) Then MemoryDllInit()
 
@@ -95,12 +155,10 @@ Func MemoryDllOpen($DllBinary)
 	$DllBuffer = 0
 	Return $Module[0]
 EndFunc
-
 Func MemoryDllClose($Module)
 	MemoryFuncSet(DllStructGetPtr($_MDCodeBuffer) + $_MDFreeOffset)
 	DllCall($_MDKernel32Dll, "none", $_MFHookApi, "uint", $Module)
 EndFunc
-
 Func MemoryDllCall($Module, $RetType, $Funcname, $Type1 = "", $Param1 = 0, $Type2 = "", $Param2 = 0, $Type3 = "", $Param3 = 0, $Type4 = "", $Param4 = 0, $Type5 = "", $Param5 = 0, $Type6 = "", $Param6 = 0, $Type7 = "", $Param7 = 0, $Type8 = "", $Param8 = 0, $Type9 = "", $Param9 = 0, $Type10 = "", $Param10 = 0, $Type11 = "", $Param11 = 0, $Type12 = "", $Param12 = 0, $Type13 = "", $Param13 = 0, $Type14 = "", $Param14 = 0, $Type15 = "", $Param15 = 0, $Type16 = "", $Param16 = 0, $Type17 = "", $Param17 = 0, $Type18 = "", $Param18 = 0, $Type19 = "", $Param19 = 0, $Type20 = "", $Param20 = 0)
 	Local $Ret, $OpenFlag = False
 	Local Const $MaxParams = 20
@@ -158,3 +216,4 @@ Func MemoryDllCall($Module, $RetType, $Funcname, $Type1 = "", $Param1 = 0, $Type
 	SetError(0)
 	Return $Ret
 EndFunc
+#ce
