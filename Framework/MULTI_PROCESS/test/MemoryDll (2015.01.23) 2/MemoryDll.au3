@@ -124,7 +124,7 @@ Func __MemoryModule_FreeLibrary($Module, $Userdata)
 		DllCall($__BinaryCall_Kernel32dll, "int", "FreeLibrary", "ptr", $Module)
 	EndIf
 EndFunc
-#cs
+
 Func MemoryDllOpen($Binary, $Name = "")
 	Static $LoadLibrary = DllCallbackGetPtr(DllCallbackRegister(__MemoryModule_LoadLibrary, "ptr:cdecl", "str;ptr"))
 	Static $GetProcAddress = DllCallbackGetPtr(DllCallbackRegister(__MemoryModule_GetProcAddress, "ptr:cdecl", "ptr;ptr;ptr"))
@@ -146,7 +146,6 @@ Func MemoryDllClose($Module)
 	__MemoryModule_ModuleRecord("delete", $Module)
 	If $Module And $Module <> -1 Then DllCallAddress("none:cdecl", $MemoryFreeLibrary, "ptr", $Module)
 EndFunc
-#ce
 
 ;* Execute entry point (EXE only). The entry point can only be executed
 ;* if the EXE has been loaded to the correct base address or it could

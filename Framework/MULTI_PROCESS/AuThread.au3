@@ -6,6 +6,13 @@
 #ce
 Global $hHandle, $tStruct, $aResult, $dReturn, $aTerminate, $hThread
 
+
+$hThread = CreateThread(0x0000027254EF0000) ;DllStructGetPtr($struct), 0)
+
+MsgBox(0, "", $hThread )
+
+
+
 Func CreateThread($sCallback)
 ;~ 	Local $hHandle, $tStruct, $aResult, $dReturn
 	$hHandle = DllCallbackRegister($sCallback, "int", "ptr")

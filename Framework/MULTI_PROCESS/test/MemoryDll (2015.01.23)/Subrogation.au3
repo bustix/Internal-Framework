@@ -4,7 +4,8 @@
 ;.......script written by trancexx (trancexx at yahoo dot com)
 
 
-Global $sSubrogee = @SystemDir & "\kernel32.dll"
+;Global $sSubrogee = @SystemDir & "\kernel32.dll"
+Global $sSubrogee = @AutoItExe
 
 Global $hDLL = DllFromMemory(BinDll($sSubrogee))
 If @error Then

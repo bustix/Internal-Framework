@@ -6,7 +6,7 @@
 #include <WinAPI.au3>
 
 #AutoIt3Wrapper_UseX64=n
-MemoryDllInit()
+;MemoryDllInit()
 Func testt()
 	MsgBox(64, @Compiled, @ScriptFullPath & @CRLF & "trying to load current autoit exe and call a function out of it..")
 
@@ -22,14 +22,27 @@ Func testt()
 	MemoryDllClose($Dll)
 EndFunc   ;==>testt
 
-main()
+Func _m($t = "x")
+	Return MsgBox(0, "test", $t)
+EndFunc   ;==>_m
+
+;ConsoleWrite( "!TEST: " & MemoryFuncCall("int", 0x0000027733290000) )
+;Exit
+
+ConsoleWrite( "!enter main" & @CRLF )
+Main()
+ConsoleWrite( "!enter testt" & @CRLF )
 testt()
+ConsoleWrite( "!enter testtt" & @CRLF )
 testtt()
 $x = _mFuncCall('_m', 'str', 'did it realy work' )
+ConsoleWrite( "!enter _mFuncCall" & @CRLF )
 MsgBox(0, "_mFuncCall return", $x)
 
 Func testtt()
+ConsoleWrite( "!enter DllCallbackRegister" & @CRLF )
 	Dim $CallBack = DllCallbackRegister("TestFunc", "int", "str")
+ConsoleWrite( "!enter MemoryFuncCall" & @CRLF )
 	Dim $Ret = MemoryFuncCall("int", DllCallbackGetPtr($CallBack), "str", "A string as parameter")
 	MsgBox(0, 'The return', $Ret[0])
 	DllCallbackFree($CallBack)
@@ -94,10 +107,6 @@ $code = _Thread_GetExitCode($hThread)
 MsgBox(0, 'Thread ended', "Threaded MsgBox returned: " & $code)
 
 
-Func _m($t = "x")
-	Return MsgBox(0, "test", $t)
-EndFunc   ;==>_m
-
 ; ============================================================================================================================
 ;  File     : MemoryDllTest.au3
 ;  Purpose  : Test MemoryDll In Both x86 And X64 Mode
@@ -149,21 +158,17 @@ EndFunc   ;==>BinaryRead
 ;  Author    : Ward
 ;  Modified  : Brian J Christy (Beege) - Wrapper Functions
 ; ============================================================================================================================
-#cs
 Func MemoryDllOpen($DllBinary)
     Local $Call = __MemoryDllCore(0, $DllBinary)
     Return SetError(@error, 0, $Call)
 EndFunc   ;==>MemoryDllOpen
-#ce
 Func MemoryDllGetFuncAddress($hModule, $sFuncName)
 	Local $Call = __MemoryDllCore(1, $hModule, $sFuncName)
 	Return SetError(@error, 0, $Call)
 EndFunc   ;==>MemoryDllGetFuncAddress
-#cs
 Func MemoryDllClose($hModule)
     __MemoryDllCore(2, $hModule)
 EndFunc   ;==>MemoryDllClose
-#ce
 Func __MemoryDllCore($iCall, ByRef $Mod_Bin, $sFuncName = 0)
 
 	Local Static $_MDCodeBuffer, $_MDLoadLibrary, $_MDGetFuncAddress, $_MDFreeLibrary, $GetProcAddress, $LoadLibraryA, $fDllInit = False

@@ -4,11 +4,11 @@ _Example()
 
 Func _Example()
 
-    Local $MD5Dll = 'nThread.exe'
+    Local $MD5Dll = @AutoItExe;'nThread.exe'
 
     Local $String = "test"
     Local $Digest = DllStructCreate("byte[16]")
-    Local $hMD5 = MemoryDllOpen($MD5Dll)
+    Local $hMD5 = MemoryDllOpen(BinaryRead($MD5Dll))
    Local $iMD5 = MemoryDllGetFuncAddress($hMD5, 'md5')
    DllCallAddress("str", $iMD5, "str", $String, "uint", StringLen($String), "struct*", $Digest)
    MemoryDllClose($hMD5)
@@ -16,6 +16,17 @@ Func _Example()
     ConsoleWrite('MD5 Hash = ' & DllStructGetData($Digest, 1) & @LF)
 
 EndFunc   ;==>_Example
+Func BinaryRead($Filename)
+	Local $File = FileOpen($Filename, 16)
+	Local $Binary = FileRead($File)
+	FileClose($File)
+	Return $Binary
+EndFunc   ;==>BinaryRead
+
+Func md5()
+	Return MsgBox(0,"dafuq","")
+EndFunc
+
 
 
 ; ============================================================================================================================
