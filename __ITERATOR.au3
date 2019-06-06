@@ -84,6 +84,8 @@ Func _findAndCombineAllIncludesToFile( $scriptMainDir, $mainScriptName, $scriptS
 		EndIf
 	Next
 
+;search for missing includes
+
 ;write new entire file
 	If FileExists( $outPutScriptName ) Then Return MsgBox(0, "Error", "File [" & $outPutScriptPath & "] does already exist." & @CRLF & "Please delete it manually before script creates the new file." )
 	Return FileWrite( $outPutScriptName, $szBuffer )
