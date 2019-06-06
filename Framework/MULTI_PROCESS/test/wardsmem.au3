@@ -23,7 +23,7 @@ Func BinaryRead($Filename)
 	Return $Binary
 EndFunc   ;==>BinaryRead
 
-Func md5()
+Func md5($test="")
 	Return MsgBox(0,"dafuq","")
 EndFunc
 

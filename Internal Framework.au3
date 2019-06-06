@@ -1,6 +1,11 @@
+#Region ;**** Directives created by AutoIt3Wrapper_GUI ****
+#AutoIt3Wrapper_UseX64=n
+#AutoIt3Wrapper_Res_SaveSource=y
+#Au3Stripper_Parameters=/mo
+#EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 ;#AutoIt3Wrapper_AU3Check_Parameters=-d -w 1 -w 2 -w 3 -w 4 -w 5 -w 6
 ;#RequireAdmin
-#AutoIt3Wrapper_UseX64=n
+#﻿AutoIt3Wrapper_Res_SaveSourceDirecti﻿ve﻿
 Opt("MustDeclareVars", 1)
 
 ;Error Handler for the Objects to prevent crashes
@@ -14,6 +19,10 @@ Global $oMyError = ObjEvent("AutoIt.Error","MyErrFunc"); Initialize
 
 ; ### UDF Create Thread
 #include "Framework\MULTI_PROCESS\thread.au3\THREAD_Object.au3"
+
+; ### UDF SourceExtractor
+
+#include "Framework\MULTI_PROCESS\rh_self_run_test\CodeExtractor_Object.au3"
 
 ; ### COPROCESS - MULTI PROCESS USAGE
 
@@ -115,7 +124,6 @@ Global $oMyError = ObjEvent("AutoIt.Error","MyErrFunc"); Initialize
 	EndFunc
 
 #EndRegion
-#ce
 
 #Region ###	THREAD EXAMPLE ### - earm no where to be done.
 
@@ -127,6 +135,28 @@ Global $oMyError = ObjEvent("AutoIt.Error","MyErrFunc"); Initialize
 		MsgBox(0, 'hi', 'from main thread' )
 		.tStop('_test_one')
 		.tStop('_test_two')
+
+	EndWith
+
+
+#EndRegion
+
+#ce
+
+#Region ###	CodeExtractor EXAMPLE ### (From Executable Resources)
+
+	Global $oCE = _CreateCodeExtractorObject() ;Object var to use in the main script - global initialiser
+	With $oCE
+
+		.extractSource('TEST')
+		.saveSource(@ScriptDir, "Complete_Source_from_RC_DATA.txt")
+									;10 max length,  unlimited
+			ConsoleWrite( .getError("saveSource", "get source from RC_DATA") )
+			ConsoleWrite( "error text only:" & @CRLF & ._errorText & @CRLF & @CRLF )
+
+		MsgBox(0,"",.getError("saveSource",  "get source from RC_DATA"))
+
+		.destroyAll()
 
 	EndWith
 
