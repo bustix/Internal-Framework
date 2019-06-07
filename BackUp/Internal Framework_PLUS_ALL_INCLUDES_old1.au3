@@ -1,4 +1,5 @@
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
+
 #AutoIt3Wrapper_UseX64=n
 #AutoIt3Wrapper_Res_SaveSource=y
 #Au3Stripper_Parameters=/mo
@@ -6,87 +7,10 @@
 #﻿AutoIt3Wrapper_Res_SaveSourceDirecti﻿ve﻿
 Opt("MustDeclareVars", 1)
 Global $oMyError = ObjEvent("AutoIt.Error","MyErrFunc"); Initialize
-#cs
-#Region ###	XML EXAMPLE ### - WORKING
-	Global $oXML = _CreateXMLObject() ;Object var to use in the main script - global initialiser
-	With $oXML
-		Local $r
-			MsgBox(0, "", .__Name & @CRLF & .__Description )
-			MsgBox(0, "", .__showdetails("code"))
-			.start() ;starts the oxml object
-			.setUrl("https://google.de") ;sets the url
-			.action("GET",.getUrl()) ;performs a get command
-			._send() ;send the request
-			.response() ;saves response to ._response
-			ConsoleWrite( "![.getResponse()] for ["&.getUrl()&"]  [stringleft(100) to shorten result]" & @CRLF & _
-							"-Result:	" & StringLeft(.getResponse(),100) & @CRLF & @CRLF )
-			.gTranslate	( "hallo ich soll ein englischer text werden" )
-			ConsoleWrite( "![.gTranslate( 'hallo ich soll ein englischer text werden' )]:" & @CRLF & "----------------------------------------" & @CRLF & _
-							"-Result:	" & .getTranslateResult() & @CRLF )
-			.close()
-			.start()
-			.gTranslate	( "ich will auch übersetzt werden" )
-			ConsoleWrite( "![.gTranslate( 'ich will auch übersetzt werden' )]" & @CRLF & "----------------------------------------" & @CRLF & _
-							"-Result:	" & .getTranslateResult() & @CRLF  & @CRLF )
-			.close()
-			Local $responseHeader 	= 'Host:translate.googleapis.com|' & _
-										'User-Agent:Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:66.0) Gecko/20100101 Firefox/66.0|' & _
-										'Accept:text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
-			Local $url 				= "https://eu.evga.com/"
-			.start() 						;	starts the oxml object
-			.setUrl($url) 					;	sets the url
-			.action("GET",.getUrl()) 		;	performs a get command to the url set with seturl
-			._send($responseHeader) 		; 	send action with custom header
-			.responseHeader("server") 		;	saves responseheader to ._responseHeader
-			ConsoleWrite( "![.getResponseHeader('server')] for ["& .getUrl() &"]" & @CRLF & _
-							"-Result:	" & .getResponseHeader() & @CRLF & @CRLF )
-			ConsoleWrite( "![LAST ERROR]" & @CRLF & _
-							"-Last Error Text:	" & ._getError() & @CRLF & _
-							"-Last Error @error:	" & ._getErrorNum() & @CRLF & _
-							"-Last Error @extended:	" & ._getErrorExt() &@CRLF &@CRLF )
-			.close()
-		#cs
-		Host: translate.googleapis.com
-		User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:66.0) Gecko/20100101 Firefox/66.0
-		Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
-		Accept-Language: de,en-US;q=0.7,en;q=0.3
-		Accept-Encoding: gzip, deflate, br
-		Connection: keep-alive
-		Upgrade-Insecure-Requests: 1
-		Accept				text/html,application/xhtml+xm…plication/xml;q=0.9,*/*;q=0.8
-		Accept-Encoding		gzip, deflate, br
-		Accept-Language		de,en-US;q=0.7,en;q=0.3
-		Connection			keep-alive´
-		#ce
-	EndWith
-#EndRegion
-#ce
-#cs - too much problems, continue with multiprocessing.
-#Region ###	THREAD EXAMPLE ### - WORKING
-	Global $oTHREAD = _CreateTHREADObject() ;Object var to use in the main script - global initialiser
-	With $oTHREAD
-		.tStart('_test_one')
-		.tStart('_test_two')
-		MsgBox(0, 'hi', 'from main thread' )
-		.tStop('_test_one')
-		.tStop('_test_two')
-	EndWith
-	Exit ; described as needed, otherwise the main process won't exit
-	Func _test_one($hThread)
-		MsgBox(0, "hi", "from one" )
-	EndFunc
-	Func _test_two($hThread)
-		MsgBox(0, "hi", "from two" )
-	EndFunc
-#EndRegion
-#Region ###	THREAD EXAMPLE ### - earm no where to be done.
-	Global $oTHREAD = _CreateTHREADObject() ;Object var to use in the main script - global initialiser
-	With $oTHREAD
-		.tStart('_test_one')
-		.tStart('_test_two')
-		MsgBox(0, 'hi', 'from main thread' )
-		.tStop('_test_one')
-		.tStop('_test_two')
+#include "Framework\AutoItObject\FastObject.au3"
+#include "Framework\XML\XML_Object.au3" ; working except cookies & login untestet -> next.
+#include "Framework\MULTI_PROCESS\thread.au3\THREAD_Object.au3"
+#include "Framework\MULTI_PROCESS\rh_self_run_test\CodeExtractor_Object.au3"
 	EndWith
 #EndRegion
 #ce
@@ -99,8 +23,6 @@ Global $oMyError = ObjEvent("AutoIt.Error","MyErrFunc"); Initialize
 			ConsoleWrite( "error text only:" & @CRLF & ._errorText & @CRLF & @CRLF )
 		MsgBox(0,"",.getError("saveSource",  "get source from RC_DATA"))
 		.destroyAll()
-	EndWith
-#EndRegion
 Exit
 Func MyErrFunc()
   ConsoleWrite("! [AutoIt-COM]	We intercepted a COM Error !"    		& @CRLF & @CRLF & _
@@ -127,6 +49,7 @@ Endfunc
 	See the License for the specific language governing permissions and
 	limitations under the License.
 #comments-end
+#include "WinHttpConstants.au3"
 Global Const $hWINHTTPDLL__WINHTTP = DllOpen("winhttp.dll")
 DllOpen("winhttp.dll") ; making sure reference count never reaches 0
 Func _WinHttpAddRequestHeaders($hRequest, $sHeader, $iModifier = Default)
@@ -138,17 +61,12 @@ Func _WinHttpAddRequestHeaders($hRequest, $sHeader, $iModifier = Default)
 			"dword", $iModifier)
 	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
 	Return 1
-EndFunc
 Func _WinHttpCheckPlatform()
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpCheckPlatform")
 	If @error Then Return SetError(1, 0, 0)
 	Return $aCall[0]
-EndFunc
 Func _WinHttpCloseHandle($hInternet)
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpCloseHandle", "handle", $hInternet)
-	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
-	Return 1
-EndFunc
 Func _WinHttpConnect($hSession, $sServerName, $iServerPort = Default)
 	Local $aURL = _WinHttpCrackUrl($sServerName), $iScheme = 0
 	If @error Then
@@ -163,10 +81,7 @@ Func _WinHttpConnect($hSession, $sServerName, $iServerPort = Default)
 			"wstr", $sServerName, _
 			"dword", $iServerPort, _
 			"dword", 0)
-	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
 	_WinHttpSetOption($aCall[0], $WINHTTP_OPTION_CONTEXT_VALUE, $iScheme)
-	Return $aCall[0]
-EndFunc
 Func _WinHttpCrackUrl($sURL, $iFlag = Default)
 	__WinHttpDefault($iFlag, $ICU_ESCAPE)
 	Local $tURL_COMPONENTS = DllStructCreate("dword StructSize;" & _
@@ -207,7 +122,6 @@ Func _WinHttpCrackUrl($sURL, $iFlag = Default)
 			"dword", $iURLLen, _
 			"dword", $iFlag, _
 			"struct*", $tURL_COMPONENTS)
-	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
 	Local $aRet[8] = [DllStructGetData($tBuffers[0], 1), _
 			DllStructGetData($tURL_COMPONENTS, "Scheme"), _
 			DllStructGetData($tBuffers[1], 1), _
@@ -217,56 +131,34 @@ Func _WinHttpCrackUrl($sURL, $iFlag = Default)
 			DllStructGetData($tBuffers[4], 1), _
 			DllStructGetData($tBuffers[5], 1)]
 	Return $aRet
-EndFunc
 Func _WinHttpCreateUrl($aURLArray)
 	If UBound($aURLArray) - 8 Then Return SetError(1, 0, "")
-	Local $tURL_COMPONENTS = DllStructCreate("dword StructSize;" & _
-			"ptr SchemeName;" & _
-			"dword SchemeNameLength;" & _
-			"int Scheme;" & _
-			"ptr HostName;" & _
-			"dword HostNameLength;" & _
-			"word Port;" & _
-			"ptr UserName;" & _
-			"dword UserNameLength;" & _
-			"ptr Password;" & _
-			"dword PasswordLength;" & _
-			"ptr UrlPath;" & _
-			"dword UrlPathLength;" & _
-			"ptr ExtraInfo;" & _
 			"dword ExtraInfoLength;")
-	DllStructSetData($tURL_COMPONENTS, 1, DllStructGetSize($tURL_COMPONENTS))
 	Local $tBuffers[6][2]
 	$tBuffers[0][1] = StringLen($aURLArray[0])
 	If $tBuffers[0][1] Then
 		$tBuffers[0][0] = DllStructCreate("wchar[" & $tBuffers[0][1] + 1 & "]")
 		DllStructSetData($tBuffers[0][0], 1, $aURLArray[0])
-	EndIf
 	$tBuffers[1][1] = StringLen($aURLArray[2])
 	If $tBuffers[1][1] Then
 		$tBuffers[1][0] = DllStructCreate("wchar[" & $tBuffers[1][1] + 1 & "]")
 		DllStructSetData($tBuffers[1][0], 1, $aURLArray[2])
-	EndIf
 	$tBuffers[2][1] = StringLen($aURLArray[4])
 	If $tBuffers[2][1] Then
 		$tBuffers[2][0] = DllStructCreate("wchar[" & $tBuffers[2][1] + 1 & "]")
 		DllStructSetData($tBuffers[2][0], 1, $aURLArray[4])
-	EndIf
 	$tBuffers[3][1] = StringLen($aURLArray[5])
 	If $tBuffers[3][1] Then
 		$tBuffers[3][0] = DllStructCreate("wchar[" & $tBuffers[3][1] + 1 & "]")
 		DllStructSetData($tBuffers[3][0], 1, $aURLArray[5])
-	EndIf
 	$tBuffers[4][1] = StringLen($aURLArray[6])
 	If $tBuffers[4][1] Then
 		$tBuffers[4][0] = DllStructCreate("wchar[" & $tBuffers[4][1] + 1 & "]")
 		DllStructSetData($tBuffers[4][0], 1, $aURLArray[6])
-	EndIf
 	$tBuffers[5][1] = StringLen($aURLArray[7])
 	If $tBuffers[5][1] Then
 		$tBuffers[5][0] = DllStructCreate("wchar[" & $tBuffers[5][1] + 1 & "]")
 		DllStructSetData($tBuffers[5][0], 1, $aURLArray[7])
-	EndIf
 	DllStructSetData($tURL_COMPONENTS, "SchemeNameLength", $tBuffers[0][1])
 	DllStructSetData($tURL_COMPONENTS, "SchemeName", DllStructGetPtr($tBuffers[0][0]))
 	DllStructSetData($tURL_COMPONENTS, "HostNameLength", $tBuffers[1][1])
@@ -290,13 +182,10 @@ Func _WinHttpCreateUrl($aURLArray)
 	Local $iURLLen = $aCall[4]
 	Local $URLBuffer = DllStructCreate("wchar[" & ($iURLLen + 1) & "]")
 	$aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpCreateUrl", _
-			"struct*", $tURL_COMPONENTS, _
-			"dword", $ICU_ESCAPE, _
 			"struct*", $URLBuffer, _
 			"dword*", $iURLLen)
 	If @error Or Not $aCall[0] Then Return SetError(3, 0, "")
 	Return DllStructGetData($URLBuffer, 1)
-EndFunc
 Func _WinHttpDetectAutoProxyConfigUrl($iAutoDetectFlags)
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpDetectAutoProxyConfigUrl", "dword", $iAutoDetectFlags, "ptr*", 0)
 	If @error Or Not $aCall[0] Then Return SetError(1, 0, "")
@@ -308,15 +197,12 @@ Func _WinHttpDetectAutoProxyConfigUrl($iAutoDetectFlags)
 		Local $sString = DllStructGetData($tString, 1)
 		__WinHttpMemGlobalFree($pStr)
 		Return $sString
-	EndIf
 	Return ""
-EndFunc
 Func _WinHttpGetDefaultProxyConfiguration()
 	Local $tWINHTTP_PROXY_INFO = DllStructCreate("dword AccessType;" & _
 			"ptr Proxy;" & _
 			"ptr ProxyBypass")
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpGetDefaultProxyConfiguration", "struct*", $tWINHTTP_PROXY_INFO)
-	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
 	Local $iAccessType = DllStructGetData($tWINHTTP_PROXY_INFO, "AccessType")
 	Local $pProxy = DllStructGetData($tWINHTTP_PROXY_INFO, "Proxy")
 	Local $pProxyBypass = DllStructGetData($tWINHTTP_PROXY_INFO, "ProxyBypass")
@@ -328,26 +214,18 @@ Func _WinHttpGetDefaultProxyConfiguration()
 			$sProxy = DllStructGetData($tProxy, 1)
 			__WinHttpMemGlobalFree($pProxy)
 		EndIf
-	EndIf
 	Local $sProxyBypass
 	If $pProxyBypass Then
 		Local $iProxyBypassLen = __WinHttpPtrStringLenW($pProxyBypass)
-		If Not @error Then
 			Local $tProxyBypass = DllStructCreate("wchar[" & $iProxyBypassLen + 1 & "]", $pProxyBypass)
 			$sProxyBypass = DllStructGetData($tProxyBypass, 1)
 			__WinHttpMemGlobalFree($pProxyBypass)
-		EndIf
-	EndIf
 	Local $aRet[3] = [$iAccessType, $sProxy, $sProxyBypass]
-	Return $aRet
-EndFunc
 Func _WinHttpGetIEProxyConfigForCurrentUser()
 	Local $tWINHTTP_CURRENT_USER_IE_PROXY_CONFIG = DllStructCreate("int AutoDetect;" & _
 			"ptr AutoConfigUrl;" & _
-			"ptr Proxy;" & _
 			"ptr ProxyBypass;")
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpGetIEProxyConfigForCurrentUser", "struct*", $tWINHTTP_CURRENT_USER_IE_PROXY_CONFIG)
-	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
 	Local $iAutoDetect = DllStructGetData($tWINHTTP_CURRENT_USER_IE_PROXY_CONFIG, "AutoDetect")
 	Local $pAutoConfigUrl = DllStructGetData($tWINHTTP_CURRENT_USER_IE_PROXY_CONFIG, "AutoConfigUrl")
 	Local $pProxy = DllStructGetData($tWINHTTP_CURRENT_USER_IE_PROXY_CONFIG, "Proxy")
@@ -355,33 +233,11 @@ Func _WinHttpGetIEProxyConfigForCurrentUser()
 	Local $sAutoConfigUrl
 	If $pAutoConfigUrl Then
 		Local $iAutoConfigUrlLen = __WinHttpPtrStringLenW($pAutoConfigUrl)
-		If Not @error Then
 			Local $tAutoConfigUrl = DllStructCreate("wchar[" & $iAutoConfigUrlLen + 1 & "]", $pAutoConfigUrl)
 			$sAutoConfigUrl = DllStructGetData($tAutoConfigUrl, 1)
 			__WinHttpMemGlobalFree($pAutoConfigUrl)
-		EndIf
-	EndIf
-	Local $sProxy
-	If $pProxy Then
-		Local $iProxyLen = __WinHttpPtrStringLenW($pProxy)
-		If Not @error Then
-			Local $tProxy = DllStructCreate("wchar[" & $iProxyLen + 1 & "]", $pProxy)
-			$sProxy = DllStructGetData($tProxy, 1)
-			__WinHttpMemGlobalFree($pProxy)
-		EndIf
-	EndIf
-	Local $sProxyBypass
-	If $pProxyBypass Then
-		Local $iProxyBypassLen = __WinHttpPtrStringLenW($pProxyBypass)
-		If Not @error Then
-			Local $tProxyBypass = DllStructCreate("wchar[" & $iProxyBypassLen + 1 & "]", $pProxyBypass)
-			$sProxyBypass = DllStructGetData($tProxyBypass, 1)
-			__WinHttpMemGlobalFree($pProxyBypass)
-		EndIf
-	EndIf
 	Local $aOutput[4] = [$iAutoDetect, $sAutoConfigUrl, $sProxy, $sProxyBypass]
 	Return $aOutput
-EndFunc
 Func _WinHttpOpen($sUserAgent = Default, $iAccessType = Default, $sProxyName = Default, $sProxyBypass = Default, $iFlag = Default)
 	__WinHttpDefault($sUserAgent, __WinHttpUA())
 	__WinHttpDefault($iAccessType, $WINHTTP_ACCESS_TYPE_NO_PROXY)
@@ -394,10 +250,7 @@ Func _WinHttpOpen($sUserAgent = Default, $iAccessType = Default, $sProxyName = D
 			"wstr", $sProxyName, _
 			"wstr", $sProxyBypass, _
 			"dword", $iFlag)
-	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
 	If $iFlag = $WINHTTP_FLAG_ASYNC Then _WinHttpSetOption($aCall[0], $WINHTTP_OPTION_CONTEXT_VALUE, $WINHTTP_FLAG_ASYNC)
-	Return $aCall[0]
-EndFunc
 Func _WinHttpOpenRequest($hConnect, $sVerb = Default, $sObjectName = Default, $sVersion = Default, $sReferrer = Default, $sAcceptTypes = Default, $iFlags = Default)
 	__WinHttpDefault($sVerb, "GET")
 	__WinHttpDefault($sObjectName, "")
@@ -407,7 +260,6 @@ Func _WinHttpOpenRequest($hConnect, $sVerb = Default, $sObjectName = Default, $s
 	Local $pAcceptTypes
 	If $sAcceptTypes = Default Or Number($sAcceptTypes) = -1 Then
 		$pAcceptTypes = $WINHTTP_DEFAULT_ACCEPT_TYPES
-	Else
 		Local $aTypes = StringSplit($sAcceptTypes, ",", 2)
 		Local $tAcceptTypes = DllStructCreate("ptr[" & UBound($aTypes) + 1 & "]")
 		Local $tType[UBound($aTypes)]
@@ -417,7 +269,6 @@ Func _WinHttpOpenRequest($hConnect, $sVerb = Default, $sObjectName = Default, $s
 			DllStructSetData($tAcceptTypes, 1, DllStructGetPtr($tType[$i]), $i + 1)
 		Next
 		$pAcceptTypes = DllStructGetPtr($tAcceptTypes)
-	EndIf
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "handle", "WinHttpOpenRequest", _
 			"handle", $hConnect, _
 			"wstr", StringUpper($sVerb), _
@@ -426,48 +277,32 @@ Func _WinHttpOpenRequest($hConnect, $sVerb = Default, $sObjectName = Default, $s
 			"wstr", $sReferrer, _
 			"ptr", $pAcceptTypes, _
 			"dword", $iFlags)
-	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
-	Return $aCall[0]
-EndFunc
 Func _WinHttpQueryAuthSchemes($hRequest, ByRef $iSupportedSchemes, ByRef $iFirstScheme, ByRef $iAuthTarget)
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpQueryAuthSchemes", _
-			"handle", $hRequest, _
 			"dword*", 0, _
-			"dword*", 0, _
-			"dword*", 0)
-	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
 	$iSupportedSchemes = $aCall[2]
 	$iFirstScheme = $aCall[3]
 	$iAuthTarget = $aCall[4]
-	Return 1
-EndFunc
 Func _WinHttpQueryDataAvailable($hRequest)
 	Local $sReadType = "dword*"
 	If BitAND(_WinHttpQueryOption(_WinHttpQueryOption(_WinHttpQueryOption($hRequest, $WINHTTP_OPTION_PARENT_HANDLE), $WINHTTP_OPTION_PARENT_HANDLE), $WINHTTP_OPTION_CONTEXT_VALUE), $WINHTTP_FLAG_ASYNC) Then $sReadType = "ptr"
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpQueryDataAvailable", "handle", $hRequest, $sReadType, 0)
-	If @error Then Return SetError(1, 0, 0)
 	Return SetExtended($aCall[2], $aCall[0])
-EndFunc
 Func _WinHttpQueryHeaders($hRequest, $iInfoLevel = Default, $sName = Default, $iIndex = Default)
 	__WinHttpDefault($iInfoLevel, $WINHTTP_QUERY_RAW_HEADERS_CRLF)
 	__WinHttpDefault($sName, $WINHTTP_HEADER_NAME_BY_INDEX)
 	__WinHttpDefault($iIndex, $WINHTTP_NO_HEADER_INDEX)
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpQueryHeaders", _
-			"handle", $hRequest, _
 			"dword", $iInfoLevel, _
 			"wstr", $sName, _
 			"wstr", "", _
 			"dword*", 65536, _
 			"dword*", $iIndex)
-	If @error Or Not $aCall[0] Then Return SetError(1, 0, "")
 	Return SetExtended($aCall[6], $aCall[4])
-EndFunc
 Func _WinHttpQueryOption($hInternet, $iOption)
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpQueryOption", _
 			"handle", $hInternet, _
 			"dword", $iOption, _
-			"ptr", 0, _
-			"dword*", 0)
 	If @error Or $aCall[0] Then Return SetError(1, 0, "")
 	Local $iSize = $aCall[4]
 	Local $tBuffer
@@ -488,13 +323,10 @@ Func _WinHttpQueryOption($hInternet, $iOption)
 			$tBuffer = DllStructCreate("byte[" & $iSize & "]")
 	EndSwitch
 	$aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpQueryOption", _
-			"handle", $hInternet, _
-			"dword", $iOption, _
 			"struct*", $tBuffer, _
 			"dword*", $iSize)
 	If @error Or Not $aCall[0] Then Return SetError(2, 0, "")
 	Return DllStructGetData($tBuffer, 1)
-EndFunc
 Func _WinHttpReadData($hRequest, $iMode = Default, $iNumberOfBytesToRead = Default, $pBuffer = Default)
 	__WinHttpDefault($iMode, 0)
 	__WinHttpDefault($iNumberOfBytesToRead, 8192)
@@ -507,22 +339,12 @@ Func _WinHttpReadData($hRequest, $iMode = Default, $iNumberOfBytesToRead = Defau
 			Else
 				$tBuffer = DllStructCreate("byte[" & $iNumberOfBytesToRead & "]")
 			EndIf
-		Case Else
 			$iMode = 0
-			If $pBuffer And $pBuffer <> Default Then
 				$tBuffer = DllStructCreate("char[" & $iNumberOfBytesToRead & "]", $pBuffer)
-			Else
 				$tBuffer = DllStructCreate("char[" & $iNumberOfBytesToRead & "]")
-			EndIf
-	EndSwitch
-	Local $sReadType = "dword*"
-	If BitAND(_WinHttpQueryOption(_WinHttpQueryOption(_WinHttpQueryOption($hRequest, $WINHTTP_OPTION_PARENT_HANDLE), $WINHTTP_OPTION_PARENT_HANDLE), $WINHTTP_OPTION_CONTEXT_VALUE), $WINHTTP_FLAG_ASYNC) Then $sReadType = "ptr"
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpReadData", _
-			"handle", $hRequest, _
-			"struct*", $tBuffer, _
 			"dword", $iNumberOfBytesToRead, _
 			$sReadType, 0)
-	If @error Or Not $aCall[0] Then Return SetError(1, 0, "")
 	If Not $aCall[4] Then Return SetError(-1, 0, $vOutOnError)
 	If $aCall[4] < $iNumberOfBytesToRead Then
 		Switch $iMode
@@ -533,20 +355,11 @@ Func _WinHttpReadData($hRequest, $iMode = Default, $iNumberOfBytesToRead = Defau
 			Case 2
 				Return SetExtended($aCall[4], BinaryMid(DllStructGetData($tBuffer, 1), 1, $aCall[4]))
 		EndSwitch
-	Else
-		Switch $iMode
 			Case 0, 2
 				Return SetExtended($aCall[4], DllStructGetData($tBuffer, 1))
-			Case 1
 				Return SetExtended($aCall[4], BinaryToString(DllStructGetData($tBuffer, 1), 4))
-		EndSwitch
-	EndIf
-EndFunc
 Func _WinHttpReceiveResponse($hRequest)
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpReceiveResponse", "handle", $hRequest, "ptr", 0)
-	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
-	Return 1
-EndFunc
 Func _WinHttpSendRequest($hRequest, $sHeaders = Default, $vOptional = Default, $iTotalLength = Default, $iContext = Default)
 	__WinHttpDefault($sHeaders, $WINHTTP_NO_ADDITIONAL_HEADERS)
 	__WinHttpDefault($vOptional, $WINHTTP_NO_REQUEST_DATA)
@@ -559,47 +372,31 @@ Func _WinHttpSendRequest($hRequest, $sHeaders = Default, $vOptional = Default, $
 		$tOptional = DllStructCreate("byte[" & $iOptionalLength & "]")
 		If $iOptionalLength Then $pOptional = DllStructGetPtr($tOptional)
 		DllStructSetData($tOptional, 1, $vOptional)
-	EndIf
 	If Not $iTotalLength Or $iTotalLength < $iOptionalLength Then $iTotalLength += $iOptionalLength
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpSendRequest", _
-			"handle", $hRequest, _
 			"wstr", $sHeaders, _
 			"dword", 0, _
 			"ptr", $pOptional, _
 			"dword", $iOptionalLength, _
 			"dword", $iTotalLength, _
 			"dword_ptr", $iContext)
-	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
-	Return 1
-EndFunc
 Func _WinHttpSetCredentials($hRequest, $iAuthTargets, $iAuthScheme, $sUserName, $sPassword)
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpSetCredentials", _
-			"handle", $hRequest, _
 			"dword", $iAuthTargets, _
 			"dword", $iAuthScheme, _
 			"wstr", $sUserName, _
 			"wstr", $sPassword, _
 			"ptr", 0)
-	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
-	Return 1
-EndFunc
 Func _WinHttpSetDefaultProxyConfiguration($iAccessType, $sProxy = "", $sProxyBypass = "")
 	Local $tProxy = DllStructCreate("wchar[" & StringLen($sProxy) + 1 & "]")
 	DllStructSetData($tProxy, 1, $sProxy)
 	Local $tProxyBypass = DllStructCreate("wchar[" & StringLen($sProxyBypass) + 1 & "]")
 	DllStructSetData($tProxyBypass, 1, $sProxyBypass)
-	Local $tWINHTTP_PROXY_INFO = DllStructCreate("dword AccessType;" & _
-			"ptr Proxy;" & _
-			"ptr ProxyBypass")
 	DllStructSetData($tWINHTTP_PROXY_INFO, "AccessType", $iAccessType)
 	If $iAccessType <> $WINHTTP_ACCESS_TYPE_NO_PROXY Then
 		DllStructSetData($tWINHTTP_PROXY_INFO, "Proxy", DllStructGetPtr($tProxy))
 		DllStructSetData($tWINHTTP_PROXY_INFO, "ProxyBypass", DllStructGetPtr($tProxyBypass))
-	EndIf
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpSetDefaultProxyConfiguration", "struct*", $tWINHTTP_PROXY_INFO)
-	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
-	Return 1
-EndFunc
 Func _WinHttpSetOption($hInternet, $iOption, $vSetting, $iSize = Default)
 	If $iSize = Default Then $iSize = -1
 	If IsBinary($vSetting) Then
@@ -607,9 +404,7 @@ Func _WinHttpSetOption($hInternet, $iOption, $vSetting, $iSize = Default)
 		DllStructSetData($iSize, 1, $vSetting)
 		$vSetting = $iSize
 		$iSize = DllStructGetSize($vSetting)
-	EndIf
 	Local $sType
-	Switch $iOption
 		Case $WINHTTP_OPTION_AUTOLOGON_POLICY, $WINHTTP_OPTION_CODEPAGE, $WINHTTP_OPTION_CONFIGURE_PASSPORT_AUTH, $WINHTTP_OPTION_CONNECT_RETRIES, _
 				$WINHTTP_OPTION_CONNECT_TIMEOUT, $WINHTTP_OPTION_DISABLE_FEATURE, $WINHTTP_OPTION_ENABLE_FEATURE, $WINHTTP_OPTION_ENABLETRACING, _
 				$WINHTTP_OPTION_MAX_CONNS_PER_1_0_SERVER, $WINHTTP_OPTION_MAX_CONNS_PER_SERVER, $WINHTTP_OPTION_MAX_HTTP_AUTOMATIC_REDIRECTS, _
@@ -623,13 +418,9 @@ Func _WinHttpSetOption($hInternet, $iOption, $vSetting, $iSize = Default)
 			$iSize = 4
 		Case $WINHTTP_OPTION_CALLBACK, $WINHTTP_OPTION_PASSPORT_SIGN_OUT
 			$sType = "ptr*"
-			$iSize = 4
 			If @AutoItX64 Then $iSize = 8
 			If Not IsPtr($vSetting) Then Return SetError(3, 0, 0)
-		Case $WINHTTP_OPTION_CONTEXT_VALUE
 			$sType = "dword_ptr*"
-			$iSize = 4
-			If @AutoItX64 Then $iSize = 8
 		Case $WINHTTP_OPTION_PASSWORD, $WINHTTP_OPTION_PROXY_PASSWORD, $WINHTTP_OPTION_PROXY_USERNAME, $WINHTTP_OPTION_USER_AGENT, $WINHTTP_OPTION_USERNAME
 			$sType = "wstr"
 			If (IsDllStruct($vSetting) Or IsPtr($vSetting)) Then Return SetError(3, 0, 0)
@@ -638,49 +429,32 @@ Func _WinHttpSetOption($hInternet, $iOption, $vSetting, $iSize = Default)
 				$WINHTTP_OPTION_PROXY
 			$sType = "ptr"
 			If Not (IsDllStruct($vSetting) Or IsPtr($vSetting)) Then Return SetError(3, 0, 0)
-		Case Else
 			Return SetError(1, 0, 0)
-	EndSwitch
 	If $iSize < 1 Then
 		If IsDllStruct($vSetting) Then
 			$iSize = DllStructGetSize($vSetting)
 		Else
 			Return SetError(2, 0, 0)
-		EndIf
-	EndIf
 	Local $aCall
 	If IsDllStruct($vSetting) Then
 		$aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpSetOption", "handle", $hInternet, "dword", $iOption, $sType, DllStructGetPtr($vSetting), "dword", $iSize)
-	Else
 		$aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpSetOption", "handle", $hInternet, "dword", $iOption, $sType, $vSetting, "dword", $iSize)
-	EndIf
 	If @error Or Not $aCall[0] Then Return SetError(4, 0, 0)
-	Return 1
-EndFunc
 Func _WinHttpSetStatusCallback($hInternet, $hInternetCallback, $iNotificationFlags = Default)
 	__WinHttpDefault($iNotificationFlags, $WINHTTP_CALLBACK_FLAG_ALL_NOTIFICATIONS)
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "ptr", "WinHttpSetStatusCallback", _
-			"handle", $hInternet, _
 			"ptr", DllCallbackGetPtr($hInternetCallback), _
 			"dword", $iNotificationFlags, _
-			"ptr", 0)
-	If @error Then Return SetError(1, 0, 0)
-	Return $aCall[0]
-EndFunc
 Func _WinHttpSetTimeouts($hInternet, $iResolveTimeout = Default, $iConnectTimeout = Default, $iSendTimeout = Default, $iReceiveTimeout = Default)
 	__WinHttpDefault($iResolveTimeout, 0)
 	__WinHttpDefault($iConnectTimeout, 60000)
 	__WinHttpDefault($iSendTimeout, 30000)
 	__WinHttpDefault($iReceiveTimeout, 30000)
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpSetTimeouts", _
-			"handle", $hInternet, _
 			"int", $iResolveTimeout, _
 			"int", $iConnectTimeout, _
 			"int", $iSendTimeout, _
 			"int", $iReceiveTimeout)
-	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
-	Return 1
-EndFunc
 Func _WinHttpSimpleBinaryConcat(ByRef $bBinary1, ByRef $bBinary2)
 	Switch IsBinary($bBinary1) + 2 * IsBinary($bBinary2)
 		Case 0
@@ -689,13 +463,11 @@ Func _WinHttpSimpleBinaryConcat(ByRef $bBinary1, ByRef $bBinary2)
 			Return $bBinary1
 		Case 2
 			Return $bBinary2
-	EndSwitch
 	Local $tAuxiliary = DllStructCreate("byte[" & BinaryLen($bBinary1) & "];byte[" & BinaryLen($bBinary2) & "]")
 	DllStructSetData($tAuxiliary, 1, $bBinary1)
 	DllStructSetData($tAuxiliary, 2, $bBinary2)
 	Local $tOutput = DllStructCreate("byte[" & DllStructGetSize($tAuxiliary) & "]", DllStructGetPtr($tAuxiliary))
 	Return DllStructGetData($tOutput, 1)
-EndFunc
 Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId = Default, $sFldId1 = Default, $sDta1 = Default, $sFldId2 = Default, $sDta2 = Default, $sFldId3 = Default, $sDta3 = Default, $sFldId4 = Default, $sDta4 = Default, $sFldId5 = Default, $sDta5 = Default, $sFldId6 = Default, $sDta6 = Default, $sFldId7 = Default, $sDta7 = Default, $sFldId8 = Default, $sDta8 = Default, $sFldId9 = Default, $sDta9 = Default, $sFldId10 = Default, $sDta10 = Default, _
 		$sFldId11 = Default, $sDta11 = Default, $sFldId12 = Default, $sDta12 = Default, $sFldId13 = Default, $sDta13 = Default, $sFldId14 = Default, $sDta14 = Default, $sFldId15 = Default, $sDta15 = Default, $sFldId16 = Default, $sDta16 = Default, $sFldId17 = Default, $sDta17 = Default, $sFldId18 = Default, $sDta18 = Default, $sFldId19 = Default, $sDta19 = Default, $sFldId20 = Default, $sDta20 = Default, _
 		$sFldId21 = Default, $sDta21 = Default, $sFldId22 = Default, $sDta22 = Default, $sFldId23 = Default, $sDta23 = Default, $sFldId24 = Default, $sDta24 = Default, $sFldId25 = Default, $sDta25 = Default, $sFldId26 = Default, $sDta26 = Default, $sFldId27 = Default, $sDta27 = Default, $sFldId28 = Default, $sDta28 = Default, $sFldId29 = Default, $sDta29 = Default, $sFldId30 = Default, $sDta30 = Default, _
@@ -712,44 +484,32 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 		$iRetArr = StringInStr($sAdditionalHeaders, "[RETURN_ARRAY]")
 		If $iRetArr Then $sAdditionalHeaders = StringReplace($sAdditionalHeaders, "[RETURN_ARRAY]", "", 1)
 		Local $aCred = StringRegExp($sAdditionalHeaders, "\[CRED:(.*?)\]", 2)
-		If Not @error Then
 			Local $sCredDelim = ":"
 			If Not StringInStr($aCred[1], $sCredDelim) Then $sCredDelim = ","
 			Local $aStrSplit = StringSplit($aCred[1], $sCredDelim, 3)
 			If Not @error Then
 				$sCredName = $aStrSplit[0]
 				$sCredPass = $aStrSplit[1]
-			EndIf
 			$sAdditionalHeaders = StringReplace($sAdditionalHeaders, $aCred[0], "", 1)
-		EndIf
-	EndIf
 	Local $hOpen, $aHTML, $sHTML, $sURL, $fVarForm, $iScheme = $INTERNET_SCHEME_HTTP
 	If IsString($hInternet) Then ; $hInternet is page source
 		$sHTML = $hInternet
 		If _WinHttpQueryOption($sActionPage, $WINHTTP_OPTION_HANDLE_TYPE) <> $WINHTTP_HANDLE_TYPE_SESSION Then Return SetError(6, 0, "")
 		$hOpen = $sActionPage
 		$fVarForm = True
-	Else
 		$iScheme = _WinHttpQueryOption($hInternet, $WINHTTP_OPTION_CONTEXT_VALUE); read internet scheme from the connection handle
 		Local $sAccpt = "Accept: text/html;q=0.9,text/plain;q=0.8,*/*;q=0.5"
 		If $iScheme = $INTERNET_SCHEME_HTTPS Then
 			$aHTML = _WinHttpSimpleSSLRequest($hInternet, Default, $sActionPage, Default, Default, $sAccpt, 1, Default, $sCredName, $sCredPass, $iIgnoreCertErr)
 		ElseIf $iScheme = $INTERNET_SCHEME_HTTP Then
 			$aHTML = _WinHttpSimpleRequest($hInternet, Default, $sActionPage, Default, Default, $sAccpt, 1, Default, $sCredName, $sCredPass)
-		Else
-			$aHTML = _WinHttpSimpleRequest($hInternet, Default, $sActionPage, Default, Default, $sAccpt, 1, Default, $sCredName, $sCredPass)
 			If @error Or @extended >= $HTTP_STATUS_BAD_REQUEST Then
 				$aHTML = _WinHttpSimpleSSLRequest($hInternet, Default, $sActionPage, Default, Default, $sAccpt, 1, Default, $sCredName, $sCredPass, $iIgnoreCertErr)
 				$iScheme = $INTERNET_SCHEME_HTTPS
-			Else
 				$iScheme = $INTERNET_SCHEME_HTTP
-			EndIf
-		EndIf
 		If Not @error Then ; Error is checked after If...Then...Else block. Be careful before changing anything!
 			$sHTML = $aHTML[1]
 			$sURL = $aHTML[2]
-		EndIf
-	EndIf
 	$sHTML = StringRegExpReplace($sHTML, "(?s)<!--.*?-->", "") ; removing comments
 	$sHTML = StringRegExpReplace($sHTML, "(?s)<!\[CDATA\[.*?\]\]>", "") ; removing CDATA
 	Local $fSend = False ; preset 'Sending flag'
@@ -759,7 +519,6 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 	Local $aSplitForm = StringSplit($sFormId, ":", 2)
 	If @error Then ; like .getElementById(FormId)
 		$fGetFormById = True
-	Else
 		If $aSplitForm[0] = "name" Then ; like .getElementsByName(FormName)
 			$sFormName = $aSplitForm[1]
 			$fGetFormByName = True
@@ -771,9 +530,6 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 			$fGetFormById = True
 		Else ; like .getElementById(FormId)
 			$sFormId = $aSplitForm[0]
-			$fGetFormById = True
-		EndIf
-	EndIf
 	Local $sForm, $sAttributes, $aInput
 	Local $iNumParams = Ceiling(($iNumArgs - 2) / 2) - 1
 	Local $sAddData, $sNewURL
@@ -862,7 +618,6 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 												$sRadio = StringReplace(StringReplace($sRadio, $sGrSep & $sGrSep, $sGrSep), $sGrSep & $sGrSep, $sGrSep)
 											EndIf
 										Next
-									EndIf
 								ElseIf $aInputIds[3][$j] = "checkbox" Then
 									$sCheckBox = StringRegExpReplace($sCheckBox, "\Q" & $aInputIds[1][$j] & "=" & $sPassedData & "\E" & $sGrSep & "*", "")
 									__WinHttpTrimBounds($sCheckBox, $sGrSep)
@@ -875,34 +630,21 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 									$sAddData = StringReplace($sAddData, "&&", "&")
 									If $iNumRepl > 1 Then ; equalize ; TODO: remove duplicates
 										$sAddData = StringRegExpReplace($sAddData, "(?:&|\A)\Q" & $aInputIds[1][$j] & "\E=.*?(?:&|\Z)", "&", $iNumRepl - 1)
-									EndIf
 									__WinHttpTrimBounds($sAddData, "&")
 								EndIf
 							EndIf
 						Next
 					Else ; like .getElementsByName
-						For $j = 0 To UBound($aInputIds, 2) - 1
 							If $aInputIds[3][$j] = "submit" Then
 								If $sPassedData = True Then ; if this "submit" is set to TRUE then
 									If $aInputIds[1][$j] == $aSplit[1] Then
-										If $sSubmit Then ; If not already processed; only the first is valid
 											Local $fDel = False
-											For $sChunkSub In StringSplit($sSubmit, $sGrSep, 3) ; go tru all "submit" controls
 												If $sChunkSub = $aInputIds[1][$j] & "=" & $aInputIds[2][$j] Then
 													If $fDel Then $sAddData = StringRegExpReplace($sAddData, "(?:&|\A)\Q" & $sChunkSub & "\E(?:&|\Z)", "&", 1)
 													$fDel = True
-												Else
-													$sAddData = StringRegExpReplace($sAddData, "(?:&|\A)\Q" & $sChunkSub & "\E(?:&|\Z)", "&") ; delete all but the TRUE one
-												EndIf
-												__WinHttpTrimBounds($sAddData, "&")
-											Next
-											$sSubmit = ""
-										EndIf
 										ContinueLoop 2 ; process next parameter
-									EndIf
 								Else ; False means do nothing
 									ContinueLoop 2 ; process next parameter
-								EndIf
 							ElseIf $aInputIds[1][$j] == $aSplit[1] And $aInputIds[3][$j] = "radio" Then
 								For $sChunkSub In StringSplit($sRadio, $sGrSep, 3) ; go tru all "radio" controls
 									If $sChunkSub == $aInputIds[1][$j] & "=" & $sPassedData Then
@@ -911,19 +653,14 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 										$sAddData &= "&" & $sChunkSub
 										$sRadio = StringRegExpReplace(StringReplace($sRadio, $sGrSep, $sGrSep & $sGrSep), "(?:" & $sGrSep & "|\A)\Q" & $aInputIds[1][$j] & "\E(.*?)(?:" & $sGrSep & "|\Z)", $sGrSep)
 										$sRadio = StringReplace(StringReplace($sRadio, $sGrSep & $sGrSep, $sGrSep), $sGrSep & $sGrSep, $sGrSep)
-									EndIf
 								Next
 								ContinueLoop 2 ; process next parameter
 							ElseIf $aInputIds[1][$j] == $aSplit[1] And $aInputIds[3][$j] = "checkbox" Then
 								$sCheckBox = StringRegExpReplace($sCheckBox, "\Q" & $aInputIds[1][$j] & "=" & $sPassedData & "\E" & $sGrSep & "*", "")
 								__WinHttpTrimBounds($sCheckBox, $sGrSep)
-								ContinueLoop 2 ; process next parameter
 							ElseIf $aInputIds[1][$j] == $aSplit[1] And $aInputIds[3][$j] = "button" Then
 								$sButton = StringRegExpReplace($sButton, "\Q" & $aInputIds[1][$j] & "=" & $sPassedData & "\E" & $sGrSep & "*", "")
 								__WinHttpTrimBounds($sButton, $sGrSep)
-								ContinueLoop 2 ; process next parameter
-							EndIf
-						Next
 						$sAddData = StringRegExpReplace(StringReplace($sAddData, "&", "&&"), "(?:&|\A)\Q" & $aSplit[1] & "\E=.*?(?:&|\Z)", "&" & $aSplit[1] & "=" & $sPassedData & "&")
 						$iNumRepl = @extended
 						$sAddData = StringReplace($sAddData, "&&", "&")
@@ -931,8 +668,6 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 							$sAddData = StringRegExpReplace($sAddData, "(?:&|\A)\Q" & $aSplit[1] & "\E=.*?(?:&|\Z)", "&", $iNumRepl - 1)
 						EndIf
 						__WinHttpTrimBounds($sAddData, "&")
-					EndIf
-				Next
 				__WinHttpFinalizeCtrls($sSubmit, $sRadio, $sCheckBox, $sButton, $sAddData, $sGrSep, "&")
 				If $sMethod = "GET" Then
 					$sAction &= "?" & $sAddData
@@ -953,23 +688,13 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 										$sCDisp & $aInputIds[1][$i] & '"; filename=""' & @CRLF & @CRLF & _
 										$aInputIds[2][$i] & @CRLF
 							Else
-								$sAddData &= "--" & $sBoundary & @CRLF & _
 										$sCDisp & $aInputIds[1][$i] & '"' & @CRLF & @CRLF & _
-										$aInputIds[2][$i] & @CRLF
-							EndIf
 							If $aInputIds[3][$i] = "submit" Then $sSubmit &= "--" & $sBoundary & @CRLF & _
 									$sCDisp & $aInputIds[1][$i] & '"' & @CRLF & @CRLF & _
 									$aInputIds[2][$i] & @CRLF & $sGrSep
 							If $aInputIds[3][$i] = "radio" Then $sRadio &= "--" & $sBoundary & @CRLF & _
-									$sCDisp & $aInputIds[1][$i] & '"' & @CRLF & @CRLF & _
-									$aInputIds[2][$i] & @CRLF & $sGrSep
 							If $aInputIds[3][$i] = "checkbox" Then $sCheckBox &= "--" & $sBoundary & @CRLF & _
-									$sCDisp & $aInputIds[1][$i] & '"' & @CRLF & @CRLF & _
-									$aInputIds[2][$i] & @CRLF & $sGrSep
 							If $aInputIds[3][$i] = "button" Then $sButton &= "--" & $sBoundary & @CRLF & _
-									$sCDisp & $aInputIds[1][$i] & '"' & @CRLF & @CRLF & _
-									$aInputIds[2][$i] & @CRLF & $sGrSep
-						EndIf
 					Next
 					$sSubmit = StringTrimRight($sSubmit, 1)
 					$sRadio = StringTrimRight($sRadio, 1)
@@ -1005,8 +730,6 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 													EndIf
 												Next
 												$sSubmit = ""
-											EndIf
-										EndIf
 									ElseIf $aInputIds[3][$j] = "radio" Then
 										If $sPassedData = $aInputIds[2][$j] Then
 											For $sChunkSub In StringSplit($sRadio, $sGrSep, 3) ; go tru all "radio" controls
@@ -1015,9 +738,6 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 													$sAddData = StringReplace($sAddData, "--" & $sBoundary & "--" & @CRLF, "", 0, 1)
 													$sAddData &= $sChunkSub & "--" & $sBoundary & "--" & @CRLF
 													$sRadio = StringRegExpReplace($sRadio, "\Q--" & $sBoundary & @CRLF & $sCDisp & $aInputIds[1][$j] & '"' & @CRLF & @CRLF & "\E(.*?)" & @CRLF & $sGrSep & "?", "")
-												EndIf
-											Next
-										EndIf
 									ElseIf $aInputIds[3][$j] = "checkbox" Then
 										$sCheckBox = StringRegExpReplace($sCheckBox, "\Q--" & $sBoundary & @CRLF & _
 												$sCDisp & $aInputIds[1][$j] & '"' & @CRLF & @CRLF & _
@@ -1025,46 +745,28 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 										If StringRight($sCheckBox, 1) = $sGrSep Then $sCheckBox = StringTrimRight($sCheckBox, 1)
 									ElseIf $aInputIds[3][$j] = "button" Then
 										$sButton = StringRegExpReplace($sButton, "\Q--" & $sBoundary & @CRLF & _
-												$sCDisp & $aInputIds[1][$j] & '"' & @CRLF & @CRLF & _
-												$sPassedData & @CRLF & "\E" & $sGrSep & "*", "")
 										If StringRight($sButton, 1) = $sGrSep Then $sButton = StringTrimRight($sButton, 1)
 									Else
-										$sAddData = StringReplace($sAddData, _
 												$sCDisp & $aInputIds[1][$j] & '"' & @CRLF & @CRLF & $aInputIds[2][$j] & @CRLF, _
 												$sCDisp & $aInputIds[1][$j] & '"' & @CRLF & @CRLF & $sPassedData & @CRLF, 0, 1)
 										$iNumRepl = @extended
 										If $iNumRepl > 1 Then ; equalize ; TODO: remove duplicates
 											$sAddData = StringRegExpReplace($sAddData, '(?s)\Q--' & $sBoundary & @CRLF & $sCDisp & $aInputIds[1][$j] & '"' & '\E\r\n\r\n.*?\r\n', "", $iNumRepl - 1)
-										EndIf
-									EndIf
-								EndIf
 							Next
 						Else ; like getElementsByName
-							For $j = 0 To UBound($aInputIds, 2) - 1
 								If $aInputIds[1][$j] == $aSplit[1] And $aInputIds[3][$j] = "file" Then
 									$sAddData = StringReplace($sAddData, _
 											$sCDisp & $aSplit[1] & '"; filename=""' & @CRLF & @CRLF & $aInputIds[2][$j] & @CRLF, _
 											__WinHttpFileContent($sAccept, $aInputIds[1][$j], $sPassedData, $sBoundary), 0, 1)
 								ElseIf $aInputIds[1][$j] == $aSplit[1] And $aInputIds[3][$j] = "submit" Then
-									If $sPassedData = True Then ; if this "submit" is set to TRUE then
-										If $sSubmit Then ; If not already processed; only the first is valid
 											Local $fMDel = False
-											For $sChunkSub In StringSplit($sSubmit, $sGrSep, 3) ; go tru all "submit" controls
 												If $sChunkSub = "--" & $sBoundary & @CRLF & _
 														$sCDisp & $aInputIds[1][$j] & '"' & @CRLF & @CRLF & _
 														$aInputIds[2][$j] & @CRLF Then
 													If $fMDel Then $sAddData = StringReplace($sAddData, $sChunkSub, "", 1, 1) ; Removing duplicates
 													$fMDel = True
-												Else
 													$sAddData = StringReplace($sAddData, $sChunkSub, "", 0, 1) ; delete all but the TRUE one
-												EndIf
-											Next
-											$sSubmit = ""
-										EndIf
-										ContinueLoop 2 ; process next parameter
 									Else ; False means do nothing
-										ContinueLoop 2 ; process next parameter
-									EndIf
 								ElseIf $aInputIds[1][$j] == $aSplit[1] And $aInputIds[3][$j] = "radio" Then
 									For $sChunkSub In StringSplit($sRadio, $sGrSep, 3) ; go tru all "radio" controls
 										If StringInStr($sChunkSub, "--" & $sBoundary & @CRLF & $sCDisp & $aInputIds[1][$j] & '"' & @CRLF & @CRLF & $sPassedData & @CRLF, 1) Then
@@ -1072,71 +774,46 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 											$sAddData = StringReplace($sAddData, "--" & $sBoundary & "--" & @CRLF, "", 0, 1)
 											$sAddData &= $sChunkSub & "--" & $sBoundary & "--" & @CRLF
 											$sRadio = StringRegExpReplace($sRadio, "\Q--" & $sBoundary & @CRLF & $sCDisp & $aInputIds[1][$j] & '"' & @CRLF & @CRLF & "\E(.*?)" & @CRLF & $sGrSep & "?", "")
-										EndIf
 									Next
-									ContinueLoop 2 ; process next parameter
 								ElseIf $aInputIds[1][$j] == $aSplit[1] And $aInputIds[3][$j] = "checkbox" Then
 									$sCheckBox = StringRegExpReplace($sCheckBox, "\Q--" & $sBoundary & @CRLF & _
 											$sCDisp & $aInputIds[1][$j] & '"' & @CRLF & @CRLF & _
 											$sPassedData & @CRLF & "\E" & $sGrSep & "*", "")
 									If StringRight($sCheckBox, 1) = $sGrSep Then $sCheckBox = StringTrimRight($sCheckBox, 1)
-									ContinueLoop 2 ; process next parameter
 								ElseIf $aInputIds[1][$j] == $aSplit[1] And $aInputIds[3][$j] = "button" Then
 									$sButton = StringRegExpReplace($sButton, "\Q--" & $sBoundary & @CRLF & _
-											$sCDisp & $aInputIds[1][$j] & '"' & @CRLF & @CRLF & _
-											$sPassedData & @CRLF & "\E" & $sGrSep & "*", "")
 									If StringRight($sButton, 1) = $sGrSep Then $sButton = StringTrimRight($sButton, 1)
-									ContinueLoop 2 ; process next parameter
-								EndIf
-							Next
 							$sAddData = StringRegExpReplace($sAddData, '(?s)\Q' & $sCDisp & $aSplit[1] & '"' & '\E\r\n\r\n.*?\r\n', _
 									$sCDisp & $aSplit[1] & '"' & @CRLF & @CRLF & StringReplace($sPassedData, "\", "\\") & @CRLF)
 							$iNumRepl = @extended
 							If $iNumRepl > 1 Then ; remove duplicates
 								$sAddData = StringRegExpReplace($sAddData, '(?s)\Q--' & $sBoundary & @CRLF & $sCDisp & $aSplit[1] & '"' & '\E\r\n\r\n.*?\r\n', "", $iNumRepl - 1)
-							EndIf
-						EndIf
-					Next
-				EndIf
 				__WinHttpFinalizeCtrls($sSubmit, $sRadio, $sCheckBox, $sButton, $sAddData, $sGrSep)
-		EndSwitch
 		ExitLoop
-	Next
 	If $fSend Then
 		If $fVarForm Then
 			$hInternet = _WinHttpConnect($hOpen, $sNewURL)
-		Else
 			If $sNewURL Then
 				$hOpen = _WinHttpQueryOption($hInternet, $WINHTTP_OPTION_PARENT_HANDLE)
 				_WinHttpCloseHandle($hInternet)
 				$hInternet = _WinHttpConnect($hOpen, $sNewURL)
-			EndIf
-		EndIf
 		Local $hRequest
-		If $iScheme = $INTERNET_SCHEME_HTTPS Then
 			$hRequest = __WinHttpFormSend($hInternet, $sMethod, $sAction, $fMultiPart, $sBoundary, $sAddData, True, $sAdditionalHeaders, $sCredName, $sCredPass, $iIgnoreCertErr)
-		Else
 			$hRequest = __WinHttpFormSend($hInternet, $sMethod, $sAction, $fMultiPart, $sBoundary, $sAddData, False, $sAdditionalHeaders, $sCredName, $sCredPass)
 			If _WinHttpQueryHeaders($hRequest, $WINHTTP_QUERY_STATUS_CODE) >= $HTTP_STATUS_BAD_REQUEST Then
 				_WinHttpCloseHandle($hRequest)
 				$hRequest = __WinHttpFormSend($hInternet, $sMethod, $sAction, $fMultiPart, $sBoundary, $sAddData, True, $sAdditionalHeaders, $sCredName, $sCredPass, $iIgnoreCertErr) ; try adding $WINHTTP_FLAG_SECURE
-			EndIf
-		EndIf
 		Local $vReturned = _WinHttpSimpleReadData($hRequest)
 		If @error Then
 			_WinHttpCloseHandle($hRequest)
 			Return SetError(4, 0, "") ; either site is expiriencing problems or your connection
-		EndIf
 		Local $iSCode = _WinHttpQueryHeaders($hRequest, $WINHTTP_QUERY_STATUS_CODE)
 		If $iRetArr Then
 			Local $aReturn[3] = [_WinHttpQueryHeaders($hRequest), $vReturned, _WinHttpQueryOption($hRequest, $WINHTTP_OPTION_URL)]
 			$vReturned = $aReturn
-		EndIf
 		_WinHttpCloseHandle($hRequest)
 		Return SetExtended($iSCode, $vReturned)
-	EndIf
 	Return SetError(3, 0, "")
-EndFunc
 Func _WinHttpSimpleFormFill_SetUploadCallback($vCallback = Default, $iNumChunks = 100)
 	If $iNumChunks <= 0 Then $iNumChunks = 100
 	Local Static $vFunc = Default, $iParts = $iNumChunks
@@ -1146,43 +823,30 @@ Func _WinHttpSimpleFormFill_SetUploadCallback($vCallback = Default, $iNumChunks 
 	ElseIf $vCallback = 0 Then
 		$vFunc = Default
 		$iParts = 1
-	EndIf
 	Local $aOut[2] = [$vFunc, $iParts]
 	Return $aOut
-EndFunc
 Func _WinHttpSimpleReadData($hRequest, $iMode = Default)
 	If $iMode = Default Then
 		$iMode = 0
 		If __WinHttpCharSet(_WinHttpQueryHeaders($hRequest, $WINHTTP_QUERY_CONTENT_TYPE)) = 65001 Then $iMode = 1 ; header suggest utf-8
-	Else
 		__WinHttpDefault($iMode, 0)
-	EndIf
 	If $iMode > 2 Or $iMode < 0 Then Return SetError(1, 0, '')
 	Local $vData = Binary('')
 	If _WinHttpQueryDataAvailable($hRequest) Then
 		Do
 			$vData &= _WinHttpReadData($hRequest, 2)
 		Until @error
-		Switch $iMode
-			Case 0
 				Return BinaryToString($vData)
-			Case 1
 				Return BinaryToString($vData, 4)
 			Case Else
 				Return $vData
-		EndSwitch
-	EndIf
 	Return SetError(2, 0, $vData)
-EndFunc
 Func _WinHttpSimpleReadDataAsync($hInternet, ByRef $pBuffer, $iNumberOfBytesToRead = Default)
-	__WinHttpDefault($iNumberOfBytesToRead, 8192)
 	Local $vOut = _WinHttpReadData($hInternet, 2, $iNumberOfBytesToRead, $pBuffer)
 	Return SetError(@error, @extended, $vOut)
-EndFunc
 Func _WinHttpSimpleRequest($hConnect, $sType = Default, $sPath = Default, $sReferrer = Default, $sDta = Default, $sHeader = Default, $fGetHeaders = Default, $iMode = Default, $sCredName = Default, $sCredPass = Default)
 	__WinHttpDefault($sType, "GET")
 	__WinHttpDefault($sPath, "")
-	__WinHttpDefault($sReferrer, $WINHTTP_NO_REFERER)
 	__WinHttpDefault($sDta, $WINHTTP_NO_REQUEST_DATA)
 	__WinHttpDefault($sHeader, $WINHTTP_NO_ADDITIONAL_HEADERS)
 	__WinHttpDefault($fGetHeaders, False)
@@ -1196,19 +860,11 @@ Func _WinHttpSimpleRequest($hConnect, $sType = Default, $sPath = Default, $sRefe
 	Local $iExtended = _WinHttpQueryHeaders($hRequest, $WINHTTP_QUERY_STATUS_CODE)
 	If $fGetHeaders Then
 		Local $aData[3] = [_WinHttpQueryHeaders($hRequest), _WinHttpSimpleReadData($hRequest, $iMode), _WinHttpQueryOption($hRequest, $WINHTTP_OPTION_URL)]
-		_WinHttpCloseHandle($hRequest)
 		Return SetExtended($iExtended, $aData)
-	EndIf
 	Local $sOutData = _WinHttpSimpleReadData($hRequest, $iMode)
 	_WinHttpCloseHandle($hRequest)
 	Return SetExtended($iExtended, $sOutData)
-EndFunc
 Func _WinHttpSimpleSendRequest($hConnect, $sType = Default, $sPath = Default, $sReferrer = Default, $sDta = Default, $sHeader = Default)
-	__WinHttpDefault($sType, "GET")
-	__WinHttpDefault($sPath, "")
-	__WinHttpDefault($sReferrer, $WINHTTP_NO_REFERER)
-	__WinHttpDefault($sDta, $WINHTTP_NO_REQUEST_DATA)
-	__WinHttpDefault($sHeader, $WINHTTP_NO_ADDITIONAL_HEADERS)
 	Local $hRequest = _WinHttpOpenRequest($hConnect, $sType, $sPath, Default, $sReferrer)
 	If Not $hRequest Then Return SetError(1, @error, 0)
 	If $sType = "POST" And $sHeader = $WINHTTP_NO_ADDITIONAL_HEADERS Then $sHeader = "Content-Type: application/x-www-form-urlencoded" & @CRLF
@@ -1219,48 +875,13 @@ Func _WinHttpSimpleSendRequest($hConnect, $sType = Default, $sPath = Default, $s
 	_WinHttpReceiveResponse($hRequest)
 	If @error Then Return SetError(3, 0 * _WinHttpCloseHandle($hRequest), 0)
 	Return $hRequest
-EndFunc
 Func _WinHttpSimpleSendSSLRequest($hConnect, $sType = Default, $sPath = Default, $sReferrer = Default, $sDta = Default, $sHeader = Default, $iIgnoreAllCertErrors = 0)
-	__WinHttpDefault($sType, "GET")
-	__WinHttpDefault($sPath, "")
-	__WinHttpDefault($sReferrer, $WINHTTP_NO_REFERER)
-	__WinHttpDefault($sDta, $WINHTTP_NO_REQUEST_DATA)
-	__WinHttpDefault($sHeader, $WINHTTP_NO_ADDITIONAL_HEADERS)
 	Local $hRequest = _WinHttpOpenRequest($hConnect, $sType, $sPath, Default, $sReferrer, Default, BitOR($WINHTTP_FLAG_SECURE, $WINHTTP_FLAG_ESCAPE_DISABLE))
-	If Not $hRequest Then Return SetError(1, @error, 0)
 	If $iIgnoreAllCertErrors Then _WinHttpSetOption($hRequest, $WINHTTP_OPTION_SECURITY_FLAGS, BitOR($SECURITY_FLAG_IGNORE_UNKNOWN_CA, $SECURITY_FLAG_IGNORE_CERT_DATE_INVALID, $SECURITY_FLAG_IGNORE_CERT_CN_INVALID, $SECURITY_FLAG_IGNORE_CERT_WRONG_USAGE))
-	If $sType = "POST" And $sHeader = $WINHTTP_NO_ADDITIONAL_HEADERS Then $sHeader = "Content-Type: application/x-www-form-urlencoded" & @CRLF
-	_WinHttpSetOption($hRequest, $WINHTTP_OPTION_DECOMPRESSION, $WINHTTP_DECOMPRESSION_FLAG_ALL)
-	_WinHttpSetOption($hRequest, $WINHTTP_OPTION_UNSAFE_HEADER_PARSING, 1)
-	_WinHttpSendRequest($hRequest, $sHeader, $sDta)
-	If @error Then Return SetError(2, 0 * _WinHttpCloseHandle($hRequest), 0)
-	_WinHttpReceiveResponse($hRequest)
-	If @error Then Return SetError(3, 0 * _WinHttpCloseHandle($hRequest), 0)
-	Return $hRequest
-EndFunc
 Func _WinHttpSimpleSSLRequest($hConnect, $sType = Default, $sPath = Default, $sReferrer = Default, $sDta = Default, $sHeader = Default, $fGetHeaders = Default, $iMode = Default, $sCredName = Default, $sCredPass = Default, $iIgnoreCertErrors = 0)
-	__WinHttpDefault($sType, "GET")
-	__WinHttpDefault($sPath, "")
-	__WinHttpDefault($sReferrer, $WINHTTP_NO_REFERER)
-	__WinHttpDefault($sDta, $WINHTTP_NO_REQUEST_DATA)
-	__WinHttpDefault($sHeader, $WINHTTP_NO_ADDITIONAL_HEADERS)
-	__WinHttpDefault($fGetHeaders, False)
-	__WinHttpDefault($iMode, Default)
-	__WinHttpDefault($sCredName, "")
-	__WinHttpDefault($sCredPass, "")
-	If $iMode > 2 Or $iMode < 0 Then Return SetError(4, 0, 0)
 	Local $hRequest = _WinHttpSimpleSendSSLRequest($hConnect, $sType, $sPath, $sReferrer, $sDta, $sHeader, $iIgnoreCertErrors)
-	If @error Then Return SetError(@error, 0, 0)
-	__WinHttpSetCredentials($hRequest, $sHeader, $sDta, $sCredName, $sCredPass)
-	If $fGetHeaders Then
-		Local $aData[3] = [_WinHttpQueryHeaders($hRequest), _WinHttpSimpleReadData($hRequest, $iMode), _WinHttpQueryOption($hRequest, $WINHTTP_OPTION_URL)]
-		_WinHttpCloseHandle($hRequest)
 		Return $aData
-	EndIf
-	Local $sOutData = _WinHttpSimpleReadData($hRequest, $iMode)
-	_WinHttpCloseHandle($hRequest)
 	Return $sOutData
-EndFunc
 Func _WinHttpTimeFromSystemTime()
 	Local $SYSTEMTIME = DllStructCreate("word Year;" & _
 			"word Month;" & _
@@ -1274,19 +895,8 @@ Func _WinHttpTimeFromSystemTime()
 	If @error Then Return SetError(1, 0, "")
 	Local $tTime = DllStructCreate("wchar[62]")
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpTimeFromSystemTime", "struct*", $SYSTEMTIME, "struct*", $tTime)
-	If @error Or Not $aCall[0] Then Return SetError(2, 0, "")
 	Return DllStructGetData($tTime, 1)
-EndFunc
 Func _WinHttpTimeToSystemTime($sHttpTime)
-	Local $SYSTEMTIME = DllStructCreate("word Year;" & _
-			"word Month;" & _
-			"word DayOfWeek;" & _
-			"word Day;" & _
-			"word Hour;" & _
-			"word Minute;" & _
-			"word Second;" & _
-			"word Milliseconds")
-	Local $tTime = DllStructCreate("wchar[62]")
 	DllStructSetData($tTime, 1, $sHttpTime)
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpTimeToSystemTime", "struct*", $tTime, "struct*", $SYSTEMTIME)
 	If @error Or Not $aCall[0] Then Return SetError(2, 0, 0)
@@ -1298,10 +908,7 @@ Func _WinHttpTimeToSystemTime($sHttpTime)
 			DllStructGetData($SYSTEMTIME, "Minute"), _
 			DllStructGetData($SYSTEMTIME, "Second"), _
 			DllStructGetData($SYSTEMTIME, "Milliseconds")]
-	Return $aRet
-EndFunc
 Func _WinHttpWriteData($hRequest, $vData, $iMode = Default)
-	__WinHttpDefault($iMode, 0)
 	Local $iNumberOfBytesToWrite, $tData
 	If $iMode = 1 Then
 		$iNumberOfBytesToWrite = BinaryLen($vData)
@@ -1310,26 +917,18 @@ Func _WinHttpWriteData($hRequest, $vData, $iMode = Default)
 	ElseIf IsDllStruct($vData) Then
 		$iNumberOfBytesToWrite = DllStructGetSize($vData)
 		$tData = $vData
-	Else
 		$iNumberOfBytesToWrite = StringLen($vData)
 		$tData = DllStructCreate("char[" & $iNumberOfBytesToWrite + 1 & "]")
-		DllStructSetData($tData, 1, $vData)
-	EndIf
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpWriteData", _
-			"handle", $hRequest, _
 			"struct*", $tData, _
 			"dword", $iNumberOfBytesToWrite, _
-			"dword*", 0)
-	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
 	Return SetExtended($aCall[4], 1)
-EndFunc
 Func __WinHttpFileContent($sAccept, $sName, $sFileString, $sBoundaryMain = "")
 	#forceref $sAccept ; FIXME: $sAccept is specified by the server (or left default). In case $sFileString is non-supported MIME type action should be aborted.
 	Local $fNonStandard = False
 	If StringLeft($sFileString, 10) = "PHP#50338:" Then
 		$sFileString = StringTrimLeft($sFileString, 10)
 		$fNonStandard = True
-	EndIf
 	Local $sOut = 'Content-Disposition: form-data; name="' & $sName & '"'
 	If Not $sFileString Then Return $sOut & '; filename=""' & @CRLF & @CRLF & @CRLF
 	If StringRight($sFileString, 1) = "|" Then $sFileString = StringTrimRight($sFileString, 1)
@@ -1340,7 +939,6 @@ Func __WinHttpFileContent($sAccept, $sName, $sFileString, $sBoundaryMain = "")
 				"Content-Type: " & __WinHttpMIMEType($aFiles[0]) & @CRLF & @CRLF & BinaryToString(FileRead($hFile), 1) & @CRLF
 		FileClose($hFile)
 		Return $sOut ; That's it
-	EndIf
 	If $fNonStandard Then
 		$sOut = "" ; discharge
 		Local $iFiles = UBound($aFiles)
@@ -1351,35 +949,24 @@ Func __WinHttpFileContent($sAccept, $sName, $sFileString, $sBoundaryMain = "")
 					"Content-Type: " & __WinHttpMIMEType($aFiles[$i]) & @CRLF & @CRLF & BinaryToString(FileRead($hFile), 1) & @CRLF
 			FileClose($hFile)
 			If $i < $iFiles - 1 Then $sOut &= "--" & $sBoundaryMain & @CRLF
-		Next
-	Else
 		Local $sBoundary = StringFormat("%s%.5f", "----WinHttpSubBoundaryLine_", Random(10000, 99999))
 		$sOut &= @CRLF & "Content-Type: multipart/mixed; boundary=" & $sBoundary & @CRLF & @CRLF
 		For $i = 0 To UBound($aFiles) - 1
-			$hFile = FileOpen($aFiles[$i], 16)
 			$sOut &= "--" & $sBoundary & @CRLF & _
 					'Content-Disposition: file; filename="' & StringRegExpReplace($aFiles[$i], ".*\\", "") & '"' & @CRLF & _
-					"Content-Type: " & __WinHttpMIMEType($aFiles[$i]) & @CRLF & @CRLF & BinaryToString(FileRead($hFile), 1) & @CRLF
-			FileClose($hFile)
-		Next
 		$sOut &= "--" & $sBoundary & "--" & @CRLF
-	EndIf
 	Return $sOut
-EndFunc
 Func __WinHttpMIMEType($sFileName)
 	Local $aArray = StringRegExp(__WinHttpMIMEAssocString(), "(?i)\Q;" & StringRegExpReplace($sFileName, ".*\.", "") & "\E\|(.*?);", 3)
 	If @error Then Return "application/octet-stream"
 	Return $aArray[0]
-EndFunc
 Func __WinHttpMIMEAssocString()
 	Return ";ai|application/postscript;aif|audio/x-aiff;aifc|audio/x-aiff;aiff|audio/x-aiff;asc|text/plain;atom|application/atom+xml;au|audio/basic;avi|video/x-msvideo;bcpio|application/x-bcpio;bin|application/octet-stream;bmp|image/bmp;cdf|application/x-netcdf;cgm|image/cgm;class|application/octet-stream;cpio|application/x-cpio;cpt|application/mac-compactpro;csh|application/x-csh;css|text/css;dcr|application/x-director;dif|video/x-dv;dir|application/x-director;djv|image/vnd.djvu;djvu|image/vnd.djvu;dll|application/octet-stream;dmg|application/octet-stream;dms|application/octet-stream;doc|application/msword;dtd|application/xml-dtd;dv|video/x-dv;dvi|application/x-dvi;dxr|application/x-director;eps|application/postscript;etx|text/x-setext;exe|application/octet-stream;ez|application/andrew-inset;gif|image/gif;gram|application/srgs;grxml|application/srgs+xml;gtar|application/x-gtar;hdf|application/x-hdf;hqx|application/mac-binhex40;htm|text/html;html|text/html;ice|x-conference/x-cooltalk;ico|image/x-icon;ics|text/calendar;ief|image/ief;ifb|text/calendar;iges|model/iges;igs|model/iges;jnlp|application/x-java-jnlp-file;jp2|image/jp2;jpe|image/jpeg;jpeg|image/jpeg;jpg|image/jpeg;js|application/x-javascript;kar|audio/midi;latex|application/x-latex;lha|application/octet-stream;lzh|application/octet-stream;m3u|audio/x-mpegurl;m4a|audio/mp4a-latm;m4b|audio/mp4a-latm;m4p|audio/mp4a-latm;m4u|video/vnd.mpegurl;m4v|video/x-m4v;mac|image/x-macpaint;man|application/x-troff-man;mathml|application/mathml+xml;me|application/x-troff-me;mesh|model/mesh;mid|audio/midi;midi|audio/midi;mif|application/vnd.mif;mov|video/quicktime;movie|video/x-sgi-movie;mp2|audio/mpeg;mp3|audio/mpeg;mp4|video/mp4;mpe|video/mpeg;mpeg|video/mpeg;mpg|video/mpeg;mpga|audio/mpeg;ms|application/x-troff-ms;msh|model/mesh;mxu|video/vnd.mpegurl;nc|application/x-netcdf;oda|application/oda;ogg|application/ogg;pbm|image/x-portable-bitmap;pct|image/pict;pdb|chemical/x-pdb;pdf|application/pdf;pgm|image/x-portable-graymap;pgn|application/x-chess-pgn;pic|image/pict;pict|image/pict;png|image/png;pnm|image/x-portable-anymap;pnt|image/x-macpaint;pntg|image/x-macpaint;ppm|image/x-portable-pixmap;ppt|application/vnd.ms-powerpoint;ps|application/postscript;qt|video/quicktime;qti|image/x-quicktime;qtif|image/x-quicktime;ra|audio/x-pn-realaudio;ram|audio/x-pn-realaudio;ras|image/x-cmu-raster;rdf|application/rdf+xml;rgb|image/x-rgb;rm|application/vnd.rn-realmedia;roff|application/x-troff;rtf|text/rtf;rtx|text/richtext;sgm|text/sgml;sgml|text/sgml;sh|application/x-sh;shar|application/x-shar;silo|model/mesh;sit|application/x-stuffit;skd|application/x-koan;skm|application/x-koan;skp|application/x-koan;skt|application/x-koan;smi|application/smil;smil|application/smil;snd|audio/basic;so|application/octet-stream;spl|application/x-futuresplash;src|application/x-wais-source;sv4cpio|application/x-sv4cpio;sv4crc|application/x-sv4crc;svg|image/svg+xml;swf|application/x-shockwave-flash;t|application/x-troff;tar|application/x-tar;tcl|application/x-tcl;tex|application/x-tex;texi|application/x-texinfo;texinfo|application/x-texinfo;tif|image/tiff;tiff|image/tiff;tr|application/x-troff;tsv|text/tab-separated-values;txt|text/plain;ustar|application/x-ustar;vcd|application/x-cdlink;vrml|model/vrml;vxml|application/voicexml+xml;wav|audio/x-wav;wbmp|image/vnd.wap.wbmp;wbmxl|application/vnd.wap.wbxml;wml|text/vnd.wap.wml;wmlc|application/vnd.wap.wmlc;wmls|text/vnd.wap.wmlscript;wmlsc|application/vnd.wap.wmlscriptc;wrl|model/vrml;xbm|image/x-xbitmap;xht|application/xhtml+xml;xhtml|application/xhtml+xml;xls|application/vnd.ms-excel;xml|application/xml;xpm|image/x-xpixmap;xsl|application/xml;xslt|application/xslt+xml;xul|application/vnd.mozilla.xul+xml;xwd|image/x-xwindowdump;xyz|chemical/x-xyz;zip|application/zip;"
-EndFunc
 Func __WinHttpCharSet($sContentType)
 	Local $aContentType = StringRegExp($sContentType, "(?i).*?\Qcharset=\E(?U)([^ ]+)(;| |\Z)", 2)
 	If Not @error Then $sContentType = $aContentType[1]
 	If StringLeft($sContentType, 2) = "cp" Then Return Int(StringTrimLeft($sContentType, 2))
 	If $sContentType = "utf-8" Then Return 65001
-EndFunc
 Func __WinHttpURLEncode($vData, $sEncType = "")
 	If IsBool($vData) Then Return $vData
 	$vData = __WinHttpHTMLDecode($vData)
@@ -1392,18 +979,11 @@ Func __WinHttpURLEncode($vData, $sEncType = "")
 				$sOut &= Chr($aData[$i])
 			Case 32
 				$sOut &= "+"
-			Case Else
 				$sOut &= "%" & Hex($aData[$i], 2)
-		EndSwitch
-	Next
-	Return $sOut
-EndFunc
 Func __WinHttpHTMLDecode($vData)
 	Return StringReplace(StringReplace(StringReplace(StringReplace($vData, "&amp;", "&"), "&lt;", "<"), "&gt;", ">"), "&quot;", '"')
-EndFunc
 Func __WinHttpNormalizeActionURL($sActionPage, ByRef $sAction, ByRef $iScheme, ByRef $sNewURL, ByRef $sEnctype, ByRef $sMethod, $sURL = "")
 	Local $aCrackURL = _WinHttpCrackUrl($sAction)
-	If @error Then
 		If $sAction Then
 			If StringLeft($sAction, 2) = "//" Then
 				$aCrackURL = _WinHttpCrackUrl($sURL)
@@ -1414,10 +994,7 @@ Func __WinHttpNormalizeActionURL($sActionPage, ByRef $sAction, ByRef $iScheme, B
 						$iScheme = $aCrackURL[1]
 						$sAction = $aCrackURL[6] & $aCrackURL[7]
 						$sActionPage = ""
-					EndIf
-				EndIf
 			ElseIf StringLeft($sAction, 1) = "?" Then
-				$aCrackURL = _WinHttpCrackUrl($sURL)
 				$sAction = $aCrackURL[6] & $sAction
 			ElseIf StringLeft($sAction, 1) = "#" Then
 				$sAction = StringReplace($sActionPage, StringRegExpReplace($sActionPage, "(.*?)(#.*?)", "$2"), $sAction)
@@ -1426,19 +1003,14 @@ Func __WinHttpNormalizeActionURL($sActionPage, ByRef $sAction, ByRef $iScheme, B
 					Local $aURL = StringRegExp($sActionPage, '(.*)/', 3)
 					If Not @error Then $sCurrent = $aURL[0]
 					If $sCurrent Then $sAction = $sCurrent & "/" & $sAction
-			EndIf
 			If StringLeft($sAction, 1) = "?" Then $sAction = $sActionPage & $sAction
-		EndIf
 		If Not $sAction Then $sAction = $sActionPage
 		$sAction = StringRegExpReplace($sAction, "\A(/*\.\./)*", "") ; /../
-	Else
 		$iScheme = $aCrackURL[1]
 		$sNewURL = $aCrackURL[0] & "://" & $aCrackURL[2] & ":" & $aCrackURL[3]
 		$sAction = $aCrackURL[6] & $aCrackURL[7]
-	EndIf
 	If Not $sMethod Then $sMethod = "GET"
 	If $sMethod = "GET" Then $sEnctype = ""
-EndFunc
 Func __WinHttpHTML5FormAttribs(ByRef $aDtas, ByRef $aFlds, ByRef $iNumParams, ByRef $aInput, ByRef $sAction, ByRef $sEnctype, ByRef $sMethod)
 	Local $aSpl, $iSubmitHTML5 = 0, $iInpSubm, $sImgAppx = "."
 	For $k = 1 To $iNumParams
@@ -1447,7 +1019,6 @@ Func __WinHttpHTML5FormAttribs(ByRef $aDtas, ByRef $aFlds, ByRef $iNumParams, By
 			Local $iSubmIndex = $aDtas[$k], $iSubmCur = 0, $iImgCur = 0, $sType, $sInpNme
 			If $aSpl[1] = "image" Then
 				$iSubmIndex = Int($aDtas[$k])
-			EndIf
 			For $i = 0 To UBound($aInput) - 1 ; for all input elements
 				Switch __WinHttpAttribVal($aInput[$i], "type")
 					Case "submit"
@@ -1455,12 +1026,9 @@ Func __WinHttpHTML5FormAttribs(ByRef $aDtas, ByRef $aFlds, ByRef $iNumParams, By
 							$iSubmitHTML5 = 1
 							$iInpSubm = $i
 							ExitLoop 2
-						EndIf
 						$iSubmCur += 1
 					Case "image"
 						If $iImgCur = $iSubmIndex Then
-							$iSubmitHTML5 = 1
-							$iInpSubm = $i
 							$sInpNme = __WinHttpAttribVal($aInput[$iInpSubm], "name")
 							If $sInpNme Then $sInpNme &= $sImgAppx
 							$aInput[$iInpSubm] = 'type="image" formaction="' & __WinHttpAttribVal($aInput[$iInpSubm], "formaction") & '" formenctype="' & __WinHttpAttribVal($aInput[$iInpSubm], "formenctype") & '" formmethod="' & __WinHttpAttribVal($aInput[$iInpSubm], "formmethod") & '"'
@@ -1470,75 +1038,38 @@ Func __WinHttpHTML5FormAttribs(ByRef $aDtas, ByRef $aFlds, ByRef $iNumParams, By
 							ReDim $aInput[UBound($aInput) + 2]
 							$aInput[UBound($aInput) - 2] = 'type="image" name="' & $sInpNme & 'x" value="' & $iX & '"'
 							$aInput[UBound($aInput) - 1] = 'type="image" name="' & $sInpNme & 'y" value="' & $iY & '"'
-							ExitLoop 2
-						EndIf
 						$iImgCur += 1
 				EndSwitch
 			Next
 			ElseIf $aSpl[0] = "name" Then
 			Local $sInpNme = $aSpl[1], $sType
-			For $i = 0 To UBound($aInput) - 1 ; for all input elements
 				$sType = __WinHttpAttribVal($aInput[$i], "type")
 				If $sType = "submit" Then
 					If __WinHttpAttribVal($aInput[$i], "name") = $sInpNme And $aDtas[$k] = True Then
 						$iSubmitHTML5 = 1
 						$iInpSubm = $i
 						ExitLoop 2
-					EndIf
 				ElseIf $sType = "image" Then
 					If __WinHttpAttribVal($aInput[$i], "name") = $sInpNme And $aDtas[$k] Then
-						$iSubmitHTML5 = 1
-						$iInpSubm = $i
 						Local $aStrSplit = StringSplit($aDtas[$k], ",", 3), $iX = 0, $iY = 0
 						If Not @error Then
 							$iX = Int($aStrSplit[0])
 							$iY = Int($aStrSplit[1])
-						EndIf
 						$aInput[$iInpSubm] = 'type="image" formaction="' & __WinHttpAttribVal($aInput[$iInpSubm], "formaction") & '" formenctype="' & __WinHttpAttribVal($aInput[$iInpSubm], "formenctype") & '" formmethod="' & __WinHttpAttribVal($aInput[$iInpSubm], "formmethod") & '"'
 						$sInpNme &= $sImgAppx
 						ReDim $aInput[UBound($aInput) + 2]
 						$aInput[UBound($aInput) - 2] = 'type="image" name="' & $sInpNme & 'x" value="' & $iX & '"'
 						$aInput[UBound($aInput) - 1] = 'type="image" name="' & $sInpNme & 'y" value="' & $iY & '"'
-						ExitLoop 2
-					EndIf
-				EndIf
-			Next
 		Else ; id
 			Local $sInpId, $sType
 			If @error Then
 				$sInpId = $aSpl[0]
 			ElseIf $aSpl[0] = "id" Then
 				$sInpId = $aSpl[1]
-			EndIf
-			For $i = 0 To UBound($aInput) - 1 ; for all input elements
-				$sType = __WinHttpAttribVal($aInput[$i], "type")
-				If $sType = "submit" Then
 					If __WinHttpAttribVal($aInput[$i], "id") = $sInpId And $aDtas[$k] = True Then
-						$iSubmitHTML5 = 1
-						$iInpSubm = $i
-						ExitLoop 2
-					EndIf
-				ElseIf $sType = "image" Then
 					If __WinHttpAttribVal($aInput[$i], "id") = $sInpId And $aDtas[$k] Then
-						$iSubmitHTML5 = 1
-						$iInpSubm = $i
 						Local $sInpNme = __WinHttpAttribVal($aInput[$iInpSubm], "name")
 						If $sInpNme Then $sInpNme &= $sImgAppx
-						Local $aStrSplit = StringSplit($aDtas[$k], ",", 3), $iX = 0, $iY = 0
-						If Not @error Then
-							$iX = Int($aStrSplit[0])
-							$iY = Int($aStrSplit[1])
-						EndIf
-						$aInput[$iInpSubm] = 'type="image" formaction="' & __WinHttpAttribVal($aInput[$iInpSubm], "formaction") & '" formenctype="' & __WinHttpAttribVal($aInput[$iInpSubm], "formenctype") & '" formmethod="' & __WinHttpAttribVal($aInput[$iInpSubm], "formmethod") & '"'
-						ReDim $aInput[UBound($aInput) + 2]
-						$aInput[UBound($aInput) - 2] = 'type="image" name="' & $sInpNme & 'x" value="' & $iX & '"'
-						$aInput[UBound($aInput) - 1] = 'type="image" name="' & $sInpNme & 'y" value="' & $iY & '"'
-						ExitLoop 2
-					EndIf
-				EndIf
-			Next
-		EndIf
-	Next
 	If $iSubmitHTML5 Then
 		Local $iUbound = UBound($aInput) - 1
 		If __WinHttpAttribVal($aInput[$iInpSubm], "type") = "image" Then $iUbound -= 2 ; two form fields are added for "image"
@@ -1548,7 +1079,6 @@ Func __WinHttpHTML5FormAttribs(ByRef $aDtas, ByRef $aFlds, ByRef $iNumParams, By
 				Case "submit", "image"
 					$aInput[$j] = "" ; remove any other submit/image controls
 			EndSwitch
-		Next
 		Local $sAttr = __WinHttpAttribVal($aInput[$iInpSubm], "formaction")
 		If $sAttr Then $sAction = $sAttr
 		$sAttr = __WinHttpAttribVal($aInput[$iInpSubm], "formenctype")
@@ -1556,109 +1086,67 @@ Func __WinHttpHTML5FormAttribs(ByRef $aDtas, ByRef $aFlds, ByRef $iNumParams, By
 		$sAttr = __WinHttpAttribVal($aInput[$iInpSubm], "formmethod")
 		If $sAttr Then $sMethod = $sAttr
 		If __WinHttpAttribVal($aInput[$iInpSubm], "type") = "image" Then $aInput[$iInpSubm] = ""
-	EndIf
-EndFunc
 Func __WinHttpNormalizeForm(ByRef $sForm, $sSpr1, $sSpr2)
 	Local $aData = StringToASCIIArray($sForm, Default, Default, 2)
 	Local $sOut, $bQuot = False, $bSQuot = False, $bOpTg = True
-	For $i = 0 To UBound($aData) - 1
-		Switch $aData[$i]
 			Case 34
 				If $bOpTg Then $bQuot = Not $bQuot
-				$sOut &= Chr($aData[$i])
 			Case 39
 				If $bOpTg Then $bSQuot = Not $bSQuot
-				$sOut &= Chr($aData[$i])
 			Case 32 ; space
 				If $bQuot Or $bSQuot Then
 					$sOut &= $sSpr1
 				Else
 					$sOut &= Chr($aData[$i])
-				EndIf
 			Case 60 ; <
 				If Not $bOpTg Then $bOpTg = True
-				$sOut &= Chr($aData[$i])
 			Case 62 ; >
-				If $bQuot Or $bSQuot Then
 					$sOut &= $sSpr2
-				Else
 					If $bOpTg Then $bOpTg = False
-					$sOut &= Chr($aData[$i])
-				EndIf
-			Case Else
-				$sOut &= Chr($aData[$i])
-		EndSwitch
-	Next
 	$sForm = $sOut
-EndFunc
 Func __WinHttpFinalizeCtrls($sSubmit, $sRadio, $sCheckBox, $sButton, ByRef $sAddData, $sGrSep, $sBound = "")
 	If $sSubmit Then ; If no submit is specified
 		Local $aSubmit = StringSplit($sSubmit, $sGrSep, 3)
 		For $m = 1 To UBound($aSubmit) - 1
 			$sAddData = StringRegExpReplace($sAddData, "(?:\Q" & $sBound & "\E|\A)\Q" & $aSubmit[$m] & "\E(?:\Q" & $sBound & "\E|\z)", $sBound)
-		Next
 		__WinHttpTrimBounds($sAddData, $sBound)
-	EndIf
 	If $sRadio Then ; If no radio is specified
 		If $sRadio <> $sGrSep Then
 			For $sElem In StringSplit($sRadio, $sGrSep, 3)
 				$sAddData = StringRegExpReplace($sAddData, "(?:\Q" & $sBound & "\E|\A)\Q" & $sElem & "\E(?:\Q" & $sBound & "\E|\z)", $sBound)
-			Next
 			__WinHttpTrimBounds($sAddData, $sBound)
-		EndIf
-	EndIf
 	If $sCheckBox Then ; If no checkbox is specified
 		For $sElem In StringSplit($sCheckBox, $sGrSep, 3)
 			$sAddData = StringRegExpReplace($sAddData, "(?:\Q" & $sBound & "\E|\A)\Q" & $sElem & "\E(?:\Q" & $sBound & "\E|\z)", $sBound)
-		Next
-		__WinHttpTrimBounds($sAddData, $sBound)
-	EndIf
 	If $sButton Then ; If no button is specified
 		For $sElem In StringSplit($sButton, $sGrSep, 3)
-			$sAddData = StringRegExpReplace($sAddData, "(?:\Q" & $sBound & "\E|\A)\Q" & $sElem & "\E(?:\Q" & $sBound & "\E|\z)", $sBound)
-		Next
-		__WinHttpTrimBounds($sAddData, $sBound)
-	EndIf
-EndFunc
 Func __WinHttpTrimBounds(ByRef $sDta, $sBound)
 	Local $iBLen = StringLen($sBound)
 	If StringRight($sDta, $iBLen) = $sBound Then $sDta = StringTrimRight($sDta, $iBLen)
 	If StringLeft($sDta, $iBLen) = $sBound Then $sDta = StringTrimLeft($sDta, $iBLen)
-EndFunc
 Func __WinHttpFormAttrib(ByRef $aAttrib, $i, $sElement)
 	$aAttrib[0][$i] = __WinHttpAttribVal($sElement, "id")
 	$aAttrib[1][$i] = __WinHttpAttribVal($sElement, "name")
 	$aAttrib[2][$i] = __WinHttpAttribVal($sElement, "value")
 	$aAttrib[3][$i] = __WinHttpAttribVal($sElement, "type")
-EndFunc
 Func __WinHttpAttribVal($sIn, $sAttrib)
 	Local $aArray = StringRegExp($sIn, '(?i).*?(\A| )\b' & $sAttrib & '\h*=(\h*"(.*?)"|' & "\h*'(.*?)'|" & '\h*(.*?)(?: |\Z))', 1) ; e.g. id="abc" or id='abc' or id=abc
 	If @error Then Return ""
 	Return $aArray[UBound($aArray) - 1]
-EndFunc
 Func __WinHttpFormSend($hInternet, $sMethod, $sAction, $fMultiPart, $sBoundary, $sAddData, $fSecure = False, $sAdditionalHeaders = "", $sCredName = "", $sCredPass = "", $iIgnoreAllCertErrors = 0)
 	Local $hRequest
 	If $fSecure Then
 		$hRequest = _WinHttpOpenRequest($hInternet, $sMethod, $sAction, Default, Default, Default, $WINHTTP_FLAG_SECURE)
 		If $iIgnoreAllCertErrors Then _WinHttpSetOption($hRequest, $WINHTTP_OPTION_SECURITY_FLAGS, BitOR($SECURITY_FLAG_IGNORE_UNKNOWN_CA, $SECURITY_FLAG_IGNORE_CERT_DATE_INVALID, $SECURITY_FLAG_IGNORE_CERT_CN_INVALID, $SECURITY_FLAG_IGNORE_CERT_WRONG_USAGE))
-	Else
 		$hRequest = _WinHttpOpenRequest($hInternet, $sMethod, $sAction)
-	EndIf
 	If $fMultiPart Then
 		_WinHttpAddRequestHeaders($hRequest, "Content-Type: multipart/form-data; boundary=" & $sBoundary)
-	Else
 		If $sMethod = "POST" Then _WinHttpAddRequestHeaders($hRequest, "Content-Type: application/x-www-form-urlencoded")
-	EndIf
 	_WinHttpAddRequestHeaders($hRequest, "Accept: application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,*/*;q=0.5")
 	_WinHttpAddRequestHeaders($hRequest, "Accept-Charset: utf-8;q=0.7")
 	If $sAdditionalHeaders Then _WinHttpAddRequestHeaders($hRequest, $sAdditionalHeaders, BitOR($WINHTTP_ADDREQ_FLAG_REPLACE, $WINHTTP_ADDREQ_FLAG_ADD))
-	_WinHttpSetOption($hRequest, $WINHTTP_OPTION_DECOMPRESSION, $WINHTTP_DECOMPRESSION_FLAG_ALL)
-	_WinHttpSetOption($hRequest, $WINHTTP_OPTION_UNSAFE_HEADER_PARSING, 1)
 	__WinHttpFormUpload($hRequest, "", $sAddData)
-	_WinHttpReceiveResponse($hRequest)
 	__WinHttpSetCredentials($hRequest, "", $sAddData, $sCredName, $sCredPass, 1)
-	Return $hRequest
-EndFunc
 Func __WinHttpSetCredentials($hRequest, $sHeaders = "", $sOptional = "", $sCredName = "", $sCredPass = "", $iFormFill = 0)
 	If $sCredName And $sCredPass Then
 		Local $iStatusCode = _WinHttpQueryHeaders($hRequest, $WINHTTP_QUERY_STATUS_CODE)
@@ -1669,19 +1157,11 @@ Func __WinHttpSetCredentials($hRequest, $sHeaders = "", $sOptional = "", $sCredN
 					_WinHttpSetOption($hRequest, $WINHTTP_OPTION_CONFIGURE_PASSPORT_AUTH, $WINHTTP_ENABLE_PASSPORT_AUTH)
 					_WinHttpSetOption($hRequest, $WINHTTP_OPTION_PROXY_USERNAME, $sCredName)
 					_WinHttpSetOption($hRequest, $WINHTTP_OPTION_PROXY_PASSWORD, $sCredPass)
-				Else
 					_WinHttpSetCredentials($hRequest, $iAuthTarget, $iFirstScheme, $sCredName, $sCredPass)
-				EndIf
 				If $iFormFill Then
 					__WinHttpFormUpload($hRequest, $sHeaders, $sOptional)
-				Else
 					_WinHttpSendRequest($hRequest, $sHeaders, $sOptional)
-				EndIf
 				_WinHttpReceiveResponse($hRequest)
-			EndIf
-		EndIf
-	EndIf
-EndFunc
 Func __WinHttpFormUpload($hRequest, $sHeaders, $sData)
 	Local $aClbk = _WinHttpSimpleFormFill_SetUploadCallback()
 	If $aClbk[0] <> Default Then
@@ -1691,75 +1171,32 @@ Func __WinHttpFormUpload($hRequest, $sHeaders, $sData)
 			If $i = $aClbk[1] Then $iCurCh = $iRest
 			_WinHttpWriteData($hRequest, StringMid($sData, 1 + $iChunk * ($i -1), $iCurCh))
 			Call($aClbk[0], Floor($i * 100 / $aClbk[1]))
-		Next
-	Else
 		_WinHttpSendRequest($hRequest, Default, $sData)
-	EndIf
-EndFunc
 Func __WinHttpDefault(ByRef $vInput, $vOutput)
 	If $vInput = Default Or Number($vInput) = -1 Then $vInput = $vOutput
-EndFunc
 Func __WinHttpMemGlobalFree($pMem)
 	Local $aCall = DllCall("kernel32.dll", "ptr", "GlobalFree", "ptr", $pMem)
 	If @error Or $aCall[0] Then Return SetError(1, 0, 0)
-	Return 1
-EndFunc
 Func __WinHttpPtrStringLenW($pStr)
 	Local $aCall = DllCall("kernel32.dll", "dword", "lstrlenW", "ptr", $pStr)
-	If @error Then Return SetError(1, 0, 0)
-	Return $aCall[0]
-EndFunc
 Func __WinHttpUA()
 	Local Static $sUA = "Mozilla/5.0 " & __WinHttpSysInfo() & " WinHttp/" & __WinHttpVer() & " (WinHTTP/5.1) like Gecko"
 	Return $sUA
-EndFunc
 Func __WinHttpSysInfo()
 	Local $sDta = FileGetVersion("kernel32.dll")
 	$sDta = "(Windows NT " & StringLeft($sDta, StringInStr($sDta, ".", 1, 2) - 1)
 	If StringInStr(@OSArch, "64") And Not @AutoItX64 Then $sDta &= "; WOW64"
 	$sDta &= ")"
 	Return $sDta
-EndFunc
 Func __WinHttpVer()
 	Return "1.6.4.1"
-EndFunc
 Func _WinHttpBinaryConcat(ByRef $bBinary1, ByRef $bBinary2)
 	Local $bOut = _WinHttpSimpleBinaryConcat($bBinary1, $bBinary2)
 	Return SetError(@error, 0, $bOut)
-EndFunc
+#include "wd_core.au3"
 #Region Copyright
-#cs
-	* WD_Helper.au3
-	*
-	* MIT License
-	*
-	* Copyright (c) 2018 Dan Pollak
-	*
-	* Permission is hereby granted, free of charge, to any person obtaining a copy
-	* of this software and associated documentation files (the "Software"), to deal
-	* in the Software without restriction, including without limitation the rights
-	* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-	* copies of the Software, and to permit persons to whom the Software is
-	* furnished to do so, subject to the following conditions:
-	*
-	* The above copyright notice and this permission notice shall be included in all
-	* copies or substantial portions of the Software.
-	*
-	* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-	* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-	* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-	* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-	* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-	* SOFTWARE.
-#ce
 #EndRegion Copyright
 #Region Many thanks to:
-#cs
-	- Jonathan Bennett and the AutoIt Team
-	- Thorsten Willert, author of FF.au3, which I've used as a model
-	- Michał Lipok for all his feedback / suggestions
-#ce
 #EndRegion Many thanks to:
 Func _WD_NewTab($sSession, $lSwitch = True, $iTimeout = -1, $sURL = "", $sFeatures = "")
 	Local Const $sFuncName = "_WD_NewTab"
@@ -1768,49 +1205,36 @@ Func _WD_NewTab($sSession, $lSwitch = True, $iTimeout = -1, $sURL = "", $sFeatur
 	Local $aHandles = _WD_Window($sSession, 'handles')
 	If @error <> $_WD_ERROR_Success Or Not IsArray($aHandles) Then
 		Return SetError(__WD_Error($sFuncName, $_WD_ERROR_Exception), 0, $sTabHandle)
-	EndIf
 	$iTabCount = UBound($aHandles)
 	$sLastTabHandle = $aHandles[$iTabCount - 1]
 	Local $sCurrentTabHandle = _WD_Window($sSession, 'window')
 	If @error = $_WD_ERROR_Success Then
 		$iTabIndex = _ArraySearch($aHandles, $sCurrentTabHandle)
-		If @error Then
 			$sCurrentTabHandle = $sLastTabHandle
 			$iTabIndex = $iTabCount - 1
-		EndIf
-	Else
 		_WD_Window($sSession, 'Switch', '{"handle":"' & $sLastTabHandle & '"}')
 		$sCurrentTabHandle = $sLastTabHandle
 		$iTabIndex = $iTabCount - 1
-	EndIf
 	_WD_ExecuteScript($sSession, "window.open(arguments[0], '', arguments[1])", '"' & $sURL & '","' & $sFeatures & '"')
 	If @error <> $_WD_ERROR_Success Then
-		Return SetError(__WD_Error($sFuncName, $_WD_ERROR_Exception), 0, $sTabHandle)
-	EndIf
 	$hWaitTimer = TimerInit()
 	While 1
  		$aTemp = _WD_Window($sSession, 'handles')
 		If UBound($aTemp) > $iTabCount Then
 			$sTabHandle = $aTemp[$iTabIndex + 1]
 			ExitLoop
-		EndIf
 		If TimerDiff($hWaitTimer) > $iTimeout Then Return SetError(__WD_Error($sFuncName, $_WD_ERROR_Timeout), 0, $sTabHandle)
 		Sleep(10)
 	WEnd
 	If $lSwitch Then
 		_WD_Window($sSession, 'Switch', '{"handle":"' & $sTabHandle & '"}')
-	Else
 		_WD_Window($sSession, 'Switch', '{"handle":"' & $sCurrentTabHandle & '"}')
-	EndIf
 	Return SetError($_WD_ERROR_Success, 0, $sTabHandle)
-EndFunc
 Func _WD_Attach($sSession, $sString, $sMode = 'title')
 	Local Const $sFuncName = "_WD_Attach"
 	Local $sTabHandle = '', $lFound = False, $sCurrentTab, $aHandles
 	$sCurrentTab = _WD_Window($sSession, 'window')
-	If @error <> $_WD_ERROR_Success Then
 		Return SetError(__WD_Error($sFuncName, $_WD_ERROR_GeneralError), 0, $sTabHandle)
-	Else
 		$aHandles = _WD_Window($sSession, 'handles')
 		If @error = $_WD_ERROR_Success Then
 			$sMode = StringLower($sMode)
@@ -1822,27 +1246,14 @@ Func _WD_Attach($sSession, $sString, $sMode = 'title')
 							$lFound = True
 							$sTabHandle = $sHandle
 							ExitLoop
-						EndIf
 					Case 'html'
 						If StringInStr(_WD_GetSource($sSession), $sString) > 0 Then
-							$lFound = True
-							$sTabHandle = $sHandle
-							ExitLoop
-						EndIf
 					Case Else
 						Return SetError(__WD_Error($sFuncName, $_WD_ERROR_InvalidDataType, "(Title|URL|HTML) $sOption=>" & $sMode), 0, $sTabHandle)
-				EndSwitch
-			Next
 			If Not $lFound Then
 				_WD_Window($sSession, 'Switch', '{"handle":"' & $sCurrentTab & '"}')
 				Return SetError(__WD_Error($sFuncName, $_WD_ERROR_NoMatch), 0, $sTabHandle)
-			EndIf
-		Else
 			Return SetError(__WD_Error($sFuncName, $_WD_ERROR_GeneralError), 0, $sTabHandle)
-		EndIf
-	EndIf
-	Return SetError($_WD_ERROR_Success, 0, $sTabHandle)
-EndFunc
 Func _WD_LinkClickByText($sSession, $sText, $lPartial = True)
 	Local Const $sFuncName = "_WD_LinkClickByText"
 	Local $sElement = _WD_FindElement($sSession, ($lPartial) ? $_WD_LOCATOR_ByPartialLinkText : $_WD_LOCATOR_ByLinkText, $sText)
@@ -1852,38 +1263,24 @@ Func _WD_LinkClickByText($sSession, $sText, $lPartial = True)
 		$iErr = @error
 		If $iErr <> $_WD_ERROR_Success Then
 			Return SetError(__WD_Error($sFuncName, $_WD_ERROR_Exception), $_WD_HTTPRESULT)
-		EndIf
-	Else
 		Return SetError(__WD_Error($sFuncName, $_WD_ERROR_NoMatch), $_WD_HTTPRESULT)
-	EndIf
 	Return SetError($_WD_ERROR_Success)
-EndFunc
 Func _WD_WaitElement($sSession, $sStrategy, $sSelector, $iDelay = 0, $iTimeout = -1, $lVisible = False)
 	Local Const $sFuncName = "_WD_WaitElement"
 	Local $bAbort = False, $iErr, $iResult = 0, $sElement, $lIsVisible = True
-	If $iTimeout = -1 Then $iTimeout = $_WD_DefaultTimeout
 	Sleep($iDelay)
 	Local $hWaitTimer = TimerInit()
-	While 1
 		$sElement = _WD_FindElement($sSession, $sStrategy, $sSelector)
-		$iErr = @error
 		If $iErr = $_WD_ERROR_Success Then
 			If $lVisible Then
 				$lIsVisible = _WD_ElementAction($sSession, $sElement, 'displayed')
-			EndIf
 			If $lIsVisible = True Then
 				$iResult = 1
 				ExitLoop
-			EndIf
-		EndIf
 		If (TimerDiff($hWaitTimer) > $iTimeout) Then
 			$iErr = $_WD_ERROR_Timeout
-			ExitLoop
-		EndIf
 		Sleep(1000)
-	WEnd
 	Return SetError(__WD_Error($sFuncName, $iErr), 0, $iResult)
-EndFunc
 Func _WD_GetMouseElement($sSession)
 	Local Const $sFuncName = "_WD_GetMouseElement"
 	Local $sResponse, $sJSON, $sElement
@@ -1894,21 +1291,15 @@ Func _WD_GetMouseElement($sSession)
 	If $_WD_DEBUG = $_WD_DEBUG_Info Then
 		ConsoleWrite($sFuncName & ': ' & $sElement & @CRLF)
 		ConsoleWrite($sFuncName & ': ' & IsObj($sElement) & @CRLF)
-	EndIf
 Return SetError($_WD_ERROR_Success, 0, $sElement)
-EndFunc
 Func _WD_GetElementFromPoint($sSession, $iX, $iY)
 	Local $sResponse, $sElement, $sJSON
     Local $sScript = "return document.elementFromPoint(arguments[0], arguments[1]);"
 	Local $sParams = $iX & ", " & $iY
 	$sResponse = _WD_ExecuteScript($sSession, $sScript, $sParams)
-	$sJSON = Json_Decode($sResponse)
-	$sElement = Json_Get($sJSON, "[value][" & $_WD_ELEMENT_ID & "]")
 	Return SetError($_WD_ERROR_Success, 0, $sElement)
-EndFunc
 Func _WD_LastHTTPResult()
 	Return $_WD_HTTPRESULT
-EndFunc
 Func _WD_GetFrameCount($sSession)
     Local $sResponse, $sJSON, $iValue
     $sResponse = _WD_ExecuteScript($sSession, "return window.frames.length")
@@ -1920,13 +1311,11 @@ Func _WD_IsWindowTop($sSession)
     Local $sResponse, $sJSON
     Local $blnResult
     $sResponse = _WD_ExecuteScript($sSession, "return window.top == window.self")
-    $sJSON = Json_Decode($sResponse)
     $blnResult = Json_Get($sJSON, "[value]")
     Return $blnResult
 EndFunc ;==>_WD_IsWindowTop
 Func _WD_FrameEnter($sSession, $sIndexOrID)
     Local $sOption
-    Local $sResponse, $sJSON
     Local $sValue
     If IsInt($sIndexOrID) = True Then
         $sOption = '{"id":' & $sIndexOrID & '}'
@@ -1934,24 +1323,16 @@ Func _WD_FrameEnter($sSession, $sIndexOrID)
 		$sOption = '{"id":{"' & $_WD_ELEMENT_ID & '":"' & $sIndexOrID & '"}}'
     EndIf
     $sResponse = _WD_Window($sSession, "frame", $sOption)
-    $sJSON = Json_Decode($sResponse)
     $sValue = Json_Get($sJSON, "[value]")
     If $sValue <> Null Then
         $sValue = Json_Get($sJSON, "[value][error]")
-    Else
         $sValue = True
-    EndIf
     Return $sValue
 EndFunc ;==>_WD_FrameEnter
 Func _WD_FrameLeave($sSession)
-    Local $sOption
     Local $sResponse, $sJSON, $asJSON
-    Local $sValue
     $sOption = '{}'
     $sResponse = _WD_Window($sSession, "parent", $sOption)
-    $sJSON = Json_Decode($sResponse)
-    $sValue = Json_Get($sJSON, "[value]")
-    If $sValue <> Null Then
         If Json_IsObject($sValue) = True Then
             $asJSON = Json_ObjGetKeys($sValue)
             If UBound($asJSON) = 0 Then ;Firefox PASS
@@ -1961,9 +1342,6 @@ Func _WD_FrameLeave($sSession)
             EndIf
         EndIf
     Else ;Chrome PASS
-        $sValue = True
-    EndIf
-    Return $sValue
 EndFunc ;==>_WD_FrameLeave
 Func _WD_HighlightElement($sSession, $sElement, $iMethod = 1)
     Local Const $aMethod[] = ["border: 2px dotted red", _
@@ -1986,57 +1364,37 @@ EndFunc   ;==>_WD_HighlightElements
 Func _WD_LoadWait($sSession, $iDelay = 0, $iTimeout = -1, $sElement = '')
 	Local Const $sFuncName = "_WD_LoadWait"
 	Local $iErr, $sResponse, $sJSON, $sReadyState
-	If $iTimeout = -1 Then $iTimeout = $_WD_DefaultTimeout
 	If $iDelay Then Sleep($iDelay)
 	Local $hLoadWaitTimer = TimerInit()
 	While True
 		If $sElement <> '' Then
 			_WD_ElementAction($sSession, $sElement, 'name')
 			If $_WD_HTTPRESULT = $HTTP_STATUS_NOT_FOUND Then $sElement = ''
-		Else
 			$sResponse = _WD_ExecuteScript($sSession, 'return document.readyState', '')
 			$iErr = @error
 			If $iErr Then
-				ExitLoop
-			EndIf
 			$sJSON = Json_Decode($sResponse)
 			$sReadyState = Json_Get($sJSON, "[value]")
 			If $sReadyState = 'complete' Then ExitLoop
-		EndIf
 		If (TimerDiff($hLoadWaitTimer) > $iTimeout) Then
-			$iErr = $_WD_ERROR_Timeout
-			ExitLoop
-		EndIf
 		Sleep(100)
-	WEnd
 	If $iErr Then
 		Return SetError(__WD_Error($sFuncName, $iErr, ""), 0, 0)
-	EndIf
 	Return SetError($_WD_ERROR_Success, 0, 1)
-EndFunc
 Func _WD_Screenshot($sSession, $sElement = '', $nOutputType = 1)
 	Local Const $sFuncName = "_WD_Screenshot"
 	Local $sResponse, $sJSON, $sResult, $bDecode
 	If $sElement = '' Then
 		$sResponse = _WD_Window($sSession, 'Screenshot')
-		$iErr = @error
-	Else
 		$sResponse = _WD_ElementAction($sSession, $sElement, 'Screenshot')
-		$iErr = @error
-	EndIf
-	If $iErr = $_WD_ERROR_Success Then
 		Switch $nOutputType
 			Case 1 ; String
 				$sResult = BinaryToString(_Base64Decode($sResponse))
 			Case 2 ; Binary
 				$sResult = _Base64Decode($sResponse)
 			Case 3 ; Base64
-		EndSwitch
-	Else
 		$sResult = ''
-	EndIf
 	Return SetError(__WD_Error($sFuncName, $iErr), 0, $sResult)
-EndFunc
 Func _WD_jQuerify($sSession)
 Local $jQueryLoader = _
 "(function(jqueryUrl, callback) {" & _
@@ -2058,24 +1416,19 @@ Local $jQueryLoader = _
 "        });" & _
 "        script.src = jqueryUrl;" & _
 "        head.appendChild(script);" & _
-"    }" & _
 "    else {" & _
 "        jQuery.noConflict();" & _
 "        callback();" & _
-"    }" & _
 "})(arguments[0], arguments[arguments.length - 1]);"
 _WD_ExecuteScript($sSession, $jQueryLoader, "[]", True)
 Do
 	Sleep(250)
 	_WD_ExecuteScript($sSession, "jQuery")
 Until @error = $_WD_ERROR_Success
-EndFunc
 Func _WD_ElementOptionSelect($sSession, $sStrategy, $sSelector, $sStartElement = "")
     Local $sElement = _WD_FindElement($sSession, $sStrategy, $sSelector, $sStartElement)
     If @error = $_WD_ERROR_Success Then
         _WD_ElementAction($sSession, $sElement, 'click')
-    EndIf
-EndFunc
 Func _Base64Decode($input_string)
     Local $struct = DllStructCreate("int")
     $a_Call = DllCall("Crypt32.dll", "int", "CryptStringToBinary", _
@@ -2084,27 +1437,17 @@ Func _Base64Decode($input_string)
             "int", 1, _
             "ptr", 0, _
             "ptr", DllStructGetPtr($struct, 1), _
-            "ptr", 0, _
             "ptr", 0)
     If @error Or Not $a_Call[0] Then
         Return SetError(1, 0, "") ; error calculating the length of the buffer needed
-    EndIf
     Local $a = DllStructCreate("byte[" & DllStructGetData($struct, 1) & "]")
-    $a_Call = DllCall("Crypt32.dll", "int", "CryptStringToBinary", _
-            "str", $input_string, _
-            "int", 0, _
-            "int", 1, _
             "ptr", DllStructGetPtr($a), _
-            "ptr", DllStructGetPtr($struct, 1), _
-            "ptr", 0, _
-            "ptr", 0)
-    If @error Or Not $a_Call[0] Then
         Return SetError(2, 0, ""); error decoding
-    EndIf
     Return DllStructGetData($a, 1)
 EndFunc   ;==>_Base64Decode
 Global $g_vMacro_J3611D687A2E2445F907F05FFD04B3A5DD611C3C6DAB446A4B196B389830541DFA8D8248BB4584FB0AE1CE6BDD0DCE952 = @AutoItExe
 #AutoIt3Wrapper_Au3Check_Parameters=-d -w 1 -w 2 -w 3 -w 4 -w 5 -w 6
+#include <APIResConstants.au3>
 OnAutoItExitRegister(_GDIPlus_Shutdown)
 OnAutoItExitRegister(_Resource_DestroyAll)
 _GDIPlus_Startup()
@@ -2112,10 +1455,8 @@ Func _Resource_Destroy($sResNameOrID, $iResType = $RT_RCDATA, $iResLang = Defaul
 If $iResLang = Default Then $iResLang = 0
 If $iResType = Default Then $iResType = $RT_RCDATA
 Return __Resource_Storage(9, $sDllOrExePath, Null, $sResNameOrID, $iResType, $iResLang, $iResType, Null)
-EndFunc
 Func _Resource_DestroyAll()
 Return __Resource_Storage(10, Null, Null, Null, Null, Null, Null, Null)
-EndFunc
 Func _Resource_GetAsBitmap($sResNameOrID, $iResType = $RT_RCDATA, $sDllOrExePath = Default)
 Local $hHBITMAP = 0, $hBitmap = _Resource_GetAsImage($sResNameOrID, $iResType, $sDllOrExePath)
 Local $iError = @error
@@ -2128,72 +1469,43 @@ Else
 _GDIPlus_BitmapDispose($hBitmap)
 $hBitmap = 0
 EndIf
-EndIf
 If $iError <> 0 Then $hHBITMAP = 0
 Return SetError($iError, $iLength, $hHBITMAP)
-EndFunc
 Func _Resource_GetAsCursor($sResNameOrID, $iResType = $RT_RCDATA, $sDllOrExePath = Default)
 Local $hCursor = __Resource_Get($sResNameOrID, $iResType, 0, $sDllOrExePath, $RT_CURSOR)
-Local $iError = @error
-Local $iLength = @extended
 If $iError <> 0 Then $hCursor = 0
 Return SetError($iError, $iLength, $hCursor)
-EndFunc
 Func _Resource_GetAsBytes($sResNameOrID, $iResType = $RT_RCDATA, $iResLang = Default, $sDllOrExePath = Default)
 Local $pResource = __Resource_Get($sResNameOrID, $iResType, $iResLang, $sDllOrExePath, $RT_RCDATA)
-Local $iError = @error
-Local $iLength = @extended
 Local $dBytes = Binary(Null)
-If $iError = 0 And $iLength > 0 Then
 Local $tBuffer = DllStructCreate('byte array[' & $iLength & ']', $pResource)
 $dBytes = DllStructGetData($tBuffer, 'array')
-EndIf
 Return SetError($iError, $iLength, $dBytes)
-EndFunc
 Func _Resource_GetAsIcon($sResNameOrID, $iResType = $RT_RCDATA, $sDllOrExePath = Default)
 Local $hIcon = __Resource_Get($sResNameOrID, $iResType, 0, $sDllOrExePath, $RT_ICON)
-Local $iError = @error
-Local $iLength = @extended
 If $iError <> 0 Then $hIcon = 0
 Return SetError($iError, $iLength, $hIcon)
-EndFunc
 Func _Resource_GetAsImage($sResNameOrID, $iResType = $RT_RCDATA, $sDllOrExePath = Default)
-If $iResType = Default Then $iResType = $RT_RCDATA
 Local $iError = 10, $iLength = 0, $hBitmap = 0
 Switch $iResType
 Case $RT_BITMAP
 Local $hHBITMAP = __Resource_Get($sResNameOrID, $RT_BITMAP, 0, $sDllOrExePath, $RT_BITMAP)
 $iError = @error
 $iLength = @extended
-If $iError = 0 And $iLength > 0 Then
 $hBitmap = _GDIPlus_BitmapCreateFromHBITMAP($hHBITMAP)
-If @error Then
 $iError = 10
-Else
-EndIf
-EndIf
 Case Else
 Local $pResource = __Resource_Get($sResNameOrID, $iResType, 0, $sDllOrExePath, $RT_RCDATA)
-$iError = @error
-$iLength = @extended
-If $iError = 0 And $iLength > 0 Then
 $hBitmap = __Resource_ConvertToBitmap($pResource, $iLength)
-EndIf
 EndSwitch
 Return SetError($iError, $iLength, $hBitmap)
-EndFunc
 Func _Resource_GetAsRaw($sResNameOrID, $iResType = $RT_RCDATA, $iResLang = Default, $sDllOrExePath = Default)
 Local $hResource = __Resource_Get($sResNameOrID, $iResType, $iResLang, $sDllOrExePath, $RT_RCDATA)
 Return SetError(@error, @extended, $hResource)
-EndFunc
 Func _Resource_GetAsString($sResNameOrID, $iResType = $RT_RCDATA, $iResLang = Default, $sDllOrExePath = Default)
 Local $iError = 12, $iLength = 0, $sString = ''
-Switch $iResType
 Case $RT_RCDATA
 Local $dBytes = _Resource_GetAsBytes($sResNameOrID, $iResType, $iResLang, $sDllOrExePath)
-$iError = @error
-$iLength = @extended
-If $iError = 0 And $iLength > 0 Then
 Local $iStart = 0, $iUTFEncoding = 1
 Local $iUTF8 = 3, $iUTF16BE = 2, $iUTF16LE = 2, $iUTF32BE = 4, $iUTF32LE = 4
 Select
@@ -2202,7 +1514,6 @@ $iStart = $iUTF32BE
 $iUTFEncoding = 1
 Case BinaryMid($dBytes, 1, $iUTF32LE) = '0xFFFE0000'
 $iStart = $iUTF32LE
-$iUTFEncoding = 1
 Case BinaryMid($dBytes, 1, $iUTF16BE) = '0xFEFF'
 $iStart = $iUTF16BE
 $iUTFEncoding = 3
@@ -2216,35 +1527,24 @@ EndSelect
 $iStart += 1
 $iLength = $iLength + 1 - $iStart
 $sString = BinaryToString(BinaryMid($dBytes, $iStart), $iUTFEncoding)
-EndIf
 $dBytes = 0
 Case $RT_STRING
 $sString = __Resource_Get($sResNameOrID, $iResType, $iResLang, $sDllOrExePath, $iResType)
-$iError = @error
-$iLength = @extended
-EndSwitch
 Return SetError($iError, $iLength, $sString)
-EndFunc
 Func _Resource_LoadFont($sResNameOrID, $iResLang = Default, $sDllOrExePath = Default)
 Local $pResource = __Resource_Get($sResNameOrID, $RT_FONT, $iResLang, $sDllOrExePath, $RT_FONT)
-Local $iError = @error
-Local $iLength = @extended
 If $iError = 0 Then
 Local $hFont = _WinAPI_AddFontMemResourceEx($pResource, $iLength)
 __Resource_Storage(8, $sDllOrExePath, $hFont, $sResNameOrID, 1002, $iResLang, 1002, $iLength)
 $hFont = 0
-EndIf
 Return SetError($iError, $iLength, $pResource)
-EndFunc
 Func _Resource_LoadSound($sResNameOrID, $iFlags = $SND_SYNC, $sDllOrExePath = Default)
 Local $bIsInternal = False, $bReturn = False
 Local $hInstance = __Resource_LoadModule($sDllOrExePath, $bIsInternal)
 If Not $hInstance Then Return SetError(11, 0, $bReturn)
 Local $dSound = _Resource_GetAsBytes($sResNameOrID)
-Local $iLength = @extended
 If Not $iLength Then
 $bReturn = _WinAPI_PlaySound($sResNameOrID, BitOR($SND_RESOURCE, $iFlags), $hInstance)
-Else
 Local $sAlign_Buffer = '00', $sHeader_1 = '0x52494646', $sHeader_2 = '57415645666D74201E0000005500020044AC0000581B0000010000000C00010002000000B600010071056661637404000000640E060064617461'
 Local $sMp3 = StringTrimLeft(Binary($dSound), 2)
 Local $iMp3Size = StringRegExpReplace(Hex($iLength, 8), '(..)(..)(..)(..)', '$4$3$2$1')
@@ -2252,98 +1552,52 @@ Local $iWavSize = StringRegExpReplace(Hex($iLength + 63, 8), '(..)(..)(..)(..)',
 Local $sHybridWav = $sHeader_1 & $iWavSize & $sHeader_2 & $iMp3Size & $sMp3
 If Mod($iMp3Size, 2) Then
 $sHybridWav &= $sAlign_Buffer
-EndIf
 Local $tWAV = DllStructCreate('byte array[' & BinaryLen($sHybridWav) & ']')
 DllStructSetData($tWAV, 'array', $sHybridWav)
 $iFlags = BitOR($SND_MEMORY, $SND_NODEFAULT, $iFlags)
 $bReturn = _WinAPI_PlaySound(DllStructGetPtr($tWAV), $iFlags, $hInstance)
-EndIf
 __Resource_UnloadModule($hInstance, $bIsInternal)
 Return $bReturn
-EndFunc
 Func _Resource_SaveToFile($sFilePath, $sResNameOrID, $iResType = $RT_RCDATA, $iResLang = Default, $bCreatePath = Default, $sDllOrExePath = Default)
 Local $bReturn = False, $iCreatePath = (IsBool($bCreatePath) And $bCreatePath ? $FO_CREATEPATH : 0), $iError = 0, $iLength = 0
-If $iResType = Default Then $iResType = $RT_RCDATA
 If $iResType = $RT_BITMAP Then
 Local $hImage = _Resource_GetAsImage($sResNameOrID, $iResType)
-$iError = @error
-$iLength = @extended
-If $iError = 0 And $iLength > 0 Then
 FileClose(FileOpen($sFilePath, BitOR($FO_OVERWRITE, $FO_BINARY, $iCreatePath)))
 $bReturn = _GDIPlus_ImageSaveToFile($hImage, $sFilePath)
 _GDIPlus_ImageDispose($hImage)
-EndIf
-Else
-Local $dBytes = _Resource_GetAsBytes($sResNameOrID, $iResType, $iResLang, $sDllOrExePath)
-$iError = @error
-$iLength = @extended
-If $iError = 0 And $iLength > 0 Then
 Local $hFileOpen = FileOpen($sFilePath, BitOR($FO_OVERWRITE, $FO_BINARY, $iCreatePath))
 If $hFileOpen > -1 Then
 $bReturn = True
 FileWrite($hFileOpen, $dBytes)
 FileClose($hFileOpen)
-EndIf
-EndIf
-EndIf
 Return SetError($iError, $iLength, $bReturn)
-EndFunc
 Func _Resource_SetBitmapToCtrlID($iCtrlID, $hHBITMAP, $bResize = Default)
 Local $bReturn = __Resource_SetToCtrlID($iCtrlID, $hHBITMAP, $RT_BITMAP, False, $bResize)
 Return SetError(@error, @extended, $bReturn)
-EndFunc
 Func _Resource_SetCursorToCtrlID($iCtrlID, $hCursor, $bResize = Default)
 Local $bReturn = __Resource_SetToCtrlID($iCtrlID, $hCursor, $RT_CURSOR, False, $bResize)
-Return SetError(@error, @extended, $bReturn)
-EndFunc
 Func _Resource_SetIconToCtrlID($iCtrlID, $hIcon, $bResize = Default)
 Local $bReturn = __Resource_SetToCtrlID($iCtrlID, $hIcon, $RT_ICON, False, $bResize)
-Return SetError(@error, @extended, $bReturn)
-EndFunc
 Func _Resource_SetImageToCtrlID($iCtrlID, $hBitmap, $bResize = Default)
 Local $hHBITMAP = _GDIPlus_BitmapCreateHBITMAPFromBitmap($hBitmap)
-If @error Then
 $hHBITMAP = 0
-Else
-_GDIPlus_BitmapDispose($hBitmap)
-EndIf
-$hBitmap = 0
-Local $bReturn = __Resource_SetToCtrlID($iCtrlID, $hHBITMAP, $RT_BITMAP, False, $bResize)
-Return SetError(@error, @extended, $bReturn)
-EndFunc
 Func _Resource_SetToCtrlID($iCtrlID, $sResNameOrID, $iResType = $RT_RCDATA, $sDllOrExePath = Default, $bResize = Default)
-If $iResType = Default Then $iResType = $RT_RCDATA
 Local $aWinGetPos = 0, $bDestroy = True, $bReturn = False, $iError = 5, $iLength = 0, $vReturn = False
 Local $hWnd = 0
 __Resource_GetCtrlId($hWnd, $iCtrlID)
-Switch $iResType
 Case $RT_BITMAP, $RT_RCDATA
 If StringStripWS($sResNameOrID, $STR_STRIPALL) = '' Or String($sResNameOrID) = '0' Then
 $bReturn = __Resource_SetToCtrlID($iCtrlID, 0, $RT_BITMAP, True, False)
-$iError = @error
-Else
 Local $hHBITMAP = _Resource_GetAsBitmap($sResNameOrID, $iResType, $sDllOrExePath)
-$iError = @error
-$iLength = @extended
-If $iError = 0 And $iLength > 0 Then
 $bReturn = __Resource_SetToCtrlID($iCtrlID, $hHBITMAP, $RT_BITMAP, $bDestroy, $bResize)
-$iError = @error
 If $bReturn Then
 If $__WINVER >= 0x0600 Then
 $bReturn = _WinAPI_DeleteObject($hHBITMAP) > 0
 $vReturn = $bReturn
-Else
 __Resource_Storage(8, $sDllOrExePath, $hHBITMAP, $sResNameOrID, $iResType, Null, $iResType, $iLength)
 $vReturn = $hHBITMAP
-EndIf
-EndIf
-EndIf
-EndIf
 Case $RT_CURSOR
-If StringStripWS($sResNameOrID, $STR_STRIPALL) = '' Or String($sResNameOrID) = '0' Then
 $bReturn = __Resource_SetToCtrlID($iCtrlID, 0, $RT_CURSOR, True, False)
-$iError = @error
-Else
 $bDestroy = False
 Local $hCursor = 0
 If $bResize Then
@@ -2354,67 +1608,18 @@ $aPos[0] = $aWinGetPos[3]
 $aPos[1] = $aWinGetPos[2]
 If $aPos[0] = 0 And $aPos[1] = 0 Then
 GUICtrlSetImage($iCtrlID, $g_vMacro_J3611D687A2E2445F907F05FFD04B3A5DD611C3C6DAB446A4B196B389830541DFA8D8248BB4584FB0AE1CE6BDD0DCE952, 0)
-$aWinGetPos = WinGetPos($hWnd)
-If Not @error Then
-$aPos[0] = $aWinGetPos[3]
-$aPos[1] = $aWinGetPos[2]
-EndIf
-EndIf
 $hCursor = __Resource_Get($sResNameOrID, $RT_CURSOR, 0, $sDllOrExePath, $RT_CURSOR, $aPos)
-$iError = @error
-$iLength = @extended
-EndIf
-Else
 $hCursor = _Resource_GetAsCursor($sResNameOrID, $iResType, $sDllOrExePath)
-$iError = @error
-$iLength = @extended
-EndIf
-If $iError = 0 Then
 $bReturn = __Resource_SetToCtrlID($iCtrlID, $hCursor, $RT_CURSOR, $bDestroy, $bResize)
-EndIf
 $hCursor = 0
-$vReturn = $bReturn
-EndIf
 Case $RT_ICON
-If StringStripWS($sResNameOrID, $STR_STRIPALL) = '' Or String($sResNameOrID) = '0' Then
 $bReturn = __Resource_SetToCtrlID($iCtrlID, 0, $RT_ICON, True, False)
-$iError = @error
-Else
-$bDestroy = False
 Local $hIcon = 0
-If $bResize Then
-__Resource_GetCtrlId($hWnd, $iCtrlID)
-$aWinGetPos = WinGetPos($hWnd)
-If Not @error Then
-Local $aPos[2]
-$aPos[0] = $aWinGetPos[3]
-$aPos[1] = $aWinGetPos[2]
-If $aPos[0] = 0 And $aPos[1] = 0 Then
-GUICtrlSetImage($iCtrlID, $g_vMacro_J3611D687A2E2445F907F05FFD04B3A5DD611C3C6DAB446A4B196B389830541DFA8D8248BB4584FB0AE1CE6BDD0DCE952, 0)
-$aWinGetPos = WinGetPos($hWnd)
-If Not @error Then
-$aPos[0] = $aWinGetPos[3]
-$aPos[1] = $aWinGetPos[2]
-EndIf
-EndIf
 $hIcon = __Resource_Get($sResNameOrID, $RT_ICON, 0, $sDllOrExePath, $RT_ICON, $aPos)
-$iError = @error
-$iLength = @extended
-EndIf
-Else
 $hIcon = _Resource_GetAsIcon($sResNameOrID, $iResType, $sDllOrExePath)
-$iError = @error
-$iLength = @extended
-EndIf
-If $iError = 0 Then
 $bReturn = __Resource_SetToCtrlID($iCtrlID, $hIcon, $RT_ICON, $bDestroy, $bResize)
-EndIf
 $hIcon = 0
-$vReturn = $bReturn
-EndIf
-EndSwitch
 Return SetError($iError, $iLength, $vReturn)
-EndFunc
 Func __Resource_ConvertToBitmap($pResource, $iLength)
 Local $hData = _MemGlobalAlloc($iLength, $GMEM_MOVEABLE)
 Local $pData = _MemGlobalLock($hData)
@@ -2424,101 +1629,61 @@ Local $pStream = _WinAPI_CreateStreamOnHGlobal($hData)
 Local $hBitmap = _GDIPlus_BitmapCreateFromStream($pStream)
 _WinAPI_ReleaseStream($pStream)
 Return $hBitmap
-EndFunc
 Func __Resource_Destroy($pResource, $iResType)
 Local $bReturn = False
-Switch $iResType
 Case $RT_ANICURSOR, $RT_CURSOR
 $bReturn = _WinAPI_DeleteObject($pResource) > 0
 If Not $bReturn Then
 $bReturn = _WinAPI_DestroyCursor($pResource) > 0
-EndIf
-Case $RT_BITMAP
-$bReturn = _WinAPI_DeleteObject($pResource) > 0
 Case $RT_FONT
-$bReturn = True
-Case $RT_ICON
-$bReturn = _WinAPI_DeleteObject($pResource) > 0
-If Not $bReturn Then
 $bReturn = _WinAPI_DestroyIcon($pResource) > 0
-EndIf
 Case $RT_MENU
 $bReturn = _GUICtrlMenu_DestroyMenu($pResource) > 0
-Case $RT_STRING
-$bReturn = True
 Case 1000
 $bReturn = _GDIPlus_BitmapDispose($pResource) > 0
 Case 1001
 $bReturn = _WinAPI_DeleteEnhMetaFile($pResource) > 0
 Case 1002
 $bReturn = _WinAPI_RemoveFontMemResourceEx($pResource) > 0
-Case Else
-$bReturn = True
-EndSwitch
 If Not IsBool($bReturn) Then $bReturn = $bReturn > 0
-Return $bReturn
-EndFunc
 Func __Resource_Get($sResNameOrID, $iResType = $RT_RCDATA, $iResLang = Default, $sDllOrExePath = Default, $iCastResType = Default, $aPos = Null)
 If $iResType = $RT_RCDATA And StringStripWS($sResNameOrID, $STR_STRIPALL) = '' Then Return SetError(4, 0, Null)
 If $iCastResType = Default Then $iCastResType = $iResType
-If $iResLang = Default Then $iResLang = 0
-If $iResType = Default Then $iResType = $RT_RCDATA
 Local $iError = 0, $iLength = 0, $vResource = __Resource_Storage(11, $sDllOrExePath, Null, $sResNameOrID, $iResType, $iResLang, $iCastResType, Null)
-$iLength = @extended
 If $vResource Then
 Return SetError($iError, $iLength, $vResource)
-EndIf
 Local $bIsInternal = False
-Local $hInstance = __Resource_LoadModule($sDllOrExePath, $bIsInternal)
 If Not $hInstance Then Return SetError(11, 0, 0)
 Local $hResource = (($iResLang <> 0) ? _WinAPI_FindResourceEx($hInstance, $iResType, $sResNameOrID, $iResLang) : _WinAPI_FindResource($hInstance, $iResType, $sResNameOrID))
 If @error <> 0 Then $iError = 1
-If $iError = 0 Then
 If $aPos = Null Then
 Local $aTemp[2] = [0, 0]
 $aPos = $aTemp
 $aTemp = 0
 $aPos[0] = 0
 $aPos[1] = 0
-EndIf
 $iLength = _WinAPI_SizeOfResource($hInstance, $hResource)
 Switch $iCastResType
-Case $RT_ANICURSOR, $RT_CURSOR
 $vResource = _WinAPI_LoadImage($hInstance, $sResNameOrID, $IMAGE_CURSOR, $aPos[1], $aPos[0], $LR_DEFAULTCOLOR)
 If @error <> 0 Or Not $vResource Then $iError = 8
-Case $RT_BITMAP
 $vResource = _WinAPI_LoadImage($hInstance, $sResNameOrID, $IMAGE_BITMAP, $aPos[1], $aPos[0], $LR_DEFAULTCOLOR)
 If @error <> 0 Or Not $vResource Then $iError = 7
-Case $RT_ICON
 $vResource = _WinAPI_LoadImage($hInstance, $sResNameOrID, $IMAGE_ICON, $aPos[1], $aPos[0], $LR_DEFAULTCOLOR)
 If @error <> 0 Or Not $vResource Then $iError = 9
-Case $RT_STRING
 $vResource = _WinAPI_LoadString($hInstance, $sResNameOrID)
-$iLength = @extended
 If @error <> 0 Then $iError = 12
-Case Else
 Local $hData = _WinAPI_LoadResource($hInstance, $hResource)
 $vResource = _WinAPI_LockResource($hData)
 $hData = 0
 If Not $vResource Then $iError = 6
-EndSwitch
-If $iError = 0 Then
 __Resource_Storage(8, $sDllOrExePath, $vResource, $sResNameOrID, $iResType, $iResLang, $iCastResType, $iLength)
-Else
 $vResource = Null
-EndIf
-EndIf
-__Resource_UnloadModule($hInstance, $bIsInternal)
-Return SetError($iError, $iLength, $vResource)
-EndFunc
 Func __Resource_GetCtrlId(ByRef $hWnd, ByRef $iCtrlID)
 If $iCtrlID = Default Or $iCtrlID <= 0 Or Not IsInt($iCtrlID) Then $iCtrlID = -1
 $hWnd = GUICtrlGetHandle($iCtrlID)
 If $hWnd And $iCtrlID = -1 Then
 $iCtrlID = _WinAPI_GetDlgCtrlID($hWnd)
-EndIf
 Return True
-EndFunc
 Func __Resource_GetLastImage($iCtrlID, $hResource, $sClassName, ByRef $hPrevious, ByRef $iPreviousResType)
 $hPrevious = 0
 $iPreviousResType = 0
@@ -2534,104 +1699,56 @@ Local $aStatic = [[$IMAGE_BITMAP, $RT_BITMAP], [$IMAGE_CURSOR, $RT_CURSOR], [$IM
 $aGetImage = $aStatic
 $aStatic = 0
 $iMsg_Get = 0x0173
-Case Else
 $bReturn = False
-EndSwitch
-If $bReturn Then
 For $i = 0 To UBound($aGetImage) - 1
 $hPrevious = GUICtrlSendMsg($iCtrlID, $iMsg_Get, $aGetImage[$i][0], 0)
 If $hPrevious <> 0 And $hPrevious <> $hResource Then
 $iPreviousResType = $aGetImage[$i][1]
 ExitLoop
-EndIf
 Next
-EndIf
-Return $bReturn
-EndFunc
 Func __Resource_LoadModule(ByRef $sDllOrExePath, ByRef $bIsInternal)
 $bIsInternal = ($sDllOrExePath = Default Or $sDllOrExePath = -1)
 If Not $bIsInternal And Not StringRegExp($sDllOrExePath, '\.(?:cpl|dll|exe)$') Then
 $bIsInternal = True
-EndIf
 Return ($bIsInternal ? _WinAPI_GetModuleHandle(Null) : _WinAPI_LoadLibraryEx($sDllOrExePath, $LOAD_LIBRARY_AS_DATAFILE))
-EndFunc
 Func __Resource_UnloadModule(ByRef $hInstance, ByRef $bIsInternal)
 Local $bReturn = True
 If $bIsInternal And $hInstance Then
 $bReturn = _WinAPI_FreeLibrary($hInstance)
-EndIf
-Return $bReturn
-EndFunc
 Func __Resource_SetToCtrlID($iCtrlID, $hResource, $iResType, $bDestroy, $bResize)
 Local $bReturn = False, $iError = 13
-Local $hWnd = 0
-__Resource_GetCtrlId($hWnd, $iCtrlID)
 $iError = 2
 If $hWnd And $iCtrlID > 0 Then
 Local $aStyles[0]
-$bReturn = True
 $iError = 0
 Local $iMsg_Set = 0, $iStyle = 0, $wParam = 0
 Local $sClassName = _WinAPI_GetClassName($iCtrlID)
-Switch $sClassName
-Case 'Button'
 Local $aButtonStyles = [$BS_BITMAP, $BS_ICON]
 $aStyles = $aButtonStyles
 $aButtonStyles = 0
 $iMsg_Set = $BM_SETIMAGE
-Switch $iResType
-Case $RT_BITMAP
 $iStyle = $BS_BITMAP
 $wParam = $IMAGE_BITMAP
 $bResize = False
-Case $RT_ICON
 $iStyle = $BS_ICON
 $wParam = $IMAGE_ICON
-$bResize = False
-Case Else
-$bReturn = False
 $iError = 5
-EndSwitch
-Case 'Static'
 Local $aStaticStyles = [$SS_BITMAP, $SS_ICON, 0xF]
 $aStyles = $aStaticStyles
 $aStaticStyles = 0
 $iMsg_Set = 0x0172
-Switch $iResType
-Case $RT_BITMAP
 $iStyle = $SS_BITMAP
-$wParam = $IMAGE_BITMAP
-Case $RT_CURSOR
 $iStyle = $SS_ICON
 $wParam = $IMAGE_CURSOR
-Case 1001
 $iStyle = 0xF
 $wParam = $IMAGE_ENHMETAFILE
-Case $RT_ICON
-$iStyle = $SS_ICON
-$wParam = $IMAGE_ICON
-Case Else
-$bReturn = False
-$iError = 5
-EndSwitch
-Case Else
-$bReturn = False
 $iError = 3
-EndSwitch
-If $bReturn Then
 Local $iCurrentStyle = _WinAPI_GetWindowLong($hWnd, $GWL_STYLE)
-If Not @error Then
 For $i = 0 To UBound($aStyles) - 1
 If BitAND($aStyles[$i], $iCurrentStyle) Then
 $iCurrentStyle = BitXOR($iCurrentStyle, $aStyles[$i])
-EndIf
-Next
-If $bResize Then
 _WinAPI_SetWindowLong($hWnd, $GWL_STYLE, BitOR($iCurrentStyle, 0x40, $iStyle))
-Else
 _WinAPI_SetWindowLong($hWnd, $GWL_STYLE, BitOR($iCurrentStyle, $iStyle))
-EndIf
-EndIf
 Local $hPrevious = 0, $iPreviousResType = 0
 __Resource_GetLastImage($iCtrlID, $hResource, $sClassName, $hPrevious, $iPreviousResType)
 GUICtrlSendMsg($iCtrlID, $iMsg_Set, $wParam, $hResource)
@@ -2641,20 +1758,12 @@ __Resource_Storage(9, Null, $hPrevious, Null, Null, Null, Null, Null)
 If $bDestroy = Default Or $bDestroy Then
 __Resource_Destroy($hResource, $iResType)
 __Resource_Storage(9, Null, $hResource, Null, Null, Null, Null, Null)
-EndIf
 _WinAPI_InvalidateRect($hWnd, 0, True)
 _WinAPI_UpdateWindow($hWnd)
-Else
-$bReturn = False
 $iError = 13
-EndIf
-EndIf
-EndIf
 Return SetError($iError, 0, $bReturn)
-EndFunc
 Func __Resource_Storage($iAction, $sDllOrExePath, $pResource, $sResNameOrID, $iResType, $iResLang, $iCastResType, $iLength)
 Local Static $aStorage[1][7]
-Local $bReturn = False
 Switch $iAction
 Case 8
 If Not ($aStorage[0][0] = 'CA37F1E6-04D1-11E4-B340-4B0AE3E253B6') Then
@@ -2662,14 +1771,11 @@ $aStorage[0][0] = 'CA37F1E6-04D1-11E4-B340-4B0AE3E253B6'
 $aStorage[0][1] = 0
 $aStorage[0][2] = 0
 $aStorage[0][3] = 1
-EndIf
 If Not ($pResource = Null) And Not __Resource_Storage(11, $sDllOrExePath, Null, $sResNameOrID, $iResType, $iResLang, $iCastResType, Null) Then
-$bReturn = True
 $aStorage[0][1] += 1
 If $aStorage[0][1] >= $aStorage[0][3] Then
 $aStorage[0][3] = Ceiling($aStorage[0][1] * 1.3)
 ReDim $aStorage[$aStorage[0][3]][7]
-EndIf
 $aStorage[$aStorage[0][1]][0] = $sDllOrExePath
 $aStorage[$aStorage[0][1]][3] = $pResource
 $aStorage[$aStorage[0][1]][4] = $iResLang
@@ -2677,72 +1783,41 @@ $aStorage[$aStorage[0][1]][5] = $sResNameOrID
 $aStorage[$aStorage[0][1]][6] = $iResType
 $aStorage[$aStorage[0][1]][1] = $iCastResType
 $aStorage[$aStorage[0][1]][2] = $iLength
-EndIf
 Case 9
 Local $iDestoryCount = 0, $iDestoryed = 0
 For $i = 1 To $aStorage[0][1]
 If Not ($aStorage[$i][3] = Null) Then
 If $aStorage[$i][3] = $pResource Or ($aStorage[$i][0] = $sDllOrExePath And $aStorage[$i][5] = $sResNameOrID And $aStorage[$i][6] = $iResType And $aStorage[$i][1] = $iCastResType) Then
 $bReturn = __Resource_Storage_Destroy($aStorage, $i)
-If $bReturn Then
 $iDestoryed += 1
 $aStorage[0][2] += 1
-EndIf
 $iDestoryCount += 1
-EndIf
-EndIf
-Next
 $bReturn = $iDestoryCount = $iDestoryed
 If $aStorage[0][2] >= 20 Then
 Local $iIndex = 0
-For $i = 1 To $aStorage[0][1]
-If Not ($aStorage[$i][3] = Null) Then
 $iIndex += 1
 For $j = 0 To 7 - 1
 $aStorage[$iIndex][$j] = $aStorage[$i][$j]
-Next
-EndIf
-Next
 $aStorage[0][1] = $iIndex
-$aStorage[0][2] = 0
 $aStorage[0][3] = $iIndex + 1
-ReDim $aStorage[$aStorage[0][3]][7]
-EndIf
 Case 10
-$bReturn = True
-For $i = 1 To $aStorage[0][1]
 __Resource_Storage_Destroy($aStorage, $i)
-Next
-$aStorage[0][1] = 0
-$aStorage[0][2] = 0
-$aStorage[0][3] = 1
-ReDim $aStorage[$aStorage[0][3]][7]
 Case 11
 Local $iExtended = 0, $pReturn = Null
 Return SetExtended($iExtended, $pReturn)
-EndSwitch
-Return $bReturn
-EndFunc
 Func __Resource_Storage_Destroy(ByRef $aStorage, $iIndex)
-Local $bReturn = False
 If Not ($aStorage[$iIndex][3] = Null) Then
 $bReturn = __Resource_Destroy($aStorage[$iIndex][3], $aStorage[$iIndex][6])
-If $bReturn Then
 $aStorage[$iIndex][3] = Null
 $aStorage[$iIndex][4] = Null
 $aStorage[$iIndex][5] = Null
 $aStorage[$iIndex][6] = Null
-EndIf
-EndIf
-Return $bReturn
-EndFunc
 __CodeExtractor_ADD_WRAPPER_INFORMATIONS()
 Global Const $__CODEEXTRACTOR_CONST_REPLACE_TEXT 	= "[##%R!E)P]L[A(C!E%##]"
 Global Const $__OBJECT_ERROR_MANAGER_NO_ERROR_IN_OBJECT__ = "No Error in Object"
 Global Const $__OBJECT_ERROR_MANAGER_CONST_REPLACE_TEXT = "[##!R§E$P%L[A%C§E!##]"
 Func __CodeExtractor_ADD_WRAPPER_INFORMATIONS()
 	#AutoIt3Wrapper_Res_File_Add = $test
-EndFunc
 	Func _CodeExtractor_SaveSourceToFile($oSelf, $p, $f, $d=1)
 		If Not (StringRight($p,1)="\") Then $p &= "\"
 		If ($d = 1) Then FileDelete($p&$f)
@@ -2754,28 +1829,20 @@ EndFunc
 		If Not @Compiled Then Return $oSelf._setError("To extract the code you have to compile the script first / Otherwise there is nothing to extract.", -1, -1)
 		Local $g =  _GetSavedSource(Default)
 		Return $oSelf.setSource($g)
-	EndFunc
 	Func _CodeExtractor_SetCurrentFileSavePath($oSelf, $p ) ;entire path
 		$oSelf._CodeExtractFilePath = $p
-	EndFunc
 	Func _CodeExtractor_GetCurrentFileSavePath($oSelf)
 		Return $oSelf._CodeExtractFilePath
-	EndFunc
 	Func __CodeExtractor_SetFileName($oSelf, $n )
 		$oSelf._FileName = $n
-	EndFunc
 	Func __CodeExtractor_GetFileName($oSelf)
 		Return $oSelf._FileName
-	EndFunc
 	Func _CodeExtractor_SetCurrentSource($oSelf, $s )
 		$oSelf._SourceCode = $s
-	EndFunc
 	Func _CodeExtractor_GetCurrentSource($oSelf)
 		Return $oSelf._SourceCode
-	EndFunc
 	Func _CodeExtractor_destroyAll($oSelf)
 		Return _Resource_DestroyAll()
-	EndFunc
 	Func _CodeExtractor_SetError($oSelf,$t,$er=@error,$ex=@extended)
 		If ($oSelf._errorCount = "") Then $oSelf._errorCount = 0
 		If (($er <> 0) Or ($ex <> 0)) Then $oSelf._incError()
@@ -2783,15 +1850,12 @@ EndFunc
 		$oSelf._errorNum = $er
 		$oSelf._errorExt = $ex
 		Return $t
-	EndFunc
 	Func _CodeExtractor_GetError($oSelf, $a="", $e= "")
 		Local $Error
 		$Error = "!+[NO ERROR]" & @CRLF & $__OBJECT_ERROR_MANAGER_CONST_REPLACE_TEXT & @CRLF & "-	text:		" & $__OBJECT_ERROR_MANAGER_NO_ERROR_IN_OBJECT__ & @CRLF & "!+[----------]" & @CRLF & @CRLF
 		If (($e <> "") And ($a <> "")) Then
 			$Error = StringReplace( $Error, $__OBJECT_ERROR_MANAGER_CONST_REPLACE_TEXT, "-	" & StringLeft($a,10) & ":	[" & $e & "]", 0, 1)
-		Else
 			$Error = StringReplace( $Error, $__OBJECT_ERROR_MANAGER_CONST_REPLACE_TEXT, "", 0, 1)
-		EndIf
 		If (($oSelf._getErrorNum = "") And ($oSelf._getErrorText() = "") And ($oSelf._getErrorExt() = "")) Then Return $Error
 		$Error = "!+[LAST ERROR]" & @CRLF & _
 							$__OBJECT_ERROR_MANAGER_CONST_REPLACE_TEXT & @CRLF & _
@@ -2801,26 +1865,24 @@ EndFunc
 							"-	error count:	[" 	& $oSelf._errorCount & "]"	&	@CRLF & _
 							"!+[----------]" & @CRLF & @CRLF
 		Local $x
-		If (($e <> "") And ($a <> "")) Then
 			$Error = StringReplace( $Error, $__OBJECT_ERROR_MANAGER_CONST_REPLACE_TEXT, "-	" & $a & ":	[" & $e & "]", 0, 1)
-		Else
-			$Error = StringReplace( $Error, $__OBJECT_ERROR_MANAGER_CONST_REPLACE_TEXT, "", 0, 1)
-		EndIf
 		Return $Error
-	EndFunc
 	Func _CodeExtractor_GetErrorText($oSelf)
 		Return $oSelf._errorText
-	EndFunc
 	Func _CodeExtractor_GetErrorNum($oSelf)
 		Return $oSelf._errorNum
-	EndFunc
 	Func _CodeExtractor_GetErrorExt($oSelf)
 		Return $oSelf._errorExt
-	EndFunc
 	Func _CodeExtractor_IncError($oSelf)
 		$oSelf._errorCount = $oSelf._errorCount + 1
 		Return
-	EndFunc
+#include "APIDiagConstants.au3"
+#include "StringConstants.au3"
+#include "WinAPIFiles.au3"
+#include "WinAPIHObj.au3"
+#include "WinAPIMem.au3"
+#include "WinAPIShellEx.au3"
+#include "WinAPITheme.au3"
 #Region Global Variables and Constants
 Global $__g_hFRDlg = 0, $__g_hFRDll = 0
 #EndRegion Global Variables and Constants
@@ -2830,7 +1892,6 @@ Global $__g_hFRDlg = 0, $__g_hFRDll = 0
 Func _WinAPI_DisplayStruct($tStruct, $sStruct = '', $sTitle = '', $iItem = 0, $iSubItem = 0, $iFlags = 0, $bTop = True, $hParent = 0)
 	If Not StringStripWS($sTitle, $STR_STRIPLEADING + $STR_STRIPTRAILING) Then
 		$sTitle = 'Structure: ListView Display'
-	EndIf
 	$sStruct = StringRegExpReplace(StringStripWS($sStruct, $STR_STRIPLEADING + $STR_STRIPTRAILING + $STR_STRIPSPACES), ';+\Z', '')
 	Local $pData
 	If IsDllStruct($tStruct) Then
@@ -2838,11 +1899,8 @@ Func _WinAPI_DisplayStruct($tStruct, $sStruct = '', $sTitle = '', $iItem = 0, $i
 		If Not $sStruct Then
 			$sStruct = 'byte[' & DllStructGetSize($tStruct) & ']'
 			$iFlags = BitOR($iFlags, 64)
-		EndIf
-	Else
 		$pData = $tStruct
 		If Not $sStruct Then Return SetError(10, 0, 0)
-	EndIf
 	Local $tData = DllStructCreate($sStruct, $pData)
 	Local $iData = DllStructGetSize($tData)
 	If (Not BitAND($iFlags, 512)) And (_WinAPI_IsBadReadPtr($pData, $iData)) Then
@@ -2851,25 +1909,20 @@ Func _WinAPI_DisplayStruct($tStruct, $sStruct = '', $sTitle = '', $iItem = 0, $i
 					@CRLF & @CRLF & Ptr($pData) & ' - ' & Ptr($pData + $iData - 1) & _
 					@CRLF & @CRLF & 'Press OK to exit.')
 			Exit -1073741819
-		EndIf
 		Return SetError(15, 0, 0)
-	EndIf
 	Local $sOpt1 = Opt('GUIDataSeparatorChar', '|')
 	Local $iOpt2 = Opt('GUIOnEventMode', 0)
 	Local $iOpt3 = Opt('GUICloseOnESC', 1)
 	If $hParent Then
 		GUISetState(@SW_DISABLE, $hParent)
-	EndIf
 	Local $iStyle = 0x00000001
 	If $bTop Then
 		$iStyle = BitOR($iStyle, 0x00000008)
-	EndIf
 	$__g_hFRDlg = GUICreate($sTitle, 570, 620, -1, -1, 0x80C70000, $iStyle, $hParent)
 	Local $idLV = GUICtrlCreateListView('#|Member|Offset|Type|Size|Value', 0, 0, 570, 620, 0x0000800D, (($__WINVER < 0x0600) ? 0x00010031 : 0x00010030))
 	Local $hLV = GUICtrlGetHandle($idLV)
 	If $__WINVER >= 0x0600 Then
 		_WinAPI_SetWindowTheme($hLV, 'Explorer')
-	EndIf
 	GUICtrlSetResizing(-1, 0x0066)
 	GUICtrlSetFont(-1, 8.5, 400, 0, 'Tahoma')
 	GUICtrlSetState(-1, 0x0100)
@@ -2879,7 +1932,6 @@ Func _WinAPI_DisplayStruct($tStruct, $sStruct = '', $sTitle = '', $iItem = 0, $i
 		$aVal[$aVal[0]] = ''
 		GUICtrlCreateListViewItem('-|-|' & $pData & '|<struct>|0|-', $idLV)
 		GUICtrlSetColor(-1, 0x9C9C9C)
-	EndIf
 	Local $aData = StringSplit($sStruct, ';')
 	Local $aItem, $vItem, $sItem, $iMode, $iIndex, $iCount = 0, $iPrev = 0
 	Local $aSel[2] = [0, 0]
@@ -2917,8 +1969,6 @@ Func _WinAPI_DisplayStruct($tStruct, $sStruct = '', $sTitle = '', $iItem = 0, $i
 		Switch $aItem[1]
 			Case 'ALIGN', 'STRUCT', 'ENDSTRUCT'
 				ContinueLoop
-			Case Else
-		EndSwitch
 		$iCount += 1
 		$iMode = 1
 		$sItem = $iCount & '|'
@@ -2927,31 +1977,19 @@ Func _WinAPI_DisplayStruct($tStruct, $sStruct = '', $sTitle = '', $iItem = 0, $i
 			$sItem &= $vItem & '|'
 			If (Not BitAND($iFlags, 16)) And (Not StringCompare(StringRegExpReplace($vItem, '[0-9]+\Z', ''), 'RESERVED')) Then
 				$iMode = 0
-			EndIf
 			If Not IsString($iItem) Then
 				$vItem = $iCount
-			EndIf
 			$iIndex = 2
-		Else
 			If Not BitAND($iFlags, 4) Then
 				$sItem &= '<unnamed>|'
-			Else
 				$sItem &= '|'
-			EndIf
-			If Not IsString($iItem) Then
-				$vItem = $iCount
-			Else
 				$vItem = 0
-			EndIf
 			$iIndex = 1
-		EndIf
 		If (Not $aSel[0]) And ($vItem) And ($iItem) And ($vItem = $iItem) Then
 			$aSel[0] = $iCount
-		EndIf
 		Local $iOffset = Number(DllStructGetPtr($tData, $iCount) - $pData)
 		$iIndex = StringRegExp($aItem[$iIndex], '\[(\d+)\]', $STR_REGEXPARRAYGLOBALMATCH)
 		Local $iSize
-		Do
 			ReDim $aItem[3]
 			$vItem = StringRegExpReplace($aItem[1], '\[.*\Z', '')
 			For $j = 0 To UBound($aType) - 1
@@ -2960,8 +1998,6 @@ Func _WinAPI_DisplayStruct($tStruct, $sStruct = '', $sTitle = '', $iItem = 0, $i
 					$aItem[2] = $aType[$j][1]
 					$iSize = $aItem[2]
 					ExitLoop 2
-				EndIf
-			Next
 			$aItem[1] = '?'
 			$aItem[2] = '?'
 			$iSize = 0
@@ -2970,45 +2006,32 @@ Func _WinAPI_DisplayStruct($tStruct, $sStruct = '', $sTitle = '', $iItem = 0, $i
 		If (IsArray($iIndex)) And ($iIndex[0] > '1') Then
 			If $iSize Then
 				$aItem[2] = $aItem[2] * $iIndex[0]
-			EndIf
 			Do
 				Switch $aItem[1]
 					Case 'BYTE', 'BOOLEAN'
 						If Not BitAND($iFlags, 64) Then
 							ContinueCase
-						EndIf
 					Case 'CHAR', 'WCHAR'
 						$sItem &= $aItem[1] & '[' & $iIndex[0] & ']|' & $aItem[2] & '|'
 						$iIndex = 0
 						ExitLoop
-					Case Else
-				EndSwitch
 				If ($iSize) And ($iMode) Then
 					$sItem &= $aItem[1] & '[' & $iIndex[0] & ']|' & $aItem[2] & ' (' & $iSize & ')' & '|'
-				Else
 					$sItem &= $aItem[1] & '[' & $iIndex[0] & ']|' & $aItem[2] & '|'
-				EndIf
 				If $iMode Then
 					$iIndex = $iIndex[0]
-				Else
 					$iIndex = 0
-				EndIf
 			Until 1
-		Else
 			$sItem &= $aItem[1] & '|' & $aItem[2] & '|'
 			$iIndex = 0
-		EndIf
 		If (Not BitAND($iFlags, 2)) And ($iPrev) And ($iOffset > $iPrev) Then
 			__Inc($aVal)
 			$aVal[$aVal[0]] = ''
 			GUICtrlCreateListViewItem('-|-|-|<alignment>|' & ($iOffset - $iPrev) & '|-', $idLV)
 			GUICtrlSetColor(-1, 0xFF0000)
-		EndIf
 		If $iSize Then
 			$iPrev = $iOffset + $aItem[2]
-		Else
 			$iPrev = 0
-		EndIf
 		Local $idLVItem, $idInit
 		If $iIndex Then
 			Local $sPattern = '[%0' & StringLen($iIndex) & 'd] '
@@ -3017,118 +2040,69 @@ Func _WinAPI_DisplayStruct($tStruct, $sStruct = '', $sTitle = '', $iItem = 0, $i
 				$aVal[$aVal[0]] = DllStructGetData($tData, $iCount, $j)
 				If BitAND($iFlags, 128) Then
 					$aVal[$aVal[0]] = __WinAPIDiag_Hex($aVal[$aVal[0]], $aItem[1])
-				EndIf
 				$idLVItem = GUICtrlCreateListViewItem($sItem & StringFormat($sPattern, $j) & $aVal[$aVal[0]], $idLV)
 				If ($aSel[0] = $iCount) And (Not $aSel[1]) Then
 					If ($iSubItem < 1) Or ($iSubItem > $iIndex) Or ($iSubItem = $j) Then
 						$aSel[1] = $idLVItem
-					EndIf
-				EndIf
 				If (Not $idInit) And ($iCount = 1) Then
 					$idInit = $idLVItem
-				EndIf
 				If Not BitAND($iFlags, 8) Then
 					GUICtrlSetBkColor(-1, 0xF5F5F5)
-				EndIf
 				If $iSize Then
 					$sItem = '-|-|' & ($iOffset + $j * $iSize) & '|-|-|'
-				Else
 					GUICtrlSetColor(-1, 0xFF8800)
 					$sItem = '-|-|-|-|-|'
-				EndIf
-			Next
-		Else
-			__Inc($aVal)
 			If $iMode Then
 				$aVal[$aVal[0]] = DllStructGetData($tData, $iCount)
-				If BitAND($iFlags, 128) Then
-					$aVal[$aVal[0]] = __WinAPIDiag_Hex($aVal[$aVal[0]], $aItem[1])
-				EndIf
 				$idLVItem = GUICtrlCreateListViewItem($sItem & $aVal[$aVal[0]], $idLV)
-			Else
 				$aVal[$aVal[0]] = ''
 				$idLVItem = GUICtrlCreateListViewItem($sItem & '-', $idLV)
-			EndIf
 			If ($aSel[0] = $iCount) And (Not $aSel[1]) Then
 				$aSel[1] = $idLVItem
-			EndIf
 			If (Not $idInit) And ($iCount = 1) Then
 				$idInit = $idLVItem
-			EndIf
 			If Not $iSize Then
 				GUICtrlSetColor(-1, 0xFF8800)
-			EndIf
-		EndIf
 		If (Not BitAND($iFlags, 2)) And (Not $iSize) Then
-			__Inc($aVal)
-			$aVal[$aVal[0]] = ''
 			GUICtrlCreateListViewItem('-|-|-|<alignment>|?|-', $idLV)
 			GUICtrlSetColor(-1, 0xFF8800)
-		EndIf
-	Next
 	If (Not BitAND($iFlags, 2)) And ($iPrev) And ($iData > $iPrev) Then
-		__Inc($aVal)
-		$aVal[$aVal[0]] = ''
 		GUICtrlCreateListViewItem('-|-|-|<alignment>|' & ($iData - $iPrev) & '|-', $idLV)
 		GUICtrlSetColor(-1, 0xFF0000)
-	EndIf
-	If Not BitAND($iFlags, 1) Then
-		__Inc($aVal)
-		$aVal[$aVal[0]] = ''
 		GUICtrlCreateListViewItem('-|-|' & ($pData + $iData - 0) & '|<endstruct>|' & $iData & '|-', $idLV)
-		GUICtrlSetColor(-1, 0x9C9C9C)
-	EndIf
 	If $aSel[1] Then
 		GUICtrlSetState($aSel[1], 0x0100)
-	Else
 		GUICtrlSetState($idInit, 0x0100)
-	EndIf
 	Local $idDummy = GUICtrlCreateDummy()
 	Local $aWidth[6] = [30, 130, 76, 100, 50, 167]
 	For $i = 0 To UBound($aWidth) - 1
 		GUICtrlSendMsg($idLV, 0x101E, $i, $aWidth[$i])
-	Next
 	Local $tParam = DllStructCreate('ptr;uint')
 	DllStructSetData($tParam, 1, $hLV)
 	If Not BitAND($iFlags, 32) Then
 		DllStructSetData($tParam, 2, $idDummy)
-	Else
 		DllStructSetData($tParam, 2, 0)
-	EndIf
 	$__g_hFRDll = DllCallbackRegister('__DlgSubclassProc', 'lresult', 'hwnd;uint;wparam;lparam;uint;ptr')
 	Local $pDll = DllCallbackGetPtr($__g_hFRDll)
 	If _WinAPI_SetWindowSubclass($__g_hFRDlg, $pDll, 1000, DllStructGetPtr($tParam)) Then
 		OnAutoItExitRegister('__WinAPIDiag_Quit')
-	Else
 		DllCallbackFree($__g_hFRDll)
 		$__g_hFRDll = 0
-	EndIf
 	GUISetState()
-	While 1
 		Switch GUIGetMsg()
-			Case 0
-				ContinueLoop
 			Case -3
-				ExitLoop
 			Case $idDummy
 				$iIndex = GUICtrlRead($idDummy)
 				If ($iIndex >= 0) And ($iIndex < $aVal[0]) Then
 					ClipPut($aVal[$iIndex + 1])
-				EndIf
-		EndSwitch
-	WEnd
 	If $__g_hFRDll Then
 		OnAutoItExitUnRegister('__WinAPIDiag_Quit')
-	EndIf
 	__WinAPIDiag_Quit()
-	If $hParent Then
 		GUISetState(@SW_ENABLE, $hParent)
-	EndIf
 	GUIDelete($__g_hFRDlg)
 	Opt('GUIDataSeparatorChar', $sOpt1)
 	Opt('GUIOnEventMode', $iOpt2)
 	Opt('GUICloseOnESC', $iOpt3)
-	Return 1
 EndFunc   ;==>_WinAPI_DisplayStruct
 Func _WinAPI_EnumDllProc($sFilePath, $sMask = '', $iFlags = 0)
 	If Not __DLL('dbghelp.dll') Then Return SetError(103, 0, 0)
@@ -3139,43 +2113,28 @@ Func _WinAPI_EnumDllProc($sFilePath, $sMask = '', $iFlags = 0)
 	If _WinAPI_IsWow64Process() Then
 		$aRet = DllCall('kernel32.dll', 'bool', 'Wow64DisableWow64FsRedirection', 'ptr*', 0)
 		If Not @error And $aRet[0] Then $vWOW64 = $aRet[1]
-	EndIf
 	Do
 		$aRet = DllCall('kernel32.dll', 'dword', 'SearchPathW', 'ptr', 0, 'wstr', $sFilePath, 'ptr', 0, 'dword', 4096, 'wstr', '', 'ptr', 0)
 		If @error Or Not $aRet[0] Then
 			$iError = @error + 10
-			ExitLoop
-		EndIf
 		$__g_vExt = $aRet[5]
 		$iPE = _WinAPI_GetPEType($__g_vExt)
 		Switch $iPE
 			Case 0x014C
 			Case 0x0200, 0x8664
-			Case Else
 				$iError = @error + 20
-				ExitLoop
-		EndSwitch
 		$hLibrary = _WinAPI_LoadLibraryEx($__g_vExt, 0x00000003)
 		If Not $hLibrary Then
 			$iError = @error + 30
-			ExitLoop
-		EndIf
 		If $vVer >= 0x0600 Then
 			__EnumDllProcW($hLibrary, $sMask, $iFlags)
-		Else
 			__EnumDllProcA($hLibrary, $sMask, $iFlags)
-		EndIf
-		If @error Then
 			$iError = @error + 40
-			ExitLoop
-		EndIf
 	Until 1
 	If $hLibrary Then
 		_WinAPI_FreeLibrary($hLibrary)
-	EndIf
 	If Not ($vWOW64 = Default) Then
 		DllCall('kernel32.dll', 'bool', 'Wow64RevertWow64FsRedirection', 'ptr*', $vWOW64)
-	EndIf
 	Return SetError($iError, $iPE, $__g_vEnum)
 EndFunc   ;==>_WinAPI_EnumDllProc
 Func _WinAPI_GetApplicationRestartSettings($iPID = 0)
@@ -3186,12 +2145,10 @@ Func _WinAPI_GetApplicationRestartSettings($iPID = 0)
 	Local $aRet = DllCall('kernel32.dll', 'uint', 'GetApplicationRestartSettings', 'handle', $hProcess[0], 'wstr', '', _
 			'dword*', 4096, 'dword*', 0)
 	Local $iError, $iExtended = @extended
-	If @error Then
 		$iError = @error
 	ElseIf $aRet[0] Then
 		$iError = 10
 		$iExtended = $aRet[0]
-	EndIf
 	DllCall("kernel32.dll", "bool", "CloseHandle", "handle", $hProcess[0])
 	If $iError Then Return SetError($iError, $iExtended, 0)
 	Local $aResult[2]
@@ -3211,10 +2168,8 @@ EndFunc   ;==>_WinAPI_FatalExit
 Func _WinAPI_IsInternetConnected()
 	If Not __DLL('connect.dll') Then Return SetError(103, 0, 0)
 	Local $aRet = DllCall('connect.dll', 'long', 'IsInternetConnected')
-	If @error Then Return SetError(@error, @extended, 0)
 	If Not ($aRet[0] = 0 Or $aRet[0] = 1) Then ; not S_OK nor S_FALSE
 		Return SetError(10, $aRet[0], False)
-	EndIf
 	Return Not $aRet[0]
 EndFunc   ;==>_WinAPI_IsInternetConnected
 Func _WinAPI_IsNetworkAlive()
@@ -3227,19 +2182,13 @@ Func _WinAPI_IsNetworkAlive()
 EndFunc   ;==>_WinAPI_IsNetworkAlive
 Func _WinAPI_NtStatusToDosError($iStatus)
 	Local $aRet = DllCall('ntdll.dll', 'ulong', 'RtlNtStatusToDosError', 'long', $iStatus)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_NtStatusToDosError
 Func _WinAPI_RegisterApplicationRestart($iFlags = 0, $sCmd = '')
 	Local $aRet = DllCall('kernel32.dll', 'long', 'RegisterApplicationRestart', 'wstr', $sCmd, 'dword', $iFlags)
-	If @error Then Return SetError(@error, @extended, 0)
 	If $aRet[0] Then Return SetError(10, $aRet[0], 0)
-	Return 1
 EndFunc   ;==>_WinAPI_RegisterApplicationRestart
 Func _WinAPI_SetErrorMode($iMode)
 	Local $aRet = DllCall('kernel32.dll', 'uint', 'SetErrorMode', 'uint', $iMode)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_SetErrorMode
 Func _WinAPI_UniqueHardwareID($iFlags = 0)
 	Local $oService = ObjGet('winmgmts:\\.\root\cimv2')
@@ -3254,7 +2203,6 @@ Func _WinAPI_UniqueHardwareID($iFlags = 0)
 		$sHw &= $oProperty.UUID
 		$sHw &= $oProperty.Vendor
 		$sHw &= $oProperty.Version
-	Next
 	$sHw = StringStripWS($sHw, $STR_STRIPALL)
 	If Not $sHw Then Return SetError(3, 0, '')
 	Local $sText
@@ -3269,59 +2217,34 @@ Func _WinAPI_UniqueHardwareID($iFlags = 0)
 			$sText &= $oProperty.SerialNumber
 			$sText &= $oProperty.SMBIOSMajorVersion
 			$sText &= $oProperty.SMBIOSMinorVersion
-		Next
 		$sText = StringStripWS($sText, $STR_STRIPALL)
 		If $sText Then
 			$iExtended += 0x0001
 			$sHw &= $sText
-		EndIf
-	EndIf
 	If BitAND($iFlags, 0x0002) Then
 		$oItems = $oService.ExecQuery('SELECT * FROM Win32_Processor')
 		If Not IsObj($oItems) Then Return SetError(4, 0, '')
-		$sText = ''
-		For $oProperty In $oItems
 			$sText &= $oProperty.Architecture
 			$sText &= $oProperty.Family
 			$sText &= $oProperty.Level
-			$sText &= $oProperty.Manufacturer
-			$sText &= $oProperty.Name
 			$sText &= $oProperty.ProcessorId
 			$sText &= $oProperty.Revision
 			$sText &= $oProperty.Version
-		Next
-		$sText = StringStripWS($sText, $STR_STRIPALL)
-		If $sText Then
 			$iExtended += 0x0002
-			$sHw &= $sText
-		EndIf
-	EndIf
 	If BitAND($iFlags, 0x0004) Then
 		$oItems = $oService.ExecQuery('SELECT * FROM Win32_PhysicalMedia')
 		If Not IsObj($oItems) Then Return SetError(5, 0, '')
-		$sText = ''
-		For $oProperty In $oItems
 			Switch _WinAPI_GetDriveBusType($oProperty.Tag)
 				Case 0x03, 0x0B
 					$sText &= $oProperty.SerialNumber
 				Case Else
-			EndSwitch
-		Next
-		$sText = StringStripWS($sText, $STR_STRIPALL)
-		If $sText Then
 			$iExtended += 0x0004
-			$sHw &= $sText
-		EndIf
-	EndIf
 	Local $sHash = __WinAPIDiag_MD5($sHw)
 	If Not $sHash Then Return SetError(6, 0, '')
 	Return SetExtended($iExtended, '{' & StringMid($sHash, 1, 8) & '-' & StringMid($sHash, 9, 4) & '-' & StringMid($sHash, 13, 4) & '-' & StringMid($sHash, 17, 4) & '-' & StringMid($sHash, 21, 12) & '}')
 EndFunc   ;==>_WinAPI_UniqueHardwareID
 Func _WinAPI_UnregisterApplicationRestart()
 	Local $aRet = DllCall('kernel32.dll', 'long', 'UnregisterApplicationRestart')
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aRet[0] Then Return SetError(10, $aRet[0], 0)
-	Return 1
 EndFunc   ;==>_WinAPI_UnregisterApplicationRestart
 #EndRegion Public Functions
 #Region Internal Functions
@@ -3343,41 +2266,20 @@ Func __DlgSubclassProc($sHwnd, $iMsg, $wParam, $lParam, $idLV, $pData)
 						Case -114 ; LVN_ITEMACTIVATE
 							If $iDummy Then
 								GUICtrlSendToDummy($iDummy, DllStructGetData($tNMIA, 'Item'))
-							EndIf
-							Return 0
 					EndSwitch
-			EndSwitch
-	EndSwitch
 	Return _WinAPI_DefSubclassProc($sHwnd, $iMsg, $wParam, $lParam)
 EndFunc   ;==>__DlgSubclassProc
 Func __EnumDllProcA($hLibrary, $sMask, $iFlags)
 	Local $hProcess, $pAddress = 0, $iInit = 0, $vOpts = Default, $iError = 0
 	Local $sTypeOfMask = 'str'
-	$__g_vEnum = 0
-	Do
 		Local $aRet = DllCall('dbghelp.dll', 'dword', 'SymGetOptions')
-		If @error Then
-			$iError = @error + 10
-			ExitLoop
-		EndIf
 		$vOpts = $aRet[0]
 		$aRet = DllCall('dbghelp.dll', 'dword', 'SymSetOptions', 'dword', BitOR(BitAND($iFlags, 0x00000003), 0x00000204))
-		If @error Or Not $aRet[0] Then
 			$iError = @error + 20
-			ExitLoop
-		EndIf
 		$hProcess = _WinAPI_GetCurrentProcess()
 		$aRet = DllCall('dbghelp.dll', 'int', 'SymInitialize', 'handle', $hProcess, 'ptr', 0, 'int', 1)
-		If @error Or Not $aRet[0] Then
-			$iError = @error + 30
-			ExitLoop
-		EndIf
 		$iInit = 1
 		$aRet = DllCall('dbghelp.dll', 'uint64', 'SymLoadModule64', 'handle', $hProcess, 'ptr', 0, 'str', $__g_vExt, 'ptr', 0, 'uint64', $hLibrary, 'dword', 0)
-		If @error Or Not $aRet[0] Then
-			$iError = @error + 40
-			ExitLoop
-		EndIf
 		$pAddress = $aRet[0]
 		Dim $__g_vEnum[501][2] = [[0]]
 		Local $hEnumProc = DllCallbackRegister('__EnumSymbolsProcA', 'int', 'ptr;ulong;lparam')
@@ -3385,86 +2287,28 @@ Func __EnumDllProcA($hLibrary, $sMask, $iFlags)
 		If Not StringStripWS($sMask, $STR_STRIPLEADING + $STR_STRIPTRAILING) Then
 			$sTypeOfMask = 'ptr'
 			$sMask = 0
-		EndIf
 		$aRet = DllCall('dbghelp.dll', 'int', 'SymEnumSymbols', 'handle', $hProcess, 'uint64', $pAddress, $sTypeOfMask, $sMask, 'ptr', $pEnumProc, 'lparam', 0)
 		If @error Or Not $aRet[0] Or (Not $__g_vEnum[0][0]) Then
 			$iError = @error + 50
 			$__g_vEnum = 0
-		EndIf
 		DllCallbackFree($hEnumProc)
 		If IsArray($__g_vEnum) Then
 			__Inc($__g_vEnum, -1)
-		EndIf
-	Until 1
 	If $pAddress Then
 		DllCall('dbghelp.dll', 'int', 'SymUnloadModule64', 'handle', $hProcess, 'uint64', $pAddress)
-	EndIf
 	If $iInit Then
 		DllCall('dbghelp.dll', 'int', 'SymCleanup', 'handle', $hProcess)
-	EndIf
 	If Not ($vOpts = Default) Then
 		DllCall('dbghelp.dll', 'dword', 'SymSetOptions', 'dword', $vOpts)
-	EndIf
 	If $iError Then Return SetError($iError, 0, 0)
-	Return 1
 EndFunc   ;==>__EnumDllProcA
 Func __EnumDllProcW($hLibrary, $sMask, $iFlags)
-	Local $hProcess, $pAddress = 0, $iInit = 0, $vOpts = Default, $iError = 0
 	Local $sTypeOfMask = 'wstr'
-	$__g_vEnum = 0
-	Do
-		Local $aRet = DllCall('dbghelp.dll', 'dword', 'SymGetOptions')
-		If @error Then
-			$iError = @error + 10
-			ExitLoop
-		EndIf
-		$vOpts = $aRet[0]
-		$aRet = DllCall('dbghelp.dll', 'dword', 'SymSetOptions', 'dword', BitOR(BitAND($iFlags, 0x00000003), 0x00000204))
-		If @error Or Not $aRet[0] Then
-			$iError = @error + 20
-			ExitLoop
-		EndIf
-		$hProcess = _WinAPI_GetCurrentProcess()
 		$aRet = DllCall('dbghelp.dll', 'int', 'SymInitializeW', 'handle', $hProcess, 'ptr', 0, 'int', 1)
-		If @error Or Not $aRet[0] Then
-			$iError = @error + 30
-			ExitLoop
-		EndIf
-		$iInit = 1
 		$aRet = DllCall('dbghelp.dll', 'uint64', 'SymLoadModuleExW', 'handle', $hProcess, 'ptr', 0, 'wstr', $__g_vExt, 'ptr', 0, 'uint64', $hLibrary, 'dword', 0, 'ptr', 0, 'dword', 0)
-		If @error Or Not $aRet[0] Then
-			$iError = @error + 40
-			ExitLoop
-		EndIf
-		$pAddress = $aRet[0]
-		Dim $__g_vEnum[501][2] = [[0]]
 		Local $hEnumProc = DllCallbackRegister('__EnumSymbolsProcW', 'int', 'ptr;ulong;lparam')
-		Local $pEnumProc = DllCallbackGetPtr($hEnumProc)
-		If Not StringStripWS($sMask, $STR_STRIPLEADING + $STR_STRIPTRAILING) Then
-			$sTypeOfMask = 'ptr'
-			$sMask = 0
-		EndIf
 		$aRet = DllCall('dbghelp.dll', 'int', 'SymEnumSymbolsW', 'handle', $hProcess, 'uint64', $pAddress, $sTypeOfMask, $sMask, 'ptr', $pEnumProc, 'lparam', 0)
 		If @error Or Not $aRet[0] Or Not $__g_vEnum[0][0] Then
-			$iError = @error + 50
-			$__g_vEnum = 0
-		EndIf
-		DllCallbackFree($hEnumProc)
-		If IsArray($__g_vEnum) Then
-			__Inc($__g_vEnum, -1)
-		EndIf
-	Until 1
-	If $pAddress Then
-		DllCall('dbghelp.dll', 'int', 'SymUnloadModule64', 'handle', $hProcess, 'uint64', $pAddress)
-	EndIf
-	If $iInit Then
-		DllCall('dbghelp.dll', 'int', 'SymCleanup', 'handle', $hProcess)
-	EndIf
-	If Not ($vOpts = Default) Then
-		DllCall('dbghelp.dll', 'dword', 'SymSetOptions', 'dword', $vOpts)
-	EndIf
-	If $iError Then Return SetError($iError, 0, 0)
-	Return 1
 EndFunc   ;==>__EnumDllProcW
 Func __EnumSymbolsProcA($pSymInfo, $iSymSize, $lParam)
 	#forceref $iSymSize, $lParam
@@ -3475,20 +2319,9 @@ Func __EnumSymbolsProcA($pSymInfo, $iSymSize, $lParam)
 		__Inc($__g_vEnum, 500)
 		$__g_vEnum[$__g_vEnum[0][0]][0] = DllStructGetData($tSYMINFO, 'Address') - DllStructGetData($tSYMINFO, 'ModBase')
 		$__g_vEnum[$__g_vEnum[0][0]][1] = DllStructGetData(DllStructCreate('char[' & ($iLength + 1) & ']', DllStructGetPtr($tSYMINFO, 'Name')), 1)
-	EndIf
-	Return 1
 EndFunc   ;==>__EnumSymbolsProcA
 Func __EnumSymbolsProcW($pSymInfo, $iSymSize, $lParam)
-	#forceref $iSymSize, $lParam
-	Local $tagSYMBOL_INFO = 'uint SizeOfStruct;uint TypeIndex;uint64 Reserved[2];uint Index;uint Size;uint64 ModBase;uint Flags;uint64 Value;uint64 Address;uint Register;uint Scope;uint Tag;uint NameLen;uint MaxNameLen;wchar Name[1]'
-	Local $tSYMINFO = DllStructCreate($tagSYMBOL_INFO, $pSymInfo)
-	Local $iLength = DllStructGetData($tSYMINFO, 'NameLen')
-	If $iLength And BitAND(DllStructGetData($tSYMINFO, 'Flags'), 0x00000600) Then
-		__Inc($__g_vEnum, 500)
-		$__g_vEnum[$__g_vEnum[0][0]][0] = DllStructGetData($tSYMINFO, 'Address') - DllStructGetData($tSYMINFO, 'ModBase')
 		$__g_vEnum[$__g_vEnum[0][0]][1] = DllStructGetData(DllStructCreate('wchar[' & ($iLength + 1) & ']', DllStructGetPtr($tSYMINFO, 'Name')), 1)
-	EndIf
-	Return 1
 EndFunc   ;==>__EnumSymbolsProcW
 Func __WinAPIDiag_Hex($iValue, $sType)
 	Local $iLength
@@ -3503,56 +2336,35 @@ Func __WinAPIDiag_Hex($iValue, $sType)
 			$iLength = 16
 		Case 'INT_PTR', 'UINT_PTR', 'LONG_PTR', 'ULONG_PTR', 'DWORD_PTR', 'WPARAM', 'LPARAM', 'LRESULT'
 			$iLength = (@AutoItX64 ? 16 : 8)
-		Case Else
 			$iLength = 0
-	EndSwitch
 	If $iLength Then
 		Return '0x' & Hex($iValue, $iLength)
-	Else
 		Return $iValue
-	EndIf
 EndFunc   ;==>__WinAPIDiag_Hex
 Func __WinAPIDiag_MD5($sData)
 	Local $hHash, $iError = 0
 	Local $hProv = DllCall('advapi32.dll', 'int', 'CryptAcquireContextW', 'ptr*', 0, 'ptr', 0, 'ptr', 0, 'dword', 3, 'dword', 0xF0000000)
 	If @error Or Not $hProv[0] Then Return SetError(@error + 10, @extended, '')
-	Do
 		$hHash = DllCall('advapi32.dll', 'int', 'CryptCreateHash', 'handle', $hProv[1], 'uint', 0x00008003, 'ptr', 0, 'dword', 0, _
 				'ptr*', 0)
 		If @error Or Not $hHash[0] Then
-			$iError = @error + 20
 			$hHash = 0
-			ExitLoop
-		EndIf
 		$hHash = $hHash[5]
 		Local $tData = DllStructCreate('byte[' & BinaryLen($sData) & ']')
 		DllStructSetData($tData, 1, $sData)
 		Local $aRet = DllCall('advapi32.dll', 'int', 'CryptHashData', 'handle', $hHash, 'struct*', $tData, _
 				'dword', DllStructGetSize($tData), 'dword', 1)
-		If @error Or Not $aRet[0] Then
-			$iError = @error + 30
-			ExitLoop
-		EndIf
 		$tData = DllStructCreate('byte[16]')
 		$aRet = DllCall('advapi32.dll', 'int', 'CryptGetHashParam', 'handle', $hHash, 'dword', 2, 'struct*', $tData, 'dword*', 16, _
 				'dword', 0)
-		If @error Or Not $aRet[0] Then
-			$iError = @error + 40
-			ExitLoop
-		EndIf
-	Until 1
 	If $hHash Then
 		DllCall('advapi32.dll', 'int', 'CryptDestroyHash', 'handle', $hHash)
-	EndIf
 	If $iError Then Return SetError($iError, 0, '')
 	Return StringTrimLeft(DllStructGetData($tData, 1), 2)
 EndFunc   ;==>__WinAPIDiag_MD5
 Func __WinAPIDiag_Quit()
-	Local $pDll = DllCallbackGetPtr($__g_hFRDll)
 	If $pDll Then
 		_WinAPI_RemoveWindowSubclass($__g_hFRDlg, $pDll, 1000)
-		DllCallbackFree($__g_hFRDll)
-	EndIf
 	$__g_hFRDll = 0
 EndFunc   ;==>__WinAPIDiag_Quit
 Func __WinAPIDiag_Ver($sPath)
@@ -3561,7 +2373,6 @@ Func __WinAPIDiag_Ver($sPath)
 	$sPath = _WinAPI_GetModuleFileNameEx(_WinAPI_GetCurrentProcess(), $hLibrary)
 	If Not $sPath Then Return SetError(@error + 20, @extended, 0)
 	Local $vVer = FileGetVersion($sPath)
-	If @error Then Return SetError(1, 0, 0)
 	$vVer = StringSplit($vVer, '.', $STR_NOCOUNT)
 	If UBound($vVer) < 2 Then Return SetError(2, 0, 0)
 	Return BitOR(BitShift(Number($vVer[0]), -8), Number($vVer[1]))
@@ -3659,7 +2470,12 @@ Global Const $E_NOTIMPL = 0x80004001
 Global Const $E_OUTOFMEMORY = 0x8007000E
 Global Const $E_POINTER = 0x80004003
 Global Const $E_UNEXPECTED = 0x8000FFFF
-#Region Global Variables and Constants
+#include "APIProcConstants.au3"
+#include "Security.au3"
+#include "SecurityConstants.au3"
+#include "WinAPICom.au3"
+#include "WinAPIError.au3"
+#include "WinAPIShPath.au3"
 Global Const $tagIO_COUNTERS = 'struct;uint64 ReadOperationCount;uint64 WriteOperationCount;uint64 OtherOperationCount;uint64 ReadTransferCount;uint64 WriteTransferCount;uint64 OtherTransferCount;endstruct'
 Global Const $tagJOBOBJECT_ASSOCIATE_COMPLETION_PORT = 'ulong_ptr CompletionKey;ptr CompletionPort'
 Global Const $tagJOBOBJECT_BASIC_ACCOUNTING_INFORMATION = 'struct;int64 TotalUserTime;int64 TotalKernelTime;int64 ThisPeriodTotalUserTime;int64 ThisPeriodTotalKernelTime;dword TotalPageFaultCount;dword TotalProcesses;dword ActiveProcesses;dword TotalTerminatedProcesses;endstruct'
@@ -3673,10 +2489,6 @@ Global Const $tagJOBOBJECT_GROUP_INFORMATION = '' ; & 'ushort ProcessorGroup[n]'
 Global Const $tagJOBOBJECT_SECURITY_LIMIT_INFORMATION = 'dword SecurityLimitFlags;ptr JobToken;ptr SidsToDisable;ptr PrivilegesToDelete;ptr RestrictedSids'
 Global Const $tagMODULEINFO = 'ptr BaseOfDll;dword SizeOfImage;ptr EntryPoint'
 Global Const $tagPROCESSENTRY32 = 'dword Size;dword Usage;dword ProcessID;ulong_ptr DefaultHeapID;dword ModuleID;dword Threads;dword ParentProcessID;long PriClassBase;dword Flags;wchar ExeFile[260]'
-#EndRegion Global Variables and Constants
-#Region Functions list
-#EndRegion Functions list
-#Region Public Functions
 Func _WinAPI_AdjustTokenPrivileges($hToken, $aPrivileges, $iAttributes, ByRef $aAdjust)
 	$aAdjust = 0
 	If Not $aPrivileges And IsNumber($aPrivileges) Then Return 0
@@ -3692,30 +2504,21 @@ Func _WinAPI_AdjustTokenPrivileges($hToken, $aPrivileges, $iAttributes, ByRef $a
 				$tTP2 = DllStructCreate('dword;dword[' & ($aRet[6] / 4 - 1) & ']')
 				If @error Then
 					ContinueCase
-				EndIf
-			Case Else
 				Return SetError(10, $iLastError, 0)
-		EndSwitch
 		$bDisable = True
-	Else
 		Local $aPrev = 0
 		If Not IsArray($aPrivileges) Then
 			Dim $aPrev[1][2]
 			$aPrev[0][0] = $aPrivileges
 			$aPrev[0][1] = $iAttributes
-		Else
 			If Not UBound($aPrivileges, $UBOUND_COLUMNS) Then
 				$iCount = UBound($aPrivileges)
 				Dim $aPrev[$iCount][2]
 				For $i = 0 To $iCount - 1
 					$aPrev[$i][0] = $aPrivileges[$i]
 					$aPrev[$i][1] = $iAttributes
-				Next
-			EndIf
-		EndIf
 		If IsArray($aPrev) Then
 			$aPrivileges = $aPrev
-		EndIf
 		Local $tagStruct = 'dword;dword[' & (3 * UBound($aPrivileges)) & ']'
 		$tTP1 = DllStructCreate($tagStruct)
 		$tTP2 = DllStructCreate($tagStruct)
@@ -3726,8 +2529,6 @@ Func _WinAPI_AdjustTokenPrivileges($hToken, $aPrivileges, $iAttributes, ByRef $a
 			$aRet = DllCall('advapi32.dll', 'bool', 'LookupPrivilegeValueW', 'ptr', 0, 'wstr', $aPrivileges[$i][0], _
 					'ptr', DllStructGetPtr($tTP1, 2) + 12 * $i)
 			If @error Or Not $aRet[0] Then Return SetError(@error + 100, @extended, 0)
-		Next
-	EndIf
 	$aRet = DllCall('advapi32.dll', 'bool', 'AdjustTokenPrivileges', 'handle', $hToken, 'bool', $bDisable, _
 			'struct*', $tTP1, 'dword', DllStructGetSize($tTP2), 'struct*', $tTP2, 'dword*', 0)
 	If @error Or Not $aRet[0] Then Return SetError(@error + 200, @extended, 0)
@@ -3735,9 +2536,7 @@ Func _WinAPI_AdjustTokenPrivileges($hToken, $aPrivileges, $iAttributes, ByRef $a
 	Switch _WinAPI_GetLastError()
 		Case 1300 ; ERROR_NOT_ALL_ASSIGNED
 			$iResult = 1
-		Case Else
 			$iResult = 0
-	EndSwitch
 	$iCount = DllStructGetData($tTP2, 1)
 	If $iCount Then
 		Local $tData = DllStructCreate('wchar[128]')
@@ -3748,51 +2547,36 @@ Func _WinAPI_AdjustTokenPrivileges($hToken, $aPrivileges, $iAttributes, ByRef $a
 			If @error Or Not $aRet[0] Then Return SetError(@error + 300, @extended, 0)
 			$aPrivileges[$i][1] = DllStructGetData($tTP2, 2, 3 * $i + 3)
 			$aPrivileges[$i][0] = DllStructGetData($tData, 1)
-		Next
 		$aAdjust = $aPrivileges
-	EndIf
 	Return SetExtended($iResult, 1)
 EndFunc   ;==>_WinAPI_AdjustTokenPrivileges
 Func _WinAPI_AssignProcessToJobObject($hJob, $hProcess)
 	Local $aRet = DllCall('kernel32.dll', 'bool', 'AssignProcessToJobObject', 'handle', $hJob, 'handle', $hProcess)
 	If @error Then Return SetError(@error, @extended, False)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_AssignProcessToJobObject
 Func _WinAPI_AttachConsole($iPID = -1)
 	Local $aResult = DllCall("kernel32.dll", "bool", "AttachConsole", "dword", $iPID)
-	If @error Then Return SetError(@error, @extended, False)
 	Return $aResult[0]
 EndFunc   ;==>_WinAPI_AttachConsole
 Func _WinAPI_AttachThreadInput($iAttach, $iAttachTo, $bAttach)
 	Local $aResult = DllCall("user32.dll", "bool", "AttachThreadInput", "dword", $iAttach, "dword", $iAttachTo, "bool", $bAttach)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aResult[0]
 EndFunc   ;==>_WinAPI_AttachThreadInput
 Func _WinAPI_CreateEvent($tAttributes = 0, $bManualReset = True, $bInitialState = True, $sName = "")
 	Local $sNameType = "wstr"
 	If $sName = "" Then
 		$sName = 0
 		$sNameType = "ptr"
-	EndIf
 	Local $aResult = DllCall("kernel32.dll", "handle", "CreateEventW", "struct*", $tAttributes, "bool", $bManualReset, _
 			"bool", $bInitialState, $sNameType, $sName)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aResult[0]
 EndFunc   ;==>_WinAPI_CreateEvent
 Func _WinAPI_CreateJobObject($sName = '', $tSecurity = 0)
 	Local $sTypeOfName = 'wstr'
 	If Not StringStripWS($sName, $STR_STRIPLEADING + $STR_STRIPTRAILING) Then
 		$sTypeOfName = 'ptr'
-		$sName = 0
-	EndIf
 	Local $aRet = DllCall('kernel32.dll', 'handle', 'CreateJobObjectW', 'struct*', $tSecurity, $sTypeOfName, $sName)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_CreateJobObject
 Func _WinAPI_CreateMutex($sMutex, $bInitial = True, $tSecurity = 0)
 	Local $aRet = DllCall('kernel32.dll', 'handle', 'CreateMutexW', 'struct*', $tSecurity, 'bool', $bInitial, 'wstr', $sMutex)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_CreateMutex
 Func _WinAPI_CreateProcess($sAppName, $sCommand, $tSecurity, $tThread, $bInherit, $iFlags, $pEnviron, $sDir, $tStartupInfo, $tProcess)
 	Local $tCommand = 0
@@ -3800,46 +2584,33 @@ Func _WinAPI_CreateProcess($sAppName, $sCommand, $tSecurity, $tThread, $bInherit
 	If $sAppName = "" Then
 		$sAppNameType = "ptr"
 		$sAppName = 0
-	EndIf
 	If $sCommand <> "" Then
 		$tCommand = DllStructCreate("wchar Text[" & 260 + 1 & "]")
 		DllStructSetData($tCommand, "Text", $sCommand)
-	EndIf
 	If $sDir = "" Then
 		$sDirType = "ptr"
 		$sDir = 0
-	EndIf
 	Local $aResult = DllCall("kernel32.dll", "bool", "CreateProcessW", $sAppNameType, $sAppName, "struct*", $tCommand, _
 			"struct*", $tSecurity, "struct*", $tThread, "bool", $bInherit, "dword", $iFlags, "struct*", $pEnviron, $sDirType, $sDir, _
 			"struct*", $tStartupInfo, "struct*", $tProcess)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aResult[0]
 EndFunc   ;==>_WinAPI_CreateProcess
 Func _WinAPI_CreateProcessWithToken($sApp, $sCmd, $iFlags, $tStartupInfo, $tProcessInfo, $hToken, $iLogon = 0, $pEnvironment = 0, $sDir = '')
 	Local $sTypeOfApp = 'wstr', $sTypeOfCmd = 'wstr', $sTypeOfDir = 'wstr'
 	If Not StringStripWS($sApp, $STR_STRIPLEADING + $STR_STRIPTRAILING) Then
 		$sTypeOfApp = 'ptr'
 		$sApp = 0
-	EndIf
 	If Not StringStripWS($sCmd, $STR_STRIPLEADING + $STR_STRIPTRAILING) Then
 		$sTypeOfCmd = 'ptr'
 		$sCmd = 0
-	EndIf
 	If Not StringStripWS($sDir, $STR_STRIPLEADING + $STR_STRIPTRAILING) Then
 		$sTypeOfDir = 'ptr'
-		$sDir = 0
-	EndIf
 	Local $aRet = DllCall('advapi32.dll', 'bool', 'CreateProcessWithTokenW', 'handle', $hToken, 'dword', $iLogon, _
 			$sTypeOfApp, $sApp, $sTypeOfCmd, $sCmd, 'dword', $iFlags, 'struct*', $pEnvironment, _
 			$sTypeOfDir, $sDir, 'struct*', $tStartupInfo, 'struct*', $tProcessInfo)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_CreateProcessWithToken
 Func _WinAPI_CreateSemaphore($sSemaphore, $iInitial, $iMaximum, $tSecurity = 0)
 	Local $aRet = DllCall('kernel32.dll', 'handle', 'CreateSemaphoreW', 'struct*', $tSecurity, 'long', $iInitial, _
 			'long', $iMaximum, 'wstr', $sSemaphore)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_CreateSemaphore
 Func _WinAPI_DuplicateTokenEx($hToken, $iAccess, $iLevel, $iType = 1, $tSecurity = 0)
 	Local $aRet = DllCall('advapi32.dll', 'bool', 'DuplicateTokenEx', 'handle', $hToken, 'dword', $iAccess, _
@@ -3848,16 +2619,11 @@ Func _WinAPI_DuplicateTokenEx($hToken, $iAccess, $iLevel, $iType = 1, $tSecurity
 	Return $aRet[6]
 EndFunc   ;==>_WinAPI_DuplicateTokenEx
 Func _WinAPI_EmptyWorkingSet($iPID = 0)
-	If Not $iPID Then $iPID = @AutoItPID
 	Local $hProcess = DllCall('kernel32.dll', 'handle', 'OpenProcess', 'dword', (($__WINVER < 0x0600) ? 0x00000500 : 0x00001100), _
-			'bool', 0, 'dword', $iPID)
-	If @error Or Not $hProcess[0] Then Return SetError(@error + 20, @extended, 0)
 	Local $aRet = DllCall(@SystemDir & '\psapi.dll', 'bool', 'EmptyWorkingSet', 'handle', $hProcess[0])
 	If __CheckErrorCloseHandle($aRet, $hProcess[0]) Then Return SetError(@error, @extended, 0)
-	Return 1
 EndFunc   ;==>_WinAPI_EmptyWorkingSet
 Func _WinAPI_EnumChildProcess($iPID = 0)
-	If Not $iPID Then $iPID = @AutoItPID
 	Local $hSnapshot = DllCall('kernel32.dll', 'handle', 'CreateToolhelp32Snapshot', 'dword', 0x00000002, 'dword', 0)
 	If @error Or ($hSnapshot[0] = Ptr(-1)) Then Return SetError(@error + 10, @extended, 0) ; $INVALID_HANDLE_VALUE
 	Local $tPROCESSENTRY32 = DllStructCreate($tagPROCESSENTRY32)
@@ -3871,14 +2637,10 @@ Func _WinAPI_EnumChildProcess($iPID = 0)
 			__Inc($aResult)
 			$aResult[$aResult[0][0]][0] = DllStructGetData($tPROCESSENTRY32, 'ProcessID')
 			$aResult[$aResult[0][0]][1] = DllStructGetData($tPROCESSENTRY32, 'ExeFile')
-		EndIf
 		$aRet = DllCall('kernel32.dll', 'bool', 'Process32NextW', 'handle', $hSnapshot, 'struct*', $tPROCESSENTRY32)
-		$iError = @error
-	WEnd
 	DllCall("kernel32.dll", "bool", "CloseHandle", "handle", $hSnapshot)
 	If Not $aResult[0][0] Then Return SetError($iError + 20, 0, 0)
 	__Inc($aResult, -1)
-	Return $aResult
 EndFunc   ;==>_WinAPI_EnumChildProcess
 Func _WinAPI_EnumDeviceDrivers()
 	Local $aRet = DllCall(@SystemDir & '\psapi.dll', 'bool', 'EnumDeviceDrivers', 'ptr', 0, 'dword', 0, 'dword*', 0)
@@ -3886,9 +2648,7 @@ Func _WinAPI_EnumDeviceDrivers()
 	Local $iSize
 	If @AutoItX64 Then
 		$iSize = $aRet[3] / 8
-	Else
 		$iSize = $aRet[3] / 4
-	EndIf
 	Local $tData = DllStructCreate('ptr[' & $iSize & ']')
 	$aRet = DllCall(@SystemDir & '\psapi.dll', 'bool', 'EnumDeviceDrivers', 'struct*', $tData, _
 			'dword', DllStructGetSize($tData), 'dword*', 0)
@@ -3896,116 +2656,64 @@ Func _WinAPI_EnumDeviceDrivers()
 	Local $aResult[$iSize + 1] = [$iSize]
 	For $i = 1 To $iSize
 		$aResult[$i] = DllStructGetData($tData, 1, $i)
-	Next
-	Return $aResult
 EndFunc   ;==>_WinAPI_EnumDeviceDrivers
 Func _WinAPI_EnumProcessHandles($iPID = 0, $iType = 0)
-	If Not $iPID Then $iPID = @AutoItPID
 	Local $aResult[101][4] = [[0]]
 	Local $tSHI = DllStructCreate('ulong;byte[4194304]')
 	Local $aRet = DllCall('ntdll.dll', 'long', 'ZwQuerySystemInformation', 'uint', 16, 'struct*', $tSHI, _
 			'ulong', DllStructGetSize($tSHI), 'ulong*', 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aRet[0] Then Return SetError(10, $aRet[0], 0)
 	Local $pData = DllStructGetPtr($tSHI, 2)
 	Local $tHandle
 	For $i = 1 To DllStructGetData($tSHI, 1)
 		$tHandle = DllStructCreate('align 4;ulong;byte;byte;ushort;ptr;ulong', $pData + (@AutoItX64 ? (4 + ($i - 1) * 24) : (($i - 1) * 16)))
 		If (DllStructGetData($tHandle, 1) = $iPID) And ((Not $iType) Or ($iType = DllStructGetData($tHandle, 2))) Then
-			__Inc($aResult)
 			$aResult[$aResult[0][0]][0] = Ptr(DllStructGetData($tHandle, 4))
 			$aResult[$aResult[0][0]][1] = DllStructGetData($tHandle, 2)
 			$aResult[$aResult[0][0]][2] = DllStructGetData($tHandle, 3)
 			$aResult[$aResult[0][0]][3] = DllStructGetData($tHandle, 6)
-		EndIf
-	Next
 	If Not $aResult[0][0] Then Return SetError(11, 0, 0)
-	__Inc($aResult, -1)
-	Return $aResult
 EndFunc   ;==>_WinAPI_EnumProcessHandles
 Func _WinAPI_EnumProcessModules($iPID = 0, $iFlag = 0)
-	If Not $iPID Then $iPID = @AutoItPID
-	Local $hProcess = DllCall('kernel32.dll', 'handle', 'OpenProcess', 'dword', (($__WINVER < 0x0600) ? 0x00000410 : 0x00001010), _
-			'bool', 0, 'dword', $iPID)
-	If @error Or Not $hProcess[0] Then Return SetError(@error + 20, @extended, 0)
 	Local $iCount, $aRet, $iError = 0
-	Do
 		If $__WINVER >= 0x0600 Then
 			$aRet = DllCall(@SystemDir & '\psapi.dll', 'bool', 'EnumProcessModulesEx', 'handle', $hProcess[0], 'ptr', 0, _
 					'dword', 0, 'dword*', 0, 'dword', $iFlag)
-		Else
 			$aRet = DllCall(@SystemDir & '\psapi.dll', 'bool', 'EnumProcessModules', 'handle', $hProcess[0], 'ptr', 0, _
 					'dword', 0, 'dword*', 0)
-		EndIf
-		If @error Or Not $aRet[0] Then
-			$iError = @error + 10
-			ExitLoop
-		EndIf
 		If @AutoItX64 Then
 			$iCount = $aRet[4] / 8
-		Else
 			$iCount = $aRet[4] / 4
-		EndIf
 		Local $tPtr = DllStructCreate('ptr[' & $iCount & ']')
-		If @error Then
-			$iError = @error + 30
-			ExitLoop
-		EndIf
-		If $__WINVER >= 0x0600 Then
 			$aRet = DllCall(@SystemDir & '\psapi.dll', 'bool', 'EnumProcessModulesEx', 'handle', $hProcess[0], 'struct*', $tPtr, _
 					'dword', DllStructGetSize($tPtr), 'dword*', 0, 'dword', $iFlag)
-		Else
 			$aRet = DllCall(@SystemDir & '\psapi.dll', 'bool', 'EnumProcessModules', 'handle', $hProcess[0], 'struct*', $tPtr, _
 					'dword', DllStructGetSize($tPtr), 'dword*', 0)
-		EndIf
-		If @error Or Not $aRet[0] Then
-			$iError = @error + 40
-			ExitLoop
-		EndIf
 		Local $aResult[$iCount + 1][2] = [[$iCount]]
 		For $i = 1 To $iCount
 			$aResult[$i][0] = DllStructGetData($tPtr, 1, $i)
 			$aResult[$i][1] = _WinAPI_GetModuleFileNameEx($hProcess[0], $aResult[$i][0])
-		Next
-	Until 1
-	DllCall("kernel32.dll", "bool", "CloseHandle", "handle", $hProcess[0])
-	If $iError Then Return SetError($iError, 0, 0)
-	Return $aResult
 EndFunc   ;==>_WinAPI_EnumProcessModules
 Func _WinAPI_EnumProcessThreads($iPID = 0)
-	If Not $iPID Then $iPID = @AutoItPID
 	Local $hSnapshot = DllCall('kernel32.dll', 'handle', 'CreateToolhelp32Snapshot', 'dword', 0x00000004, 'dword', 0)
 	If @error Or Not $hSnapshot[0] Then Return SetError(@error + 10, @extended, 0)
 	Local Const $tagTHREADENTRY32 = 'dword Size;dword Usage;dword ThreadID;dword OwnerProcessID;long BasePri;long DeltaPri;dword Flags'
 	Local $tTHREADENTRY32 = DllStructCreate($tagTHREADENTRY32)
 	Local $aResult[101] = [0]
-	$hSnapshot = $hSnapshot[0]
 	DllStructSetData($tTHREADENTRY32, 'Size', DllStructGetSize($tTHREADENTRY32))
 	Local $aRet = DllCall('kernel32.dll', 'bool', 'Thread32First', 'handle', $hSnapshot, 'struct*', $tTHREADENTRY32)
 	While Not @error And $aRet[0]
 		If DllStructGetData($tTHREADENTRY32, 'OwnerProcessID') = $iPID Then
-			__Inc($aResult)
 			$aResult[$aResult[0]] = DllStructGetData($tTHREADENTRY32, 'ThreadID')
-		EndIf
 		$aRet = DllCall('kernel32.dll', 'bool', 'Thread32Next', 'handle', $hSnapshot, 'struct*', $tTHREADENTRY32)
-	WEnd
-	DllCall("kernel32.dll", "bool", "CloseHandle", "handle", $hSnapshot)
 	If Not $aResult[0] Then Return SetError(1, 0, 0)
-	__Inc($aResult, -1)
-	Return $aResult
 EndFunc   ;==>_WinAPI_EnumProcessThreads
 Func _WinAPI_EnumProcessWindows($iPID = 0, $bVisible = True)
 	Local $aThreads = _WinAPI_EnumProcessThreads($iPID)
-	If @error Then Return SetError(@error, @extended, 0)
 	Local $hEnumProc = DllCallbackRegister('__EnumWindowsProc', 'bool', 'hwnd;lparam')
 	Dim $__g_vEnum[101][2] = [[0]]
 	For $i = 1 To $aThreads[0]
 		DllCall('user32.dll', 'bool', 'EnumThreadWindows', 'dword', $aThreads[$i], 'ptr', DllCallbackGetPtr($hEnumProc), _
 				'lparam', $bVisible)
-		If @error Then
-			ExitLoop
-		EndIf
-	Next
 	DllCallbackFree($hEnumProc)
 	If Not $__g_vEnum[0][0] Then Return SetError(11, 0, 0)
 	__Inc($__g_vEnum, -1)
@@ -4013,7 +2721,6 @@ Func _WinAPI_EnumProcessWindows($iPID = 0, $bVisible = True)
 EndFunc   ;==>_WinAPI_EnumProcessWindows
 Func _WinAPI_FatalAppExit($sMessage)
 	DllCall("kernel32.dll", "none", "FatalAppExitW", "uint", 0, "wstr", $sMessage)
-	If @error Then Return SetError(@error, @extended)
 EndFunc   ;==>_WinAPI_FatalAppExit
 Func _WinAPI_GetCurrentProcessExplicitAppUserModelID()
 	Local $aRet = DllCall('shell32.dll', 'long', 'GetCurrentProcessExplicitAppUserModelID', 'ptr*', 0)
@@ -4025,41 +2732,27 @@ Func _WinAPI_GetCurrentProcessExplicitAppUserModelID()
 EndFunc   ;==>_WinAPI_GetCurrentProcessExplicitAppUserModelID
 Func _WinAPI_GetCurrentProcessID()
 	Local $aResult = DllCall("kernel32.dll", "dword", "GetCurrentProcessId")
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aResult[0]
 EndFunc   ;==>_WinAPI_GetCurrentProcessID
 Func _WinAPI_GetCurrentThread()
 	Local $aResult = DllCall("kernel32.dll", "handle", "GetCurrentThread")
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aResult[0]
 EndFunc   ;==>_WinAPI_GetCurrentThread
 Func _WinAPI_GetCurrentThreadId()
 	Local $aResult = DllCall("kernel32.dll", "dword", "GetCurrentThreadId")
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aResult[0]
 EndFunc   ;==>_WinAPI_GetCurrentThreadId
 Func _WinAPI_GetDeviceDriverBaseName($pDriver)
 	Local $aRet = DllCall(@SystemDir & '\psapi.dll', 'dword', 'GetDeviceDriverBaseNameW', 'ptr', $pDriver, 'wstr', '', _
 			'dword', 4096)
-	If @error Then Return SetError(@error, @extended, '')
 	Return $aRet[2]
 EndFunc   ;==>_WinAPI_GetDeviceDriverBaseName
 Func _WinAPI_GetDeviceDriverFileName($pDriver)
 	Local $aRet = DllCall(@SystemDir & '\psapi.dll', 'dword', 'GetDeviceDriverFileNameW', 'ptr', $pDriver, 'wstr', '', _
-			'dword', 4096)
-	If @error Then Return SetError(@error, @extended, '')
-	Return $aRet[2]
 EndFunc   ;==>_WinAPI_GetDeviceDriverFileName
 Func _WinAPI_GetExitCodeProcess($hProcess)
 	Local $aRet = DllCall('kernel32.dll', 'bool', 'GetExitCodeProcess', 'handle', $hProcess, 'dword*', 0)
-	If @error Or Not $aRet[0] Then Return SetError(@error, @extended, 0)
-	Return $aRet[2]
 EndFunc   ;==>_WinAPI_GetExitCodeProcess
 Func _WinAPI_GetGuiResources($iFlag = 0, $hProcess = -1)
 	If $hProcess = -1 Then $hProcess = _WinAPI_GetCurrentProcess()
 	Local $aResult = DllCall("user32.dll", "dword", "GetGuiResources", "handle", $hProcess, "dword", $iFlag)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aResult[0]
 EndFunc   ;==>_WinAPI_GetGuiResources
 Func _WinAPI_GetModuleFileNameEx($hProcess, $hModule = 0)
 	Local $aRet = DllCall(@SystemDir & '\psapi.dll', 'dword', 'GetModuleFileNameExW', 'handle', $hProcess, 'handle', $hModule, _
@@ -4071,41 +2764,20 @@ Func _WinAPI_GetModuleInformation($hProcess, $hModule = 0)
 	Local $tMODULEINFO = DllStructCreate($tagMODULEINFO)
 	Local $aRet = DllCall(@SystemDir & '\psapi.dll', 'bool', 'GetModuleInformation', 'handle', $hProcess, 'handle', $hModule, _
 			'struct*', $tMODULEINFO, 'dword', DllStructGetSize($tMODULEINFO))
-	If @error Or Not $aRet[0] Then Return SetError(@error + 10, @extended, 0)
 	Return $tMODULEINFO
 EndFunc   ;==>_WinAPI_GetModuleInformation
 Func _WinAPI_GetParentProcess($iPID = 0)
-	If Not $iPID Then $iPID = @AutoItPID
-	Local $hSnapshot = DllCall('kernel32.dll', 'handle', 'CreateToolhelp32Snapshot', 'dword', 0x00000002, 'dword', 0)
-	If @error Or Not $hSnapshot[0] Then Return SetError(@error + 10, @extended, 0)
-	Local $tPROCESSENTRY32 = DllStructCreate($tagPROCESSENTRY32)
 	Local $iResult = 0
-	$hSnapshot = $hSnapshot[0]
-	DllStructSetData($tPROCESSENTRY32, 'Size', DllStructGetSize($tPROCESSENTRY32))
-	Local $aRet = DllCall('kernel32.dll', 'bool', 'Process32FirstW', 'handle', $hSnapshot, 'struct*', $tPROCESSENTRY32)
-	Local $iError = @error
-	While (Not @error) And ($aRet[0])
 		If DllStructGetData($tPROCESSENTRY32, 'ProcessID') = $iPID Then
 			$iResult = DllStructGetData($tPROCESSENTRY32, 'ParentProcessID')
-			ExitLoop
-		EndIf
-		$aRet = DllCall('kernel32.dll', 'bool', 'Process32NextW', 'handle', $hSnapshot, 'struct*', $tPROCESSENTRY32)
-		$iError = @error
-	WEnd
-	DllCall("kernel32.dll", "bool", "CloseHandle", "handle", $hSnapshot)
 	If Not $iResult Then Return SetError($iError, 0, 0)
 	Return $iResult
 EndFunc   ;==>_WinAPI_GetParentProcess
 Func _WinAPI_GetPriorityClass($iPID = 0)
-	If Not $iPID Then $iPID = @AutoItPID
 	Local $hProcess = DllCall('kernel32.dll', 'handle', 'OpenProcess', 'dword', (($__WINVER < 0x0600) ? 0x00000400 : 0x00001000), 'bool', 0, 'dword', $iPID)
-	If @error Or Not $hProcess[0] Then Return SetError(@error + 20, @extended, 0)
 	Local $iError = 0
 	Local $aRet = DllCall('kernel32.dll', 'dword', 'GetPriorityClass', 'handle', $hProcess[0])
 	If @error Then $iError = @error
-	DllCall("kernel32.dll", "bool", "CloseHandle", "handle", $hProcess[0])
-	If $iError Then Return SetError($iError, 0, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_GetPriorityClass
 Func _WinAPI_GetProcessAffinityMask($hProcess)
 	Local $aResult = DllCall("kernel32.dll", "bool", "GetProcessAffinityMask", "handle", $hProcess, "dword_ptr*", 0, "dword_ptr*", 0)
@@ -4117,9 +2789,6 @@ Func _WinAPI_GetProcessAffinityMask($hProcess)
 	Return $aMask
 EndFunc   ;==>_WinAPI_GetProcessAffinityMask
 Func _WinAPI_GetProcessCommandLine($iPID = 0)
-	If Not $iPID Then $iPID = @AutoItPID
-	Local $hProcess = DllCall('kernel32.dll', 'handle', 'OpenProcess', 'dword', (($__WINVER < 0x0600) ? 0x00000410 : 0x00001010), _
-			'bool', 0, 'dword', $iPID)
 	If @error Or Not $hProcess[0] Then Return SetError(@error + 20, @extended, '')
 	$hProcess = $hProcess[0]
 	Local $tPBI = DllStructCreate('ulong_ptr ExitStatus;ptr PebBaseAddress;ulong_ptr AffinityMask;ulong_ptr BasePriority;ulong_ptr UniqueProcessId;ulong_ptr InheritedFromUniqueProcessId')
@@ -4127,229 +2796,92 @@ Func _WinAPI_GetProcessCommandLine($iPID = 0)
 	Local $tUPP = DllStructCreate('ulong AllocationSize;ulong ActualSize;ulong Flags;ulong Unknown1;ushort LengthUnknown2;ushort MaxLengthUnknown2;ptr Unknown2;ptr InputHandle;ptr OutputHandle;ptr ErrorHandle;ushort LengthCurrentDirectory;ushort MaxLengthCurrentDirectory;ptr CurrentDirectory;ptr CurrentDirectoryHandle;ushort LengthSearchPaths;ushort MaxLengthSearchPaths;ptr SearchPaths;ushort LengthApplicationName;ushort MaxLengthApplicationName;ptr ApplicationName;ushort LengthCommandLine;ushort MaxLengthCommandLine;ptr CommandLine;ptr EnvironmentBlock;ulong Unknown[9];ushort LengthUnknown3;ushort MaxLengthUnknown3;ptr Unknown3;ushort LengthUnknown4;ushort MaxLengthUnknown4;ptr Unknown4;ushort LengthUnknown5;ushort MaxLengthUnknown5;ptr Unknown5')
 	Local $tCMD
 	Local $aRet, $iError = 0
-	Do
 		$aRet = DllCall('ntdll.dll', 'long', 'NtQueryInformationProcess', 'handle', $hProcess, 'ulong', 0, 'struct*', $tPBI, _
 				'ulong', DllStructGetSize($tPBI), 'ulong*', 0)
 		If @error Or $aRet[0] Then
-			$iError = @error + 30
-			ExitLoop
-		EndIf
 		$aRet = DllCall('kernel32.dll', 'bool', 'ReadProcessMemory', 'handle', $hProcess, _
 				'ptr', DllStructGetData($tPBI, 'PebBaseAddress'), 'struct*', $tPEB, _
 				'ulong_ptr', DllStructGetSize($tPEB), 'ulong_ptr*', 0)
 		If @error Or Not $aRet[0] Or (Not $aRet[5]) Then
-			$iError = @error + 40
-			ExitLoop
-		EndIf
-		$aRet = DllCall('kernel32.dll', 'bool', 'ReadProcessMemory', 'handle', $hProcess, _
 				'ptr', DllStructGetData($tPEB, 'ProcessParameters'), 'struct*', $tUPP, _
 				'ulong_ptr', DllStructGetSize($tUPP), 'ulong_ptr*', 0)
-		If @error Or Not $aRet[0] Or (Not $aRet[5]) Then
-			$iError = @error + 50
-			ExitLoop
-		EndIf
 		$tCMD = DllStructCreate('byte[' & DllStructGetData($tUPP, 'MaxLengthCommandLine') & ']')
-		If @error Then
 			$iError = @error + 60
-			ExitLoop
-		EndIf
-		$aRet = DllCall('kernel32.dll', 'bool', 'ReadProcessMemory', 'handle', $hProcess, _
 				'ptr', DllStructGetData($tUPP, 'CommandLine'), 'struct*', $tCMD, _
 				'ulong_ptr', DllStructGetSize($tCMD), 'ulong_ptr*', 0)
-		If @error Or Not $aRet[0] Or (Not $aRet[5]) Then
 			$iError = @error + 70
-			ExitLoop
-		EndIf
-	Until 1
 	DllCall("kernel32.dll", "bool", "CloseHandle", "handle", $hProcess)
-	If $iError Then Return SetError($iError, 0, '')
 	Return StringStripWS(_WinAPI_PathGetArgs(_WinAPI_GetString(DllStructGetPtr($tCMD, 1))), $STR_STRIPLEADING + $STR_STRIPTRAILING)
 EndFunc   ;==>_WinAPI_GetProcessCommandLine
 Func _WinAPI_GetProcessFileName($iPID = 0)
-	If Not $iPID Then $iPID = @AutoItPID
-	Local $hProcess = DllCall('kernel32.dll', 'handle', 'OpenProcess', 'dword', (($__WINVER < 0x0600) ? 0x00000410 : 0x00001010), _
-			'bool', 0, 'dword', $iPID)
-	If @error Or Not $hProcess[0] Then Return SetError(@error + 20, @extended, '')
 	Local $sPath = _WinAPI_GetModuleFileNameEx($hProcess[0])
-	Local $iError = @error
-	DllCall("kernel32.dll", "bool", "CloseHandle", "handle", $hProcess[0])
 	If $iError Then Return SetError(@error, 0, '')
 	Return $sPath
 EndFunc   ;==>_WinAPI_GetProcessFileName
 Func _WinAPI_GetProcessHandleCount($iPID = 0)
-	If Not $iPID Then $iPID = @AutoItPID
 	Local $hProcess = DllCall('kernel32.dll', 'handle', 'OpenProcess', 'dword', (($__WINVER < 0x0600) ? 0x00000400 : 0x00001000), _
-			'bool', 0, 'dword', $iPID)
-	If @error Or Not $hProcess[0] Then Return SetError(@error + 20, @extended, 0)
 	Local $aRet = DllCall('kernel32.dll', 'bool', 'GetProcessHandleCount', 'handle', $hProcess[0], 'dword*', 0)
-	If __CheckErrorCloseHandle($aRet, $hProcess[0]) Then Return SetError(@error, @extended, 0)
-	Return $aRet[2]
 EndFunc   ;==>_WinAPI_GetProcessHandleCount
 Func _WinAPI_GetProcessID($hProcess)
 	Local $aRet = DllCall('kernel32.dll', 'dword', 'GetProcessId', 'handle', $hProcess)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_GetProcessID
 Func _WinAPI_GetProcessIoCounters($iPID = 0)
-	If Not $iPID Then $iPID = @AutoItPID
-	Local $hProcess = DllCall('kernel32.dll', 'handle', 'OpenProcess', 'dword', (($__WINVER < 0x0600) ? 0x00000400 : 0x00001000), _
-			'bool', 0, 'dword', $iPID)
-	If @error Or Not $hProcess[0] Then Return SetError(@error + 20, @extended, 0)
 	Local $tIO_COUNTERS = DllStructCreate('uint64[6]')
 	Local $aRet = DllCall('kernel32.dll', 'bool', 'GetProcessIoCounters', 'handle', $hProcess[0], 'struct*', $tIO_COUNTERS)
-	If __CheckErrorCloseHandle($aRet, $hProcess[0]) Then Return SetError(@error, @extended, 0)
 	Local $aResult[6]
-	For $i = 0 To 5
 		$aResult[$i] = DllStructGetData($tIO_COUNTERS, 1, $i + 1)
-	Next
-	Return $aResult
 EndFunc   ;==>_WinAPI_GetProcessIoCounters
 Func _WinAPI_GetProcessMemoryInfo($iPID = 0)
-	If Not $iPID Then $iPID = @AutoItPID
-	Local $hProcess = DllCall('kernel32.dll', 'handle', 'OpenProcess', 'dword', (($__WINVER < 0x0600) ? 0x00000410 : 0x00001010), _
-			'bool', 0, 'dword', $iPID)
-	If @error Or Not $hProcess[0] Then Return SetError(@error + 20, @extended, 0)
 	Local $tPMC_EX = DllStructCreate('dword;dword;ulong_ptr;ulong_ptr;ulong_ptr;ulong_ptr;ulong_ptr;ulong_ptr;ulong_ptr;ulong_ptr;ulong_ptr')
 	Local $aRet = DllCall(@SystemDir & '\psapi.dll', 'bool', 'GetProcessMemoryInfo', 'handle', $hProcess[0], 'struct*', $tPMC_EX, _
 			'int', DllStructGetSize($tPMC_EX))
-	If __CheckErrorCloseHandle($aRet, $hProcess[0]) Then Return SetError(@error, @extended, 0)
 	Local $aResult[10]
 	For $i = 0 To 9
 		$aResult[$i] = DllStructGetData($tPMC_EX, $i + 2)
-	Next
-	Return $aResult
 EndFunc   ;==>_WinAPI_GetProcessMemoryInfo
 Func _WinAPI_GetProcessName($iPID = 0)
-	If Not $iPID Then $iPID = @AutoItPID
-	Local $hSnapshot = DllCall('kernel32.dll', 'handle', 'CreateToolhelp32Snapshot', 'dword', 0x00000002, 'dword', 0)
 	If @error Or Not $hSnapshot[0] Then Return SetError(@error + 20, @extended, '')
-	$hSnapshot = $hSnapshot[0]
-	Local $tPROCESSENTRY32 = DllStructCreate($tagPROCESSENTRY32)
-	DllStructSetData($tPROCESSENTRY32, 'Size', DllStructGetSize($tPROCESSENTRY32))
-	Local $aRet = DllCall('kernel32.dll', 'bool', 'Process32FirstW', 'handle', $hSnapshot, 'struct*', $tPROCESSENTRY32)
-	Local $iError = @error
-	While (Not @error) And ($aRet[0])
-		If DllStructGetData($tPROCESSENTRY32, 'ProcessID') = $iPID Then
-			ExitLoop
-		EndIf
-		$aRet = DllCall('kernel32.dll', 'bool', 'Process32NextW', 'handle', $hSnapshot, 'struct*', $tPROCESSENTRY32)
-		$iError = @error
-	WEnd
-	DllCall("kernel32.dll", "bool", "CloseHandle", "handle", $hSnapshot)
-	If $iError Then Return SetError($iError, 0, '')
 	If Not $aRet[0] Then SetError(10, 0, '')
 	Return DllStructGetData($tPROCESSENTRY32, 'ExeFile')
 EndFunc   ;==>_WinAPI_GetProcessName
 Func _WinAPI_GetProcessTimes($iPID = 0)
-	If Not $iPID Then $iPID = @AutoItPID
-	Local $hProcess = DllCall('kernel32.dll', 'handle', 'OpenProcess', 'dword', (($__WINVER < 0x0600) ? 0x00000400 : 0x00001000), _
-			'bool', 0, 'dword', $iPID)
-	If @error Or Not $hProcess[0] Then Return SetError(@error + 20, @extended, 0)
 	Local $tFILETIME = DllStructCreate($tagFILETIME)
 	Local $aRet = DllCall('kernel32.dll', 'bool', 'GetProcessTimes', 'handle', $hProcess[0], 'struct*', $tFILETIME, 'uint64*', 0, _
 			'uint64*', 0, 'uint64*', 0)
-	If __CheckErrorCloseHandle($aRet, $hProcess[0]) Then Return SetError(@error, @extended, 0)
 	Local $aResult[3]
 	$aResult[0] = $tFILETIME
-	$aResult[1] = $aRet[4]
 	$aResult[2] = $aRet[5]
-	Return $aResult
 EndFunc   ;==>_WinAPI_GetProcessTimes
 Func _WinAPI_GetProcessUser($iPID = 0)
-	If Not $iPID Then $iPID = @AutoItPID
 	Local $tSID, $hToken, $aRet
-	Local $iError = 0
-	Local $hProcess = DllCall('kernel32.dll', 'handle', 'OpenProcess', 'dword', (($__WINVER < 0x0600) ? 0x00000400 : 0x00001000), _
-			'bool', 0, 'dword', $iPID)
-	If @error Or Not $hProcess[0] Then Return SetError(@error + 20, @extended, 0)
-	Do
 		$hToken = _WinAPI_OpenProcessToken(0x00000008, $hProcess[0])
 		If Not $hToken Then
-			$iError = @error + 10
-			ExitLoop
-		EndIf
 		$tSID = DllStructCreate('ptr;byte[1024]')
 		$aRet = DllCall('advapi32.dll', 'bool', 'GetTokenInformation', 'handle', $hToken, 'uint', 1, 'struct*', $tSID, _
 				'dword', DllStructGetSize($tSID), 'dword*', 0)
-		If @error Or Not $aRet[0] Then
-			$iError = @error + 30
-			ExitLoop
-		EndIf
 		$aRet = DllCall('advapi32.dll', 'bool', 'LookupAccountSidW', 'ptr', 0, 'ptr', DllStructGetData($tSID, 1), 'wstr', '', _
 				'dword*', 2048, 'wstr', '', 'dword*', 2048, 'uint*', 0)
-		If @error Or Not $aRet[0] Then
-			$iError = @error + 40
-			ExitLoop
-		EndIf
-	Until 1
 	If $hToken Then
 		DllCall("kernel32.dll", "bool", "CloseHandle", "handle", $hToken)
-	EndIf
-	DllCall("kernel32.dll", "bool", "CloseHandle", "handle", $hProcess[0])
-	If $iError Then Return SetError($iError, 0, 0)
-	Local $aResult[2]
 	$aResult[0] = $aRet[3]
 	$aResult[1] = $aRet[5]
-	Return $aResult
 EndFunc   ;==>_WinAPI_GetProcessUser
 Func _WinAPI_GetProcessWorkingDirectory($iPID = 0)
-	If Not $iPID Then $iPID = @AutoItPID
-	Local $aRet, $iError = 0
 	Local $hProcess = DllCall('kernel32.dll', 'handle', 'OpenProcess', 'dword', (($__WINVER < 0x0600) ? 0x00000410 : 0x00001010), 'bool', 0, 'dword', $iPID)
-	If @error Or Not $hProcess[0] Then Return SetError(@error + 20, @extended, '')
-	$hProcess = $hProcess[0]
-	Local $tPBI = DllStructCreate('ulong_ptr ExitStatus;ptr PebBaseAddress;ulong_ptr AffinityMask;ulong_ptr BasePriority;ulong_ptr UniqueProcessId;ulong_ptr InheritedFromUniqueProcessId')
-	Local $tPEB = DllStructCreate('byte InheritedAddressSpace;byte ReadImageFileExecOptions;byte BeingDebugged;byte Spare;ptr Mutant;ptr ImageBaseAddress;ptr LoaderData;ptr ProcessParameters;ptr SubSystemData;ptr ProcessHeap;ptr FastPebLock;ptr FastPebLockRoutine;ptr FastPebUnlockRoutine;ulong EnvironmentUpdateCount;ptr KernelCallbackTable;ptr EventLogSection;ptr EventLog;ptr FreeList;ulong TlsExpansionCounter;ptr TlsBitmap;ulong TlsBitmapBits[2];ptr ReadOnlySharedMemoryBase;ptr ReadOnlySharedMemoryHeap;ptr ReadOnlyStaticServerData;ptr AnsiCodePageData;ptr OemCodePageData;ptr UnicodeCaseTableData;ulong NumberOfProcessors;ulong NtGlobalFlag;byte Spare2[4];int64 CriticalSectionTimeout;ulong HeapSegmentReserve;ulong HeapSegmentCommit;ulong HeapDeCommitTotalFreeThreshold;ulong HeapDeCommitFreeBlockThreshold;ulong NumberOfHeaps;ulong MaximumNumberOfHeaps;ptr ProcessHeaps;ptr GdiSharedHandleTable;ptr ProcessStarterHelper;ptr GdiDCAttributeList;ptr LoaderLock;ulong OSMajorVersion;ulong OSMinorVersion;ulong OSBuildNumber;ulong OSPlatformId;ulong ImageSubSystem;ulong ImageSubSystemMajorVersion;ulong ImageSubSystemMinorVersion;ulong GdiHandleBuffer[34];ulong PostProcessInitRoutine;ulong TlsExpansionBitmap;byte TlsExpansionBitmapBits[128];ulong SessionId')
-	Local $tUPP = DllStructCreate('ulong AllocationSize;ulong ActualSize;ulong Flags;ulong Unknown1;ushort LengthUnknown2;ushort MaxLengthUnknown2;ptr Unknown2;ptr InputHandle;ptr OutputHandle;ptr ErrorHandle;ushort LengthCurrentDirectory;ushort MaxLengthCurrentDirectory;ptr CurrentDirectory;ptr CurrentDirectoryHandle;ushort LengthSearchPaths;ushort MaxLengthSearchPaths;ptr SearchPaths;ushort LengthApplicationName;ushort MaxLengthApplicationName;ptr ApplicationName;ushort LengthCommandLine;ushort MaxLengthCommandLine;ptr CommandLine;ptr EnvironmentBlock;ulong Unknown[9];ushort LengthUnknown3;ushort MaxLengthUnknown3;ptr Unknown3;ushort LengthUnknown4;ushort MaxLengthUnknown4;ptr Unknown4;ushort LengthUnknown5;ushort MaxLengthUnknown5;ptr Unknown5')
 	Local $tDIR
-	Do
-		$aRet = DllCall('ntdll.dll', 'long', 'NtQueryInformationProcess', 'handle', $hProcess, 'ulong', 0, 'struct*', $tPBI, _
-				'ulong', DllStructGetSize($tPBI), 'ulong*', 0)
 		If @error Or ($aRet[0]) Then
-			$iError = @error + 10
-			ExitLoop
-		EndIf
-		$aRet = DllCall('kernel32.dll', 'bool', 'ReadProcessMemory', 'handle', $hProcess, _
-				'ptr', DllStructGetData($tPBI, 'PebBaseAddress'), 'struct*', $tPEB, _
-				'ulong_ptr', DllStructGetSize($tPEB), 'ulong_ptr*', 0)
 		If @error Or (Not $aRet[0]) Or (Not $aRet[5]) Then
-			$iError = @error + 30
-			ExitLoop
-		EndIf
-		$aRet = DllCall('kernel32.dll', 'bool', 'ReadProcessMemory', 'handle', $hProcess, _
-				'ptr', DllStructGetData($tPEB, 'ProcessParameters'), 'struct*', $tUPP, _
-				'ulong_ptr', DllStructGetSize($tUPP), 'ulong_ptr*', 0)
-		If @error Or (Not $aRet[0]) Or (Not $aRet[5]) Then
-			$iError = @error + 40
-			ExitLoop
-		EndIf
 		$tDIR = DllStructCreate('byte[' & DllStructGetData($tUPP, 'MaxLengthCurrentDirectory') & ']')
-		If @error Then
-			$iError = @error + 50
-			ExitLoop
-		EndIf
-		$aRet = DllCall('kernel32.dll', 'bool', 'ReadProcessMemory', 'handle', $hProcess, _
 				'ptr', DllStructGetData($tUPP, 'CurrentDirectory'), 'struct*', $tDIR, _
 				'ulong_ptr', DllStructGetSize($tDIR), 'ulong_ptr*', 0)
-		If @error Or (Not $aRet[0]) Or (Not $aRet[5]) Then
-			$iError = @error + 60
-			ExitLoop
-		EndIf
 		$iError = 0
-	Until 1
-	DllCall("kernel32.dll", "bool", "CloseHandle", "handle", $hProcess)
-	If $iError Then Return SetError($iError, 0, '')
 	Return _WinAPI_PathRemoveBackslash(_WinAPI_GetString(DllStructGetPtr($tDIR)))
 EndFunc   ;==>_WinAPI_GetProcessWorkingDirectory
 Func _WinAPI_GetThreadDesktop($iThreadId)
 	Local $aRet = DllCall('user32.dll', 'handle', 'GetThreadDesktop', 'dword', $iThreadId)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_GetThreadDesktop
 Func _WinAPI_GetThreadErrorMode()
 	Local $aRet = DllCall('kernel32.dll', 'dword', 'GetThreadErrorMode')
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_GetThreadErrorMode
 Func _WinAPI_GetWindowFileName($hWnd)
 	Local $iPID = 0
@@ -4357,31 +2889,19 @@ Func _WinAPI_GetWindowFileName($hWnd)
 	If $aResult[0] Then
 		$aResult = DllCall("user32.dll", "dword", "GetWindowThreadProcessId", "hwnd", $hWnd, "dword*", 0)
 		$iPID = $aResult[2]
-	EndIf
 	If Not $iPID Then Return SetError(1, 0, '')
 	Local $sResult = _WinAPI_GetProcessFileName($iPID)
-	If @error Then Return SetError(@error, @extended, '')
 	Return $sResult
 EndFunc   ;==>_WinAPI_GetWindowFileName
 Func _WinAPI_IsElevated()
 	Local $iElev, $aRet, $iError = 0
 	Local $hToken = _WinAPI_OpenProcessToken(0x0008)
 	If Not $hToken Then Return SetError(@error + 10, @extended, False)
-	Do
 		$aRet = DllCall('advapi32.dll', 'bool', 'GetTokenInformation', 'handle', $hToken, 'uint', 20, 'uint*', 0, 'dword', 4, _
 				'dword*', 0) ; TOKEN_ELEVATION
-		If @error Or Not $aRet[0] Then
-			$iError = @error + 10
-			ExitLoop
-		EndIf
 		$iElev = $aRet[3]
 		$aRet = DllCall('advapi32.dll', 'bool', 'GetTokenInformation', 'handle', $hToken, 'uint', 18, 'uint*', 0, 'dword', 4, _
 				'dword*', 0) ; TOKEN_ELEVATION_TYPE
-		If @error Or Not $aRet[0] Then
-			$iError = @error + 20
-			ExitLoop
-		EndIf
-	Until 1
 	DllCall("kernel32.dll", "bool", "CloseHandle", "handle", $hToken)
 	If $iError Then Return SetError($iError, 0, False)
 	Return SetExtended($aRet[0] - 1, $iElev)
@@ -4389,199 +2909,128 @@ EndFunc   ;==>_WinAPI_IsElevated
 Func _WinAPI_IsProcessInJob($hProcess, $hJob = 0)
 	Local $aRet = DllCall('kernel32.dll', 'bool', 'IsProcessInJob', 'handle', $hProcess, 'handle', $hJob, 'bool*', 0)
 	If @error Or Not $aRet[0] Then Return SetError(@error, @extended, False)
-	Return $aRet[3]
 EndFunc   ;==>_WinAPI_IsProcessInJob
 Func _WinAPI_OpenJobObject($sName, $iAccess = $JOB_OBJECT_ALL_ACCESS, $bInherit = False)
 	Local $aRet = DllCall('kernel32.dll', 'handle', 'OpenJobObjectW', 'dword', $iAccess, 'bool', $bInherit, 'wstr', $sName)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_OpenJobObject
 Func _WinAPI_OpenMutex($sMutex, $iAccess = $MUTEX_ALL_ACCESS, $bInherit = False)
 	Local $aRet = DllCall('kernel32.dll', 'handle', 'OpenMutexW', 'dword', $iAccess, 'bool', $bInherit, 'wstr', $sMutex)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_OpenMutex
 Func _WinAPI_OpenProcess($iAccess, $bInherit, $iPID, $bDebugPriv = False)
 	Local $aResult = DllCall("kernel32.dll", "handle", "OpenProcess", "dword", $iAccess, "bool", $bInherit, "dword", $iPID)
-	If @error Then Return SetError(@error, @extended, 0)
 	If $aResult[0] Then Return $aResult[0]
 	If Not $bDebugPriv Then Return SetError(100, 0, 0)
 	Local $hToken = _Security__OpenThreadTokenEx(BitOR($TOKEN_ADJUST_PRIVILEGES, $TOKEN_QUERY))
 	If @error Then Return SetError(@error + 10, @extended, 0)
 	_Security__SetPrivilege($hToken, "SeDebugPrivilege", True)
-	Local $iError = @error
 	Local $iExtended = @extended
 	Local $iRet = 0
 	If Not @error Then
 		$aResult = DllCall("kernel32.dll", "handle", "OpenProcess", "dword", $iAccess, "bool", $bInherit, "dword", $iPID)
-		$iError = @error
 		$iExtended = @extended
 		If $aResult[0] Then $iRet = $aResult[0]
 		_Security__SetPrivilege($hToken, "SeDebugPrivilege", False)
-		If @error Then
-			$iError = @error + 20
 			$iExtended = @extended
-		EndIf
-	Else
 		$iError = @error + 30 ; SeDebugPrivilege=True error
-	EndIf
-	DllCall("kernel32.dll", "bool", "CloseHandle", "handle", $hToken)
 	Return SetError($iError, $iExtended, $iRet)
 EndFunc   ;==>_WinAPI_OpenProcess
 Func _WinAPI_OpenProcessToken($iAccess, $hProcess = 0)
 	If Not $hProcess Then
 		$hProcess = DllCall("kernel32.dll", "handle", "GetCurrentProcess")
 		$hProcess = $hProcess[0]
-	EndIf
 	Local $aRet = DllCall('advapi32.dll', 'bool', 'OpenProcessToken', 'handle', $hProcess, 'dword', $iAccess, 'handle*', 0)
-	If @error Or Not $aRet[0] Then Return SetError(@error, @extended, 0)
-	Return $aRet[3]
 EndFunc   ;==>_WinAPI_OpenProcessToken
 Func _WinAPI_OpenSemaphore($sSemaphore, $iAccess = 0x001F0003, $bInherit = False)
 	Local $aRet = DllCall('kernel32.dll', 'handle', 'OpenSemaphoreW', 'dword', $iAccess, 'bool', $bInherit, 'wstr', $sSemaphore)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_OpenSemaphore
 Func _WinAPI_QueryInformationJobObject($hJob, $iJobObjectInfoClass, ByRef $tJobObjectInfo)
 	Local $aRet = DllCall('kernel32.dll', 'bool', 'QueryInformationJobObject', 'handle', $hJob, 'int', $iJobObjectInfoClass, _
 			'struct*', $tJobObjectInfo, 'dword', DllStructGetSize($tJobObjectInfo), 'dword*', 0)
-	If @error Or Not $aRet[0] Then Return SetError(@error, @extended, 0)
 	Return $aRet[5]
 EndFunc   ;==>_WinAPI_QueryInformationJobObject
 Func _WinAPI_ReleaseMutex($hMutex)
 	Local $aRet = DllCall('kernel32.dll', 'bool', 'ReleaseMutex', 'handle', $hMutex)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_ReleaseMutex
 Func _WinAPI_ReleaseSemaphore($hSemaphore, $iIncrease = 1)
 	Local $aRet = DllCall('kernel32.dll', 'bool', 'ReleaseSemaphore', 'handle', $hSemaphore, 'long', $iIncrease, 'long*', 0)
-	If @error Or Not $aRet[0] Then Return SetError(@error + 10, @extended, 0)
-	Return $aRet[3]
 EndFunc   ;==>_WinAPI_ReleaseSemaphore
 Func _WinAPI_ResetEvent($hEvent)
 	Local $aRet = DllCall('kernel32.dll', 'bool', 'ResetEvent', 'handle', $hEvent)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_ResetEvent
 Func _WinAPI_SetEvent($hEvent)
 	Local $aResult = DllCall("kernel32.dll", "bool", "SetEvent", "handle", $hEvent)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aResult[0]
 EndFunc   ;==>_WinAPI_SetEvent
 Func _WinAPI_SetInformationJobObject($hJob, $iJobObjectInfoClass, $tJobObjectInfo)
 	Local $aRet = DllCall('kernel32.dll', 'bool', 'SetInformationJobObject', 'handle', $hJob, 'int', $iJobObjectInfoClass, _
 			'struct*', $tJobObjectInfo, 'dword', DllStructGetSize($tJobObjectInfo))
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_SetInformationJobObject
 Func _WinAPI_SetPriorityClass($iPriority, $iPID = 0)
-	If Not $iPID Then $iPID = @AutoItPID
 	Local $hProcess = DllCall('kernel32.dll', 'handle', 'OpenProcess', 'dword', (($__WINVER < 0x0600) ? 0x00000600 : 0x00001200), _
-			'bool', 0, 'dword', $iPID)
 	If @error Or Not $hProcess[0] Then Return SetError(@error + 10, @extended, 0)
-	Local $iError = 0
 	Local $aRet = DllCall('kernel32.dll', 'bool', 'SetPriorityClass', 'handle', $hProcess[0], 'dword', $iPriority)
-	If @error Then $iError = @error
-	DllCall("kernel32.dll", "bool", "CloseHandle", "handle", $hProcess[0])
-	If $iError Then Return SetError($iError, 0, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_SetPriorityClass
 Func _WinAPI_SetProcessAffinityMask($hProcess, $iMask)
 	Local $aResult = DllCall("kernel32.dll", "bool", "SetProcessAffinityMask", "handle", $hProcess, "ulong_ptr", $iMask)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aResult[0]
 EndFunc   ;==>_WinAPI_SetProcessAffinityMask
 Func _WinAPI_SetThreadDesktop($hDesktop)
 	Local $aRet = DllCall('user32.dll', 'bool', 'SetThreadDesktop', 'handle', $hDesktop)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_SetThreadDesktop
 Func _WinAPI_SetThreadErrorMode($iMode)
 	Local $aRet = DllCall('kernel32.dll', 'bool', 'SetThreadErrorMode', 'dword', $iMode, 'dword*', 0)
-	If @error Or Not $aRet[0] Then Return SetError(@error + 10, @extended, 0)
-	Return $aRet[2]
 EndFunc   ;==>_WinAPI_SetThreadErrorMode
 Func _WinAPI_SetThreadExecutionState($iFlags)
 	Local $aRet = DllCall('kernel32.dll', 'dword', 'SetThreadExecutionState', 'dword', $iFlags)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_SetThreadExecutionState
 Func _WinAPI_TerminateJobObject($hJob, $iExitCode = 0)
 	Local $aRet = DllCall('kernel32.dll', 'bool', 'TerminateJobObject', 'handle', $hJob, 'uint', $iExitCode)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_TerminateJobObject
 Func _WinAPI_TerminateProcess($hProcess, $iExitCode = 0)
 	Local $aRet = DllCall('kernel32.dll', 'bool', 'TerminateProcess', 'handle', $hProcess, 'uint', $iExitCode)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_TerminateProcess
 Func _WinAPI_UserHandleGrantAccess($hObject, $hJob, $bGrant)
 	Local $aRet = DllCall('kernel32.dll', 'bool', 'UserHandleGrantAccess', 'handle', $hObject, 'handle', $hJob, 'bool', $bGrant)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_UserHandleGrantAccess
 Func _WinAPI_WaitForInputIdle($hProcess, $iTimeout = -1)
 	Local $aResult = DllCall("user32.dll", "dword", "WaitForInputIdle", "handle", $hProcess, "dword", $iTimeout)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aResult[0]
 EndFunc   ;==>_WinAPI_WaitForInputIdle
 Func _WinAPI_WaitForMultipleObjects($iCount, $paHandles, $bWaitAll = False, $iTimeout = -1)
 	Local $aResult = DllCall("kernel32.dll", "INT", "WaitForMultipleObjects", "dword", $iCount, "struct*", $paHandles, "bool", $bWaitAll, "dword", $iTimeout)
 	If @error Then Return SetError(@error, @extended, -1)
-	Return $aResult[0]
 EndFunc   ;==>_WinAPI_WaitForMultipleObjects
 Func _WinAPI_WaitForSingleObject($hHandle, $iTimeout = -1)
 	Local $aResult = DllCall("kernel32.dll", "INT", "WaitForSingleObject", "handle", $hHandle, "dword", $iTimeout)
-	If @error Then Return SetError(@error, @extended, -1)
-	Return $aResult[0]
 EndFunc   ;==>_WinAPI_WaitForSingleObject
 Func _WinAPI_WriteConsole($hConsole, $sText)
 	Local $aResult = DllCall("kernel32.dll", "bool", "WriteConsoleW", "handle", $hConsole, "wstr", $sText, _
 			"dword", StringLen($sText), "dword*", 0, "ptr", 0)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aResult[0]
 EndFunc   ;==>_WinAPI_WriteConsole
-#EndRegion Public Functions
-#Region Global Variables and Constants
+#include "APILocaleConstants.au3"
+#include "APIResConstants.au3"
+#include "WinAPIConv.au3"
+#include "WinAPIIcons.au3"
+#include "WinAPIInternals.au3"
 Global $__g_vVal
 Global Const $tagVS_FIXEDFILEINFO = 'dword Signature;dword StrucVersion;dword FileVersionMS;dword FileVersionLS;dword ProductVersionMS;dword ProductVersionLS;dword FileFlagsMask;dword FileFlags;dword FileOS;dword FileType;dword FileSubtype;dword FileDateMS;dword FileDateLS'
-#EndRegion Global Variables and Constants
-#Region Functions list
-#EndRegion Functions list
-#Region Public Functions
 Func _WinAPI_BeginUpdateResource($sFilePath, $bDelete = False)
 	Local $aRet = DllCall('kernel32.dll', 'handle', 'BeginUpdateResourceW', 'wstr', $sFilePath, 'bool', $bDelete)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_BeginUpdateResource
 Func _WinAPI_ClipCursor($tRECT)
 	Local $aRet = DllCall('user32.dll', 'bool', 'ClipCursor', 'struct*', $tRECT)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_ClipCursor
 Func _WinAPI_CopyCursor($hCursor)
 	Return _WinAPI_CopyIcon($hCursor)
 EndFunc   ;==>_WinAPI_CopyCursor
 Func _WinAPI_CreateCaret($hWnd, $hBitmap, $iWidth = 0, $iHeight = 0)
 	Local $aRet = DllCall('user32.dll', 'bool', 'CreateCaret', 'hwnd', $hWnd, 'handle', $hBitmap, 'int', $iWidth, 'int', $iHeight)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_CreateCaret
 Func _WinAPI_DestroyCaret()
 	Local $aRet = DllCall('user32.dll', 'bool', 'DestroyCaret')
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_DestroyCaret
 Func _WinAPI_DestroyCursor($hCursor)
 	Local $aRet = DllCall('user32.dll', 'bool', 'DestroyCursor', 'handle', $hCursor)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_DestroyCursor
 Func _WinAPI_EndUpdateResource($hUpdate, $bDiscard = False)
 	Local $aRet = DllCall('kernel32.dll', 'bool', 'EndUpdateResourceW', 'handle', $hUpdate, 'bool', $bDiscard)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_EndUpdateResource
 Func _WinAPI_EnumResourceLanguages($hModule, $sType, $sName)
 	Local $iLibrary = 0, $sTypeOfType = 'int', $sTypeOfName = 'int'
@@ -4590,195 +3039,91 @@ Func _WinAPI_EnumResourceLanguages($hModule, $sType, $sName)
 			$hModule = _WinAPI_LoadLibraryEx($hModule, 0x00000003)
 			If Not $hModule Then Return SetError(1, 0, 0)
 			$iLibrary = 1
-		Else
 			$hModule = 0
-		EndIf
-	EndIf
 	If IsString($sType) Then
 		$sTypeOfType = 'wstr'
-	EndIf
 	If IsString($sName) Then
 		$sTypeOfName = 'wstr'
-	EndIf
 	Dim $__g_vEnum[101] = [0]
 	Local $hEnumProc = DllCallbackRegister('__EnumResLanguagesProc', 'bool', 'handle;ptr;ptr;word;long_ptr')
 	Local $aRet = DllCall('kernel32.dll', 'bool', 'EnumResourceLanguagesW', 'handle', $hModule, $sTypeOfType, $sType, _
 			$sTypeOfName, $sName, 'ptr', DllCallbackGetPtr($hEnumProc), 'long_ptr', 0)
 	If @error Or Not $aRet[0] Or Not $__g_vEnum[0] Then
 		$__g_vEnum = @error + 10
-	EndIf
 	If $iLibrary Then
 		_WinAPI_FreeLibrary($hModule)
-	EndIf
-	DllCallbackFree($hEnumProc)
 	If $__g_vEnum Then Return SetError($__g_vEnum, 0, 0)
-	__Inc($__g_vEnum, -1)
-	Return $__g_vEnum
 EndFunc   ;==>_WinAPI_EnumResourceLanguages
 Func _WinAPI_EnumResourceNames($hModule, $sType)
 	Local $aRet, $hEnumProc, $iLibrary = 0, $sTypeOfType = 'int'
-	If IsString($hModule) Then
-		If StringStripWS($hModule, $STR_STRIPLEADING + $STR_STRIPTRAILING) Then
-			$hModule = _WinAPI_LoadLibraryEx($hModule, 0x00000003)
-			If Not $hModule Then Return SetError(1, 0, 0)
-			$iLibrary = 1
-		Else
-			$hModule = 0
-		EndIf
-	EndIf
-	If IsString($sType) Then
-		$sTypeOfType = 'wstr'
-	EndIf
-	Dim $__g_vEnum[101] = [0]
 	$hEnumProc = DllCallbackRegister('__EnumResNamesProc', 'bool', 'handle;ptr;ptr;long_ptr')
 	$aRet = DllCall('kernel32.dll', 'bool', 'EnumResourceNamesW', 'handle', $hModule, $sTypeOfType, $sType, _
 			'ptr', DllCallbackGetPtr($hEnumProc), 'long_ptr', 0)
 	If @error Or Not $aRet[0] Or (Not $__g_vEnum[0]) Then
-		$__g_vEnum = @error + 10
-	EndIf
-	If $iLibrary Then
-		_WinAPI_FreeLibrary($hModule)
-	EndIf
-	DllCallbackFree($hEnumProc)
-	If $__g_vEnum Then Return SetError($__g_vEnum, 0, 0)
-	__Inc($__g_vEnum, -1)
-	Return $__g_vEnum
 EndFunc   ;==>_WinAPI_EnumResourceNames
 Func _WinAPI_EnumResourceTypes($hModule)
 	Local $iLibrary = 0
-	If IsString($hModule) Then
-		If StringStripWS($hModule, $STR_STRIPLEADING + $STR_STRIPTRAILING) Then
-			$hModule = _WinAPI_LoadLibraryEx($hModule, 0x00000003)
-			If Not $hModule Then Return SetError(1, 0, 0)
-			$iLibrary = 1
-		Else
-			$hModule = 0
-		EndIf
-	EndIf
-	Dim $__g_vEnum[101] = [0]
 	Local $hEnumProc = DllCallbackRegister('__EnumResTypesProc', 'bool', 'handle;ptr;long_ptr')
 	Local $aRet = DllCall('kernel32.dll', 'bool', 'EnumResourceTypesW', 'handle', $hModule, _
-			'ptr', DllCallbackGetPtr($hEnumProc), 'long_ptr', 0)
-	If @error Or Not $aRet[0] Or (Not $__g_vEnum[0]) Then
-		$__g_vEnum = @error + 10
-	EndIf
-	If $iLibrary Then
-		_WinAPI_FreeLibrary($hModule)
-	EndIf
-	DllCallbackFree($hEnumProc)
-	If $__g_vEnum Then Return SetError($__g_vEnum, 0, 0)
-	__Inc($__g_vEnum, -1)
-	Return $__g_vEnum
 EndFunc   ;==>_WinAPI_EnumResourceTypes
 Func _WinAPI_FindResource($hInstance, $sType, $sName)
 	Local $sTypeOfType = 'int', $sTypeOfName = 'int'
-	If IsString($sType) Then
-		$sTypeOfType = 'wstr'
-	EndIf
-	If IsString($sName) Then
-		$sTypeOfName = 'wstr'
-	EndIf
 	Local $aRet = DllCall('kernel32.dll', 'handle', 'FindResourceW', 'handle', $hInstance, $sTypeOfName, $sName, $sTypeOfType, $sType)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_FindResource
 Func _WinAPI_FindResourceEx($hInstance, $sType, $sName, $iLanguage)
-	Local $sTypeOfType = 'int', $sTypeOfName = 'int'
-	If IsString($sType) Then
-		$sTypeOfType = 'wstr'
-	EndIf
-	If IsString($sName) Then
-		$sTypeOfName = 'wstr'
-	EndIf
 	Local $aRet = DllCall('kernel32.dll', 'handle', 'FindResourceExW', 'handle', $hInstance, $sTypeOfType, $sType, _
 			$sTypeOfName, $sName, 'ushort', $iLanguage)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_FindResourceEx
 Func _WinAPI_FreeResource($hData)
 	Local $aRet = DllCall('kernel32.dll', 'bool', 'FreeResource', 'handle', $hData)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_FreeResource
 Func _WinAPI_GetCaretBlinkTime()
 	Local $aRet = DllCall('user32.dll', 'uint', 'GetCaretBlinkTime')
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_GetCaretBlinkTime
 Func _WinAPI_GetCaretPos()
 	Local $tPOINT = DllStructCreate($tagPOINT)
 	Local $aRet = DllCall('user32.dll', 'bool', 'GetCaretPos', 'struct*', $tagPOINT)
-	If @error Or Not $aRet[0] Then Return SetError(@error + 10, @extended, 0)
-	Local $aResult[2]
 	For $i = 0 To 1
 		$aResult[$i] = DllStructGetData($tPOINT, $i + 1)
-	Next
-	Return $aResult
 EndFunc   ;==>_WinAPI_GetCaretPos
 Func _WinAPI_GetClipCursor()
 	Local $tRECT = DllStructCreate($tagRECT)
 	Local $aRet = DllCall('user32.dll', 'bool', 'GetClipCursor', 'struct*', $tRECT)
-	If @error Or Not $aRet[0] Then Return SetError(@error + 10, @extended, 0)
 	Return $tRECT
 EndFunc   ;==>_WinAPI_GetClipCursor
 Func _WinAPI_GetCursor()
 	Local $aRet = DllCall('user32.dll', 'handle', 'GetCursor')
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_GetCursor
 Func _WinAPI_GetFileVersionInfo($sFilePath, ByRef $pBuffer, $iFlags = 0)
 	Local $aRet
-	If $__WINVER >= 0x0600 Then
 		$aRet = DllCall('version.dll', 'dword', 'GetFileVersionInfoSizeExW', 'dword', BitAND($iFlags, 0x03), 'wstr', $sFilePath, _
 				'ptr', 0)
-	Else
 		$aRet = DllCall('version.dll', 'dword', 'GetFileVersionInfoSizeW', 'wstr', $sFilePath, 'ptr', 0)
-	EndIf
-	If @error Or Not $aRet[0] Then Return SetError(@error, @extended, 0)
 	$pBuffer = __HeapReAlloc($pBuffer, $aRet[0], 1)
 	If @error Then Return SetError(@error + 100, @extended, 0)
 	Local $iNbByte = $aRet[0]
-	If $__WINVER >= 0x0600 Then
 		$aRet = DllCall('version.dll', 'bool', 'GetFileVersionInfoExW', 'dword', BitAND($iFlags, 0x07), 'wstr', $sFilePath, _
 				'dword', 0, 'dword', $iNbByte, 'ptr', $pBuffer)
-	Else
 		$aRet = DllCall('version.dll', 'bool', 'GetFileVersionInfoW', 'wstr', $sFilePath, _
-				'dword', 0, 'dword', $iNbByte, 'ptr', $pBuffer)
-	EndIf
-	If @error Or Not $aRet[0] Then Return SetError(@error + 10, @extended, 0)
 	Return $iNbByte
 EndFunc   ;==>_WinAPI_GetFileVersionInfo
 Func _WinAPI_HideCaret($hWnd)
 	Local $aRet = DllCall('user32.dll', 'int', 'HideCaret', 'hwnd', $hWnd)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_HideCaret
 Func _WinAPI_LoadBitmap($hInstance, $sBitmap)
 	Local $sBitmapType = "int"
 	If IsString($sBitmap) Then $sBitmapType = "wstr"
 	Local $aResult = DllCall("user32.dll", "handle", "LoadBitmapW", "handle", $hInstance, $sBitmapType, $sBitmap)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aResult[0]
 EndFunc   ;==>_WinAPI_LoadBitmap
 Func _WinAPI_LoadCursor($hInstance, $sName)
 	Local $sTypeOfName = 'int'
-	If IsString($sName) Then
-		$sTypeOfName = 'wstr'
-	EndIf
 	Local $aRet = DllCall('user32.dll', 'handle', 'LoadCursorW', 'handle', $hInstance, $sTypeOfName, $sName)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_LoadCursor
 Func _WinAPI_LoadCursorFromFile($sFilePath)
 	Local $aRet = DllCall('user32.dll', 'handle', 'LoadCursorFromFileW', 'wstr', $sFilePath)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_LoadCursorFromFile
 Func _WinAPI_LoadIndirectString($sStrIn)
 	Local $aRet = DllCall('shlwapi.dll', 'uint', 'SHLoadIndirectString', 'wstr', $sStrIn, 'wstr', '', 'uint', 4096, 'ptr*', 0)
-	If @error Then Return SetError(@error, @extended, '')
-	If $aRet[0] Then Return SetError(10, $aRet[0], '')
-	Return $aRet[2]
 EndFunc   ;==>_WinAPI_LoadIndirectString
 Func _WinAPI_LoadString($hInstance, $iStringID)
 	Local $aResult = DllCall("user32.dll", "int", "LoadStringW", "handle", $hInstance, "uint", $iStringID, "wstr", "", "int", 4096)
@@ -4787,99 +3132,54 @@ Func _WinAPI_LoadString($hInstance, $iStringID)
 EndFunc   ;==>_WinAPI_LoadString
 Func _WinAPI_LoadLibraryEx($sFileName, $iFlags = 0)
 	Local $aResult = DllCall("kernel32.dll", "handle", "LoadLibraryExW", "wstr", $sFileName, "ptr", 0, "dword", $iFlags)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aResult[0]
 EndFunc   ;==>_WinAPI_LoadLibraryEx
 Func _WinAPI_LoadResource($hInstance, $hResource)
 	Local $aRet = DllCall('kernel32.dll', 'handle', 'LoadResource', 'handle', $hInstance, 'handle', $hResource)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_LoadResource
 Func _WinAPI_LoadStringEx($hModule, $iID, $iLanguage = $LOCALE_USER_DEFAULT)
-	Local $iLibrary = 0
-	If IsString($hModule) Then
-		If StringStripWS($hModule, $STR_STRIPLEADING + $STR_STRIPTRAILING) Then
-			$hModule = _WinAPI_LoadLibraryEx($hModule, 0x00000003)
 			If Not $hModule Then Return SetError(@error + 20, @extended, '')
-			$iLibrary = 1
-		Else
-			$hModule = 0
-		EndIf
-	EndIf
 	Local $sResult = ''
 	Local $pData = __ResLoad($hModule, 6, Floor($iID / 16) + 1, $iLanguage)
-	If Not @error Then
 		Local $iOffset = 0
 		For $i = 0 To Mod($iID, 16) - 1
 			$iOffset += 2 * (DllStructGetData(DllStructCreate('ushort', $pData + $iOffset), 1) + 1)
-		Next
 		$sResult = DllStructGetData(DllStructCreate('ushort;wchar[' & DllStructGetData(DllStructCreate('ushort', $pData + $iOffset), 1) & ']', $pData + $iOffset), 2)
 		If @error Then $sResult = ''
-	Else
 		Return SetError(10, 0, '')
-	EndIf
-	If $iLibrary Then
-		_WinAPI_FreeLibrary($hModule)
-	EndIf
 	Return SetError(Number(Not $sResult), 0, $sResult)
 EndFunc   ;==>_WinAPI_LoadStringEx
 Func _WinAPI_LockResource($hData)
 	Local $aRet = DllCall('kernel32.dll', 'ptr', 'LockResource', 'handle', $hData)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_LockResource
 Func _WinAPI_SetCaretBlinkTime($iDuration)
 	Local $iPrev = _WinAPI_GetCaretBlinkTime()
 	If Not $iPrev Then Return SetError(@error + 20, @extended, 0)
 	Local $aRet = DllCall('user32.dll', 'bool', 'SetCaretBlinkTime', 'uint', $iDuration)
-	If @error Or Not $aRet[0] Then Return SetError(@error + 10, @extended, 0)
 	Return $iPrev
 EndFunc   ;==>_WinAPI_SetCaretBlinkTime
 Func _WinAPI_SetCaretPos($iX, $iY)
 	Local $aRet = DllCall('user32.dll', 'int', 'SetCaretPos', 'int', $iX, 'int', $iY)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_SetCaretPos
 Func _WinAPI_SetCursor($hCursor)
 	Local $aResult = DllCall("user32.dll", "handle", "SetCursor", "handle", $hCursor)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aResult[0]
 EndFunc   ;==>_WinAPI_SetCursor
 Func _WinAPI_SetSystemCursor($hCursor, $iID, $bCopy = False)
 	If $bCopy Then
 		$hCursor = _WinAPI_CopyCursor($hCursor)
-	EndIf
 	Local $aRet = DllCall('user32.dll', 'bool', 'SetSystemCursor', 'handle', $hCursor, 'dword', $iID)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_SetSystemCursor
 Func _WinAPI_ShowCaret($hWnd)
 	Local $aRet = DllCall('user32.dll', 'bool', 'ShowCaret', 'hwnd', $hWnd)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_ShowCaret
 Func _WinAPI_ShowCursor($bShow)
 	Local $aResult = DllCall("user32.dll", "int", "ShowCursor", "bool", $bShow)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aResult[0]
 EndFunc   ;==>_WinAPI_ShowCursor
 Func _WinAPI_SizeOfResource($hInstance, $hResource)
 	Local $aRet = DllCall('kernel32.dll', 'dword', 'SizeofResource', 'handle', $hInstance, 'handle', $hResource)
-	If @error Or Not $aRet[0] Then Return SetError(@error, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_SizeOfResource
 Func _WinAPI_UpdateResource($hUpdate, $sType, $sName, $iLanguage, $pData, $iSize)
-	Local $sTypeOfType = 'int', $sTypeOfName = 'int'
-	If IsString($sType) Then
-		$sTypeOfType = 'wstr'
-	EndIf
-	If IsString($sName) Then
-		$sTypeOfName = 'wstr'
-	EndIf
 	Local $aRet = DllCall('kernel32.dll', 'bool', 'UpdateResourceW', 'handle', $hUpdate, $sTypeOfType, $sType, $sTypeOfName, $sName, _
 			'word', $iLanguage, 'ptr', $pData, 'dword', $iSize)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_UpdateResource
 Func _WinAPI_VerQueryRoot($pData)
 	Local $aRet = DllCall('version.dll', 'bool', 'VerQueryValueW', 'ptr', $pData, 'wstr', '\', 'ptr*', 0, 'uint*', 0)
@@ -4892,7 +3192,6 @@ Func _WinAPI_VerQueryValue($pData, $sValues = '')
 	$sValues = StringRegExpReplace($sValues, '\A[\s\|]*|[\s\|]*\Z', '')
 	If Not $sValues Then
 		$sValues = 'Comments|CompanyName|FileDescription|FileVersion|InternalName|LegalCopyright|LegalTrademarks|OriginalFilename|ProductName|ProductVersion|PrivateBuild|SpecialBuild'
-	EndIf
 	$sValues = StringSplit($sValues, '|', $STR_NOCOUNT)
 	Local $aRet = DllCall('version.dll', 'bool', 'VerQueryValueW', 'ptr', $pData, 'wstr', '\VarFileInfo\Translation', 'ptr*', 0, _
 			'uint*', 0)
@@ -4910,11 +3209,7 @@ Func _WinAPI_VerQueryValue($pData, $sValues = '')
 					'ptr*', 0, 'uint*', 0)
 			If Not @error And $aRet[0] And $aRet[4] Then
 				$aInfo[$aInfo[0][0]][$j + 1] = DllStructGetData(DllStructCreate('wchar[' & $aRet[4] & ']', $aRet[3]), 1)
-			Else
 				$aInfo[$aInfo[0][0]][$j + 1] = ''
-			EndIf
-		Next
-	Next
 	__Inc($aInfo, -1)
 	Return $aInfo
 EndFunc   ;==>_WinAPI_VerQueryValue
@@ -4922,79 +3217,37 @@ Func _WinAPI_VerQueryValueEx($hModule, $sValues = '', $iLanguage = 0x0400)
 	$__g_vVal = StringRegExpReplace($sValues, '\A[\s\|]*|[\s\|]*\Z', '')
 	If Not $__g_vVal Then
 		$__g_vVal = 'Comments|CompanyName|FileDescription|FileVersion|InternalName|LegalCopyright|LegalTrademarks|OriginalFilename|ProductName|ProductVersion|PrivateBuild|SpecialBuild'
-	EndIf
 	$__g_vVal = StringSplit($__g_vVal, '|')
 	If Not IsArray($__g_vVal) Then Return SetError(1, 0, 0)
-	Local $iLibrary = 0
-	If IsString($hModule) Then
-		If StringStripWS($hModule, $STR_STRIPLEADING + $STR_STRIPTRAILING) Then
-			$hModule = _WinAPI_LoadLibraryEx($hModule, 0x00000003)
 			If Not $hModule Then
 				Return SetError(@error + 10, @extended, 0)
-			EndIf
-			$iLibrary = 1
-		Else
-			$hModule = 0
-		EndIf
-	EndIf
 	Dim $__g_vEnum[101][$__g_vVal[0] + 1] = [[0]]
 	Local $hEnumProc = DllCallbackRegister('__EnumVerValuesProc', 'bool', 'ptr;ptr;ptr;word;long_ptr')
 	Local $aRet = DllCall('kernel32.dll', 'bool', 'EnumResourceLanguagesW', 'handle', $hModule, 'int', 16, 'int', 1, _
 			'ptr', DllCallbackGetPtr($hEnumProc), 'long_ptr', $iLanguage)
-	Do
-		If @error Then
 			$__g_vEnum = @error + 20
-		Else
 			If Not $aRet[0] Then
 				Switch _WinAPI_GetLastError()
 					Case 0, 15106 ; ERROR_SUCCESS, ERROR_RESOURCE_ENUM_USER_STOP
-						ExitLoop
-					Case Else
 						$__g_vEnum = 20
-				EndSwitch
-			Else
-				ExitLoop
-			EndIf
-		EndIf
-	Until 1
-	If $iLibrary Then
-		_WinAPI_FreeLibrary($hModule)
-	EndIf
-	DllCallbackFree($hEnumProc)
 	If Not $__g_vEnum[0][0] Then $__g_vEnum = 230
-	If $__g_vEnum Then Return SetError($__g_vEnum, 0, 0)
-	__Inc($__g_vEnum, -1)
-	Return $__g_vEnum
 EndFunc   ;==>_WinAPI_VerQueryValueEx
-#EndRegion Public Functions
-#Region Internal Functions
 Func __EnumResLanguagesProc($hModule, $iType, $iName, $iLanguage, $lParam)
 	#forceref $hModule, $iType, $iName, $lParam
 	__Inc($__g_vEnum)
 	$__g_vEnum[$__g_vEnum[0]] = $iLanguage
-	Return 1
 EndFunc   ;==>__EnumResLanguagesProc
 Func __EnumResNamesProc($hModule, $iType, $iName, $lParam)
 	#forceref $hModule, $iType, $lParam
 	Local $iLength = _WinAPI_StrLen($iName)
-	__Inc($__g_vEnum)
-	If $iLength Then
 		$__g_vEnum[$__g_vEnum[0]] = DllStructGetData(DllStructCreate('wchar[' & ($iLength + 1) & ']', $iName), 1)
-	Else
 		$__g_vEnum[$__g_vEnum[0]] = Number($iName)
-	EndIf
-	Return 1
 EndFunc   ;==>__EnumResNamesProc
 Func __EnumResTypesProc($hModule, $iType, $lParam)
 	#forceref $hModule, $lParam
 	Local $iLength = _WinAPI_StrLen($iType)
-	__Inc($__g_vEnum)
-	If $iLength Then
 		$__g_vEnum[$__g_vEnum[0]] = DllStructGetData(DllStructCreate('wchar[' & ($iLength + 1) & ']', $iType), 1)
-	Else
 		$__g_vEnum[$__g_vEnum[0]] = Number($iType)
-	EndIf
-	Return 1
 EndFunc   ;==>__EnumResTypesProc
 Func __EnumVerValuesProc($hModule, $iType, $iName, $iLanguage, $iDefault)
 	Local $aRet, $iEnum = 1, $iError = 0
@@ -5003,45 +3256,21 @@ Func __EnumVerValuesProc($hModule, $iType, $iName, $iLanguage, $iDefault)
 		Case 0x0400
 			$iLanguage = 0x0400
 			$iEnum = 0
-		Case Else
 			If $iLanguage <> $iDefault Then
 				Return 1
-			EndIf
-			$iEnum = 0
-	EndSwitch
-	Do
 		Local $pData = __ResLoad($hModule, $iType, $iName, $iLanguage)
-		If @error Then
-			$iError = @error + 10
-			ExitLoop
-		EndIf
 		$aRet = DllCall('version.dll', 'bool', 'VerQueryValueW', 'ptr', $pData, 'wstr', '\VarFileInfo\Translation', 'ptr*', 0, 'uint*', 0)
 		If @error Or Not $aRet[0] Or Not $aRet[4] Then
-			$iError = @error + 20
-			ExitLoop
-		EndIf
 		Local $tData = DllStructCreate('ushort;ushort', $aRet[3])
-		If @error Then
-			$iError = @error + 30
-			ExitLoop
-		EndIf
-	Until 1
 	If Not $iError Then
 		__Inc($__g_vEnum)
 		$__g_vEnum[$__g_vEnum[0][0]][0] = DllStructGetData($tData, 1)
 		Local $sCP = Hex(_WinAPI_MakeLong(DllStructGetData($tData, 2), DllStructGetData($tData, 1)), 8)
 		For $i = 1 To $__g_vVal[0]
 			$aRet = DllCall('version.dll', 'bool', 'VerQueryValueW', 'ptr', $pData, 'wstr', '\StringFileInfo\' & $sCP & '\' & $__g_vVal[$i], _
-					'ptr*', 0, 'uint*', 0)
-			If Not @error And $aRet[0] And $aRet[4] Then
 				$__g_vEnum[$__g_vEnum[0][0]][$i] = DllStructGetData(DllStructCreate('wchar[' & $aRet[4] & ']', $aRet[3]), 1)
-			Else
 				$__g_vEnum[$__g_vEnum[0][0]][$i] = ''
-			EndIf
-		Next
-	Else
 		$__g_vEnum = @error + 40
-	EndIf
 	If $__g_vEnum Then Return SetError($iError, 0, 0)
 	Return $iEnum
 EndFunc   ;==>__EnumVerValuesProc
@@ -5056,7 +3285,6 @@ Func __ResLoad($hInstance, $sType, $sName, $iLanguage)
 	If Not $pData Then Return SetError(@error + 40, @extended, 0)
 	Return SetExtended($iSize, $pData)
 EndFunc   ;==>__ResLoad
-#EndRegion Internal Functions
 #region _Memory
 Func _MemoryModuleGetBaseAddress($iPID, $sModule)
     If Not ProcessExists($iPID) Then Return SetError(1, 0, 0)
@@ -5068,8 +3296,6 @@ Func _MemoryModuleGetBaseAddress($iPID, $sModule)
         Local $hProcess = DllCall("kernel32.dll", "ptr", "OpenProcess", "dword", $PERMISSION, "int", 0, "dword", $iPID)
         If $hProcess[0] Then
             $hProcess = $hProcess[0]
-        EndIf
-    EndIf
     Local   $Modules = DllStructCreate("ptr[1024]")
     Local   $aCall = DllCall($PSAPI, "int", "EnumProcessModules", "ptr", $hProcess, "ptr", DllStructGetPtr($Modules), "dword", DllStructGetSize($Modules), "dword*", 0)
     If $aCall[4] > 0 Then
@@ -5080,89 +3306,39 @@ Func _MemoryModuleGetBaseAddress($iPID, $sModule)
             If $aTemp[3] = $sModule Then
                 DllClose($PSAPI)
                 Return Ptr(DllStructGetData($Modules, 1, $i))
-            EndIf
         Next
-    EndIf
     DllClose($PSAPI)
     Return SetError(-1, 0, 0)
-EndFunc
 Func _MemoryOpen($iv_Pid, $iv_DesiredAccess = 0x1F0FFF, $iv_InheritHandle = 1)
 	If Not ProcessExists($iv_Pid) Then
 		SetError(1)
         Return 0
-	EndIf
 	Local $ah_Handle[2] = [DllOpen('kernel32.dll')]
-	If @Error Then
         SetError(2)
-        Return 0
-    EndIf
 	Local $av_OpenProcess = DllCall($ah_Handle[0], 'int', 'OpenProcess', 'int', $iv_DesiredAccess, 'int', $iv_InheritHandle, 'int', $iv_Pid)
-	If @Error Then
         DllClose($ah_Handle[0])
         SetError(3)
-        Return 0
-    EndIf
 	$ah_Handle[1] = $av_OpenProcess[0]
 	Return $ah_Handle
-EndFunc
 Func _MemoryRead($iv_Address, $ah_Handle, $sv_Type = 'dword')
 	If Not IsArray($ah_Handle) Then
-		SetError(1)
-        Return 0
-	EndIf
 	Local $v_Buffer = DllStructCreate($sv_Type)
-	If @Error Then
 		SetError(@Error + 1)
 		Return 0
-	EndIf
 	DllCall($ah_Handle[0], 'int', 'ReadProcessMemory', 'int', $ah_Handle[1], 'int', $iv_Address, 'ptr', DllStructGetPtr($v_Buffer), 'int', DllStructGetSize($v_Buffer), 'int', '')
-	If Not @Error Then
 		Local $v_Value = DllStructGetData($v_Buffer, 1)
 		Return $v_Value
-	Else
 		SetError(6)
-        Return 0
-	EndIf
-EndFunc
 Func _MemoryWrite($iv_Address, $ah_Handle, $v_Data, $sv_Type = 'dword')
-	If Not IsArray($ah_Handle) Then
-		SetError(1)
-        Return 0
-	EndIf
-	Local $v_Buffer = DllStructCreate($sv_Type)
-	If @Error Then
-		SetError(@Error + 1)
-		Return 0
-	Else
 		DllStructSetData($v_Buffer, 1, $v_Data)
-		If @Error Then
 			SetError(6)
 			Return 0
-		EndIf
-	EndIf
 	DllCall($ah_Handle[0], 'int', 'WriteProcessMemory', 'int', $ah_Handle[1], 'int', $iv_Address, 'ptr', DllStructGetPtr($v_Buffer), 'int', DllStructGetSize($v_Buffer), 'int', '')
-	If Not @Error Then
-		Return 1
-	Else
 		SetError(7)
-        Return 0
-	EndIf
-EndFunc
 Func _MemoryClose($ah_Handle)
-	If Not IsArray($ah_Handle) Then
-		SetError(1)
-        Return 0
-	EndIf
 	DllCall($ah_Handle[0], 'int', 'CloseHandle', 'int', $ah_Handle[1])
-	If Not @Error Then
-		DllClose($ah_Handle[0])
-		Return 1
-	Else
 		DllClose($ah_Handle[0])
 		SetError(2)
-        Return 0
-	EndIf
-EndFunc
 Func SetPrivilege( $privilege, $bEnable )
     Local $hToken, $SP_auxret, $SP_ret, $hCurrProcess, $nTokens, $nTokenIndex, $priv
     $nTokens = 1
@@ -5182,7 +3358,6 @@ Func SetPrivilege( $privilege, $bEnable )
                 $priv = $privilege[$nTokenIndex-1]
             Else
                 $priv = $privilege
-            EndIf
             $ret = DLLCall("advapi32.dll","int","LookupPrivilegeValue","str","","str",$priv,   _
                     "ptr",DLLStructGetPtr($LUID))
             If $ret[0] Then
@@ -5195,14 +3370,12 @@ Func SetPrivilege( $privilege, $bEnable )
                 DLLStructSetData($TOKEN_PRIVILEGES,2,DllStructGetData($LUID,2),(3 * ($nTokenIndex-1)) + 2)
                 DLLStructSetData($LUID,1,0)
                 DLLStructSetData($LUID,2,0)
-            EndIf
             $nTokenIndex += 1
         WEnd
         $ret = DLLCall("advapi32.dll","int","AdjustTokenPrivileges","hwnd",$hToken,"int",0,   _
                 "ptr",DllStructGetPtr($TOKEN_PRIVILEGES),"int",DllStructGetSize($NEWTOKEN_PRIVILEGES),   _
                 "ptr",DllStructGetPtr($NEWTOKEN_PRIVILEGES),"int_ptr",0)
         $f = DLLCall("kernel32.dll","int","GetLastError")
-    EndIf
     $NEWTOKEN_PRIVILEGES=0
     $TOKEN_PRIVILEGES=0
     $LUID=0
@@ -5211,7 +3384,6 @@ Func SetPrivilege( $privilege, $bEnable )
     If Not $ret[0] And Not $SP_auxret[0] Then Return 0
     return $ret[0]
 EndFunc   ;==>SetPrivilege
-#endregion
 Global Const $BS_GROUPBOX = 0x0007
 Global Const $BS_BOTTOM = 0x0800
 Global Const $BS_CENTER = 0x0300
@@ -5298,6 +3470,9 @@ Global Const $BST_UNCHECKED = 0x0
 Global Const $BST_FOCUS = 0x8
 Global Const $BST_PUSHED = 0x4
 Global Const $BST_DONTCLICK = 0x000080
+#include "GDIPlusConstants.au3"
+#include "StructureConstants.au3"
+#include "WinAPIGdi.au3"
 Global $__g_hGDIPBrush = 0
 Global $__g_hGDIPDll = 0
 Global $__g_hGDIPPen = 0
@@ -5306,69 +3481,42 @@ Global $__g_iGDIPToken = 0
 Global $__g_bGDIP_V1_0 = True
 Func _GDIPlus_ArrowCapCreate($fHeight, $fWidth, $bFilled = True)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipCreateAdjustableArrowCap", "float", $fHeight, "float", $fWidth, "bool", $bFilled, "handle*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
 	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
 	Return $aResult[4]
 EndFunc   ;==>_GDIPlus_ArrowCapCreate
 Func _GDIPlus_ArrowCapDispose($hCap)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipDeleteCustomLineCap", "handle", $hCap)
-	If @error Then Return SetError(@error, @extended, False)
 	If $aResult[0] Then Return SetError(10, $aResult[0], False)
 	Return True
 EndFunc   ;==>_GDIPlus_ArrowCapDispose
 Func _GDIPlus_ArrowCapGetFillState($hArrowCap)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetAdjustableArrowCapFillState", "handle", $hArrowCap, "bool*", 0)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_ArrowCapGetFillState
 Func _GDIPlus_ArrowCapGetHeight($hArrowCap)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetAdjustableArrowCapHeight", "handle", $hArrowCap, "float*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
 	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_ArrowCapGetHeight
 Func _GDIPlus_ArrowCapGetMiddleInset($hArrowCap)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetAdjustableArrowCapMiddleInset", "handle", $hArrowCap, "float*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_ArrowCapGetMiddleInset
 Func _GDIPlus_ArrowCapGetWidth($hArrowCap)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetAdjustableArrowCapWidth", "handle", $hArrowCap, "float*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_ArrowCapGetWidth
 Func _GDIPlus_ArrowCapSetFillState($hArrowCap, $bFilled = True)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetAdjustableArrowCapFillState", "handle", $hArrowCap, "bool", $bFilled)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_ArrowCapSetFillState
 Func _GDIPlus_ArrowCapSetHeight($hArrowCap, $fHeight)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetAdjustableArrowCapHeight", "handle", $hArrowCap, "float", $fHeight)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_ArrowCapSetHeight
 Func _GDIPlus_ArrowCapSetMiddleInset($hArrowCap, $fInset)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetAdjustableArrowCapMiddleInset", "handle", $hArrowCap, "float", $fInset)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_ArrowCapSetMiddleInset
 Func _GDIPlus_ArrowCapSetWidth($hArrowCap, $fWidth)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetAdjustableArrowCapWidth", "handle", $hArrowCap, "float", $fWidth)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_ArrowCapSetWidth
 Func _GDIPlus_BitmapCloneArea($hBitmap, $nLeft, $nTop, $nWidth, $nHeight, $iFormat = 0x00021808)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipCloneBitmapArea", "float", $nLeft, "float", $nTop, "float", $nWidth, "float", $nHeight, _
 			"int", $iFormat, "handle", $hBitmap, "handle*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
 	Return $aResult[7]
 EndFunc   ;==>_GDIPlus_BitmapCloneArea
 Func _GDIPlus_BitmapCreateDIBFromBitmap($hBitmap)
@@ -5395,9 +3543,7 @@ Func _GDIPlus_BitmapCreateDIBFromBitmap($hBitmap)
 	If Not @error And $hHBitmapv5[0] Then
 		DllCall("gdi32.dll", "dword", "SetBitmapBits", "ptr", $hHBitmapv5[0], "dword", $aRet[2] * $aRet[3] * 4, "ptr", DllStructGetData($tData, "Scan0"))
 		$hHBitmapv5 = $hHBitmapv5[0]
-	Else
 		$hHBitmapv5 = 0
-	EndIf
 	_GDIPlus_BitmapUnlockBits($hBitmap, $tData)
 	$tData = 0
 	$tBIHDR = 0
@@ -5405,21 +3551,13 @@ Func _GDIPlus_BitmapCreateDIBFromBitmap($hBitmap)
 EndFunc   ;==>_GDIPlus_BitmapCreateDIBFromBitmap
 Func _GDIPlus_BitmapCreateFromFile($sFileName)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipCreateBitmapFromFile", "wstr", $sFileName, "handle*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_BitmapCreateFromFile
 Func _GDIPlus_BitmapCreateFromGraphics($iWidth, $iHeight, $hGraphics)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipCreateBitmapFromGraphics", "int", $iWidth, "int", $iHeight, "handle", $hGraphics, _
 			"handle*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[4]
 EndFunc   ;==>_GDIPlus_BitmapCreateFromGraphics
 Func _GDIPlus_BitmapCreateFromHBITMAP($hBitmap, $hPal = 0)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipCreateBitmapFromHBITMAP", "handle", $hBitmap, "handle", $hPal, "handle*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
 	Return $aResult[3]
 EndFunc   ;==>_GDIPlus_BitmapCreateFromHBITMAP
 Func _GDIPlus_BitmapCreateFromMemory($dImage, $bHBITMAP = False)
@@ -5446,46 +3584,28 @@ Func _GDIPlus_BitmapCreateFromMemory($dImage, $bHBITMAP = False)
 		Local Const $hHBmp = _GDIPlus_BitmapCreateDIBFromBitmap($hBitmap) ;supports GDI transparent color format
 		_GDIPlus_BitmapDispose($hBitmap)
 		Return $hHBmp
-	EndIf
 	Return $hBitmap
 EndFunc   ;==>_GDIPlus_BitmapCreateFromMemory
 Func _GDIPlus_BitmapCreateFromResource($hInst, $vResourceName)
 	Local $sType = "int"
 	If IsString($vResourceName) Then $sType = "wstr"
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipCreateBitmapFromResource", "handle", $hInst, $sType, $vResourceName, "handle*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[3]
 EndFunc   ;==>_GDIPlus_BitmapCreateFromResource
 Func _GDIPlus_BitmapCreateFromScan0($iWidth, $iHeight, $iPixelFormat = $GDIP_PXF32ARGB, $iStride = 0, $pScan0 = 0)
 	Local $aResult = DllCall($__g_hGDIPDll, "uint", "GdipCreateBitmapFromScan0", "int", $iWidth, "int", $iHeight, "int", $iStride, "int", $iPixelFormat, "struct*", $pScan0, "handle*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
 	Return $aResult[6]
 EndFunc   ;==>_GDIPlus_BitmapCreateFromScan0
 Func _GDIPlus_BitmapCreateFromStream($pStream)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipCreateBitmapFromStream", "ptr", $pStream, "handle*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_BitmapCreateFromStream
 Func _GDIPlus_BitmapCreateHBITMAPFromBitmap($hBitmap, $iARGB = 0xFF000000)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipCreateHBITMAPFromBitmap", "handle", $hBitmap, "handle*", 0, "dword", $iARGB)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_BitmapCreateHBITMAPFromBitmap
 Func _GDIPlus_BitmapDispose($hBitmap)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipDisposeImage", "handle", $hBitmap)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_BitmapDispose
 Func _GDIPlus_BitmapCreateFromHICON($hIcon)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipCreateBitmapFromHICON", "handle", $hIcon, "handle*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_BitmapCreateFromHICON
 Func _GDIPlus_BitmapCreateFromHICON32($hIcon)
 	Local $tSIZE = _WinAPI_GetIconDimension($hIcon)
@@ -5514,79 +3634,46 @@ Func _GDIPlus_BitmapCreateFromHICON32($hIcon)
 	_WinAPI_SelectObject($hDC, $hOrig)
 	_WinAPI_DeleteDC($hDC)
 	_WinAPI_DeleteObject($hBmp)
-	Return $hBitmap
 EndFunc   ;==>_GDIPlus_BitmapCreateFromHICON32
 Func _GDIPlus_BitmapGetPixel($hBitmap, $iX, $iY)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipBitmapGetPixel", "handle", $hBitmap, "int", $iX, "int", $iY, "uint*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[4]
 EndFunc   ;==>_GDIPlus_BitmapGetPixel
 Func _GDIPlus_BitmapLockBits($hBitmap, $iLeft, $iTop, $iWidth, $iHeight, $iFlags = $GDIP_ILMREAD, $iFormat = $GDIP_PXF32RGB)
 	Local $tData = DllStructCreate($tagGDIPBITMAPDATA)
-	Local $tRECT = DllStructCreate($tagRECT)
 	DllStructSetData($tRECT, "Left", $iLeft)
 	DllStructSetData($tRECT, "Top", $iTop)
 	DllStructSetData($tRECT, "Right", $iWidth)
 	DllStructSetData($tRECT, "Bottom", $iHeight)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipBitmapLockBits", "handle", $hBitmap, "struct*", $tRECT, "uint", $iFlags, "int", $iFormat, "struct*", $tData)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
 	Return $tData
 EndFunc   ;==>_GDIPlus_BitmapLockBits
 Func _GDIPlus_BitmapSetPixel($hBitmap, $iX, $iY, $iARGB)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipBitmapSetPixel", "handle", $hBitmap, "int", $iX, "int", $iY, "uint", $iARGB)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_BitmapSetPixel
 Func _GDIPlus_BitmapSetResolution($hBitmap, $fDpiX, $fDpiY)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipBitmapSetResolution", "handle", $hBitmap, "float", $fDpiX, "float", $fDpiY)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_BitmapSetResolution
 Func _GDIPlus_BitmapUnlockBits($hBitmap, $tBitmapData)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipBitmapUnlockBits", "handle", $hBitmap, "struct*", $tBitmapData)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_BitmapUnlockBits
 Func _GDIPlus_BrushClone($hBrush)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipCloneBrush", "handle", $hBrush, "handle*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_BrushClone
 Func _GDIPlus_BrushCreateSolid($iARGB = 0xFF000000)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipCreateSolidFill", "int", $iARGB, "handle*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_BrushCreateSolid
 Func _GDIPlus_BrushDispose($hBrush)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipDeleteBrush", "handle", $hBrush)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_BrushDispose
 Func _GDIPlus_BrushGetSolidColor($hBrush)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetSolidFillColor", "handle", $hBrush, "dword*", 0)
-	If @error Then Return SetError(@error, @extended, -1)
 	If $aResult[0] Then Return SetError(10, $aResult[0], -1)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_BrushGetSolidColor
 Func _GDIPlus_BrushGetType($hBrush)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetBrushType", "handle", $hBrush, "int*", 0)
-	If @error Then Return SetError(@error, @extended, -1)
-	If $aResult[0] Then Return SetError(10, $aResult[0], -1)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_BrushGetType
 Func _GDIPlus_BrushSetSolidColor($hBrush, $iARGB = 0xFF000000)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetSolidFillColor", "handle", $hBrush, "dword", $iARGB)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_BrushSetSolidColor
 Func _GDIPlus_ColorMatrixCreate()
 	Return _GDIPlus_ColorMatrixCreateScale(1, 1, 1, 1)
@@ -5597,8 +3684,6 @@ Func _GDIPlus_ColorMatrixCreateGrayScale()
 	For $iI = 0 To 3
 		For $iJ = 1 To 3
 			DllStructSetData($tCM, "m", $aLums[$iI], $iI * 5 + $iJ)
-		Next
-	Next
 	DllStructSetData($tCM, "m", 1, 19)
 	DllStructSetData($tCM, "m", 1, 25)
 	Return $tCM
@@ -5608,12 +3693,9 @@ Func _GDIPlus_ColorMatrixCreateNegative()
 	$tCM = _GDIPlus_ColorMatrixCreateScale(-1, -1, -1, 1)
 	For $iI = 1 To 4
 		DllStructSetData($tCM, "m", 1, 20 + $iI)
-	Next
-	Return $tCM
 EndFunc   ;==>_GDIPlus_ColorMatrixCreateNegative
 Func _GDIPlus_ColorMatrixCreateSaturation($fSat)
 	Local $fSatComp, $tCM
-	$tCM = DllStructCreate($tagGDIPCOLORMATRIX)
 	$fSatComp = (1 - $fSat)
 	DllStructSetData($tCM, "m", $fSatComp * $GDIP_RLUM + $fSat, 1)
 	DllStructSetData($tCM, "m", $fSatComp * $GDIP_RLUM, 2)
@@ -5624,50 +3706,31 @@ Func _GDIPlus_ColorMatrixCreateSaturation($fSat)
 	DllStructSetData($tCM, "m", $fSatComp * $GDIP_BLUM, 11)
 	DllStructSetData($tCM, "m", $fSatComp * $GDIP_BLUM, 12)
 	DllStructSetData($tCM, "m", $fSatComp * $GDIP_BLUM + $fSat, 13)
-	DllStructSetData($tCM, "m", 1, 19)
-	DllStructSetData($tCM, "m", 1, 25)
-	Return $tCM
 EndFunc   ;==>_GDIPlus_ColorMatrixCreateSaturation
 Func _GDIPlus_ColorMatrixCreateScale($fRed, $fGreen, $fBlue, $fAlpha = 1)
 	Local $tCM
-	$tCM = DllStructCreate($tagGDIPCOLORMATRIX)
 	DllStructSetData($tCM, "m", $fRed, 1)
 	DllStructSetData($tCM, "m", $fGreen, 7)
 	DllStructSetData($tCM, "m", $fBlue, 13)
 	DllStructSetData($tCM, "m", $fAlpha, 19)
-	DllStructSetData($tCM, "m", 1, 25)
-	Return $tCM
 EndFunc   ;==>_GDIPlus_ColorMatrixCreateScale
 Func _GDIPlus_ColorMatrixCreateTranslate($fRed, $fGreen, $fBlue, $fAlpha = 0)
 	Local $iI, $tCM, $aFactors[4] = [$fRed, $fGreen, $fBlue, $fAlpha]
 	$tCM = _GDIPlus_ColorMatrixCreate()
-	For $iI = 0 To 3
 		DllStructSetData($tCM, "m", $aFactors[$iI], 21 + $iI)
-	Next
-	Return $tCM
 EndFunc   ;==>_GDIPlus_ColorMatrixCreateTranslate
 Func _GDIPlus_CustomLineCapClone($hCustomLineCap)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipCloneCustomLineCap", "handle", $hCustomLineCap, "handle*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
 	If $aResult[0] Then SetError(10, $aResult[0], 0)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_CustomLineCapClone
 Func _GDIPlus_CustomLineCapCreate($hPathFill, $hPathStroke, $iLineCap = 0, $nBaseInset = 0)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipCreateCustomLineCap", "handle", $hPathFill, "handle", $hPathStroke, "int", $iLineCap, "float", $nBaseInset, "handle*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
 	Return $aResult[5]
 EndFunc   ;==>_GDIPlus_CustomLineCapCreate
 Func _GDIPlus_CustomLineCapDispose($hCap)
-	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipDeleteCustomLineCap", "handle", $hCap)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_CustomLineCapDispose
 Func _GDIPlus_CustomLineCapGetStrokeCaps($hCustomLineCap)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetCustomLineCapStrokeCaps", "hwnd", $hCustomLineCap, "ptr*", 0, "ptr*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then SetError(10, $aResult[0], 0)
 	Local $aCaps[2]
 	$aCaps[0] = $aResult[2]
 	$aCaps[1] = $aResult[3]
@@ -5675,17 +3738,13 @@ Func _GDIPlus_CustomLineCapGetStrokeCaps($hCustomLineCap)
 EndFunc   ;==>_GDIPlus_CustomLineCapGetStrokeCaps
 Func _GDIPlus_CustomLineCapSetStrokeCaps($hCustomLineCap, $iStartCap, $iEndCap)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetCustomLineCapStrokeCaps", "handle", $hCustomLineCap, "int", $iStartCap, "int", $iEndCap)
-	If @error Then Return SetError(@error, @extended, False)
 	If $aResult[0] Then SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_CustomLineCapSetStrokeCaps
 Func _GDIPlus_Decoders()
 	Local $iCount = _GDIPlus_DecodersGetCount()
 	Local $iSize = _GDIPlus_DecodersGetSize()
 	Local $tBuffer = DllStructCreate("byte[" & $iSize & "]")
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetImageDecoders", "uint", $iCount, "uint", $iSize, "struct*", $tBuffer)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
 	Local $pBuffer = DllStructGetPtr($tBuffer)
 	Local $tCodec, $aInfo[$iCount + 1][14]
 	$aInfo[0][0] = $iCount
@@ -5705,20 +3764,12 @@ Func _GDIPlus_Decoders()
 		$aInfo[$iI][12] = DllStructGetData($tCodec, "SigPattern")
 		$aInfo[$iI][13] = DllStructGetData($tCodec, "SigMask")
 		$pBuffer += DllStructGetSize($tCodec)
-	Next
-	Return $aInfo
 EndFunc   ;==>_GDIPlus_Decoders
 Func _GDIPlus_DecodersGetCount()
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetImageDecodersSize", "uint*", 0, "uint*", 0)
-	If @error Then Return SetError(@error, @extended, -1)
-	If $aResult[0] Then Return SetError(10, $aResult[0], -1)
 	Return $aResult[1]
 EndFunc   ;==>_GDIPlus_DecodersGetCount
 Func _GDIPlus_DecodersGetSize()
-	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetImageDecodersSize", "uint*", 0, "uint*", 0)
-	If @error Then Return SetError(@error, @extended, -1)
-	If $aResult[0] Then Return SetError(10, $aResult[0], -1)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_DecodersGetSize
 Func _GDIPlus_DrawImagePoints($hGraphic, $hImage, $nULX, $nULY, $nURX, $nURY, $nLLX, $nLLY, $iCount = 3)
 	Local $tPoint = DllStructCreate("float X;float Y;float X2;float Y2;float X3;float Y3")
@@ -5729,280 +3780,128 @@ Func _GDIPlus_DrawImagePoints($hGraphic, $hImage, $nULX, $nULY, $nURX, $nURY, $n
 	DllStructSetData($tPoint, "X3", $nLLX)
 	DllStructSetData($tPoint, "Y3", $nLLY)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipDrawImagePoints", "handle", $hGraphic, "handle", $hImage, "struct*", $tPoint, "int", $iCount)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_DrawImagePoints
 Func _GDIPlus_Encoders()
 	Local $iCount = _GDIPlus_EncodersGetCount()
 	Local $iSize = _GDIPlus_EncodersGetSize()
-	Local $tBuffer = DllStructCreate("byte[" & $iSize & "]")
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetImageEncoders", "uint", $iCount, "uint", $iSize, "struct*", $tBuffer)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Local $pBuffer = DllStructGetPtr($tBuffer)
-	Local $tCodec, $aInfo[$iCount + 1][14]
-	$aInfo[0][0] = $iCount
-	For $iI = 1 To $iCount
-		$tCodec = DllStructCreate($tagGDIPIMAGECODECINFO, $pBuffer)
-		$aInfo[$iI][1] = _WinAPI_StringFromGUID(DllStructGetPtr($tCodec, "CLSID"))
-		$aInfo[$iI][2] = _WinAPI_StringFromGUID(DllStructGetPtr($tCodec, "FormatID"))
-		$aInfo[$iI][3] = _WinAPI_WideCharToMultiByte(DllStructGetData($tCodec, "CodecName"))
-		$aInfo[$iI][4] = _WinAPI_WideCharToMultiByte(DllStructGetData($tCodec, "DllName"))
-		$aInfo[$iI][5] = _WinAPI_WideCharToMultiByte(DllStructGetData($tCodec, "FormatDesc"))
-		$aInfo[$iI][6] = _WinAPI_WideCharToMultiByte(DllStructGetData($tCodec, "FileExt"))
-		$aInfo[$iI][7] = _WinAPI_WideCharToMultiByte(DllStructGetData($tCodec, "MimeType"))
-		$aInfo[$iI][8] = DllStructGetData($tCodec, "Flags")
-		$aInfo[$iI][9] = DllStructGetData($tCodec, "Version")
-		$aInfo[$iI][10] = DllStructGetData($tCodec, "SigCount")
-		$aInfo[$iI][11] = DllStructGetData($tCodec, "SigSize")
-		$aInfo[$iI][12] = DllStructGetData($tCodec, "SigPattern")
-		$aInfo[$iI][13] = DllStructGetData($tCodec, "SigMask")
-		$pBuffer += DllStructGetSize($tCodec)
-	Next
-	Return $aInfo
 EndFunc   ;==>_GDIPlus_Encoders
 Func _GDIPlus_EncodersGetCLSID($sFileExtension)
 	Local $aEncoders = _GDIPlus_Encoders()
 	If @error Then Return SetError(@error, 0, "")
 	For $iI = 1 To $aEncoders[0][0]
 		If StringInStr($aEncoders[$iI][6], "*." & $sFileExtension) > 0 Then Return $aEncoders[$iI][1]
-	Next
 	Return SetError(-1, -1, "")
 EndFunc   ;==>_GDIPlus_EncodersGetCLSID
 Func _GDIPlus_EncodersGetCount()
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetImageEncodersSize", "uint*", 0, "uint*", 0)
-	If @error Then Return SetError(@error, @extended, -1)
-	If $aResult[0] Then Return SetError(10, $aResult[0], -1)
-	Return $aResult[1]
 EndFunc   ;==>_GDIPlus_EncodersGetCount
 Func _GDIPlus_EncodersGetParamList($hImage, $sEncoder)
 	Local $iSize = _GDIPlus_EncodersGetParamListSize($hImage, $sEncoder)
-	If @error Then Return SetError(@error + 10, @extended, 0)
 	Local $tGUID = _WinAPI_GUIDFromString($sEncoder)
 	Local $iRemainingSize = $iSize - 4 - _GDIPlus_ParamSize()
-	Local $tBuffer
 	If $iRemainingSize Then
 		$tBuffer = DllStructCreate("dword Count;" & $tagGDIPENCODERPARAM & ";byte [" & $iRemainingSize & "]")
-	Else
 		$tBuffer = DllStructCreate("dword Count;" & $tagGDIPENCODERPARAM)
-	EndIf
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetEncoderParameterList", "handle", $hImage, "struct*", $tGUID, "uint", $iSize, "struct*", $tBuffer)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
 	Return $tBuffer
 EndFunc   ;==>_GDIPlus_EncodersGetParamList
 Func _GDIPlus_EncodersGetParamListSize($hImage, $sEncoder)
-	Local $tGUID = _WinAPI_GUIDFromString($sEncoder)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetEncoderParameterListSize", "handle", $hImage, "struct*", $tGUID, "uint*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[3]
 EndFunc   ;==>_GDIPlus_EncodersGetParamListSize
 Func _GDIPlus_EncodersGetSize()
-	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetImageEncodersSize", "uint*", 0, "uint*", 0)
-	If @error Then Return SetError(@error, @extended, -1)
-	If $aResult[0] Then Return SetError(10, $aResult[0], -1)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_EncodersGetSize
 Func _GDIPlus_FontCreate($hFamily, $fSize, $iStyle = 0, $iUnit = 3)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipCreateFont", "handle", $hFamily, "float", $fSize, "int", $iStyle, "int", $iUnit, "handle*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[5]
 EndFunc   ;==>_GDIPlus_FontCreate
 Func _GDIPlus_FontDispose($hFont)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipDeleteFont", "handle", $hFont)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_FontDispose
 Func _GDIPlus_FontFamilyCreate($sFamily, $pCollection = 0)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipCreateFontFamilyFromName", "wstr", $sFamily, "ptr", $pCollection, "handle*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[3]
 EndFunc   ;==>_GDIPlus_FontFamilyCreate
 Func _GDIPlus_FontFamilyCreateFromCollection($sFontName, $hFontCollection)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipCreateFontFamilyFromName", "wstr", $sFontName, "ptr", $hFontCollection, "ptr*", 0)
 	If @error Then Return SetError(@error, @extended, "")
 	If $aResult[0] Then Return SetError(10, $aResult[0], "")
-	Return $aResult[3]
 EndFunc   ;==>_GDIPlus_FontFamilyCreateFromCollection
 Func _GDIPlus_FontFamilyDispose($hFamily)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipDeleteFontFamily", "handle", $hFamily)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_FontFamilyDispose
 Func _GDIPlus_FontFamilyGetCellAscent($hFontFamily, $iStyle = 0)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetCellAscent", "handle", $hFontFamily, "int", $iStyle, "ushort*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[3]
 EndFunc   ;==>_GDIPlus_FontFamilyGetCellAscent
 Func _GDIPlus_FontFamilyGetCellDescent($hFontFamily, $iStyle = 0)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetCellDescent", "handle", $hFontFamily, "int", $iStyle, "ushort*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[3]
 EndFunc   ;==>_GDIPlus_FontFamilyGetCellDescent
 Func _GDIPlus_FontFamilyGetEmHeight($hFontFamily, $iStyle = 0)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetEmHeight", "handle", $hFontFamily, "int", $iStyle, "ushort*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[3]
 EndFunc   ;==>_GDIPlus_FontFamilyGetEmHeight
 Func _GDIPlus_FontFamilyGetLineSpacing($hFontFamily, $iStyle = 0)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetLineSpacing", "handle", $hFontFamily, "int", $iStyle, "ushort*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[3]
 EndFunc   ;==>_GDIPlus_FontFamilyGetLineSpacing
 Func _GDIPlus_FontGetHeight($hFont, $hGraphics)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetFontHeight", "handle", $hFont, "handle", $hGraphics, "float*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[3]
 EndFunc   ;==>_GDIPlus_FontGetHeight
 Func _GDIPlus_FontPrivateAddFont($hFontCollection, $sFontFile)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipPrivateAddFontFile", "ptr", $hFontCollection, "wstr", $sFontFile)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_FontPrivateAddFont
 Func _GDIPlus_FontPrivateAddMemoryFont($hFontCollection, $tFont)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipPrivateAddMemoryFont", "handle", $hFontCollection, "struct*", $tFont, "int", DllStructGetSize($tFont))
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_FontPrivateAddMemoryFont
 Func _GDIPlus_FontPrivateCollectionDispose($hFontCollection)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipDeletePrivateFontCollection", "handle*", $hFontCollection)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_FontPrivateCollectionDispose
 Func _GDIPlus_FontPrivateCreateCollection()
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipNewPrivateFontCollection", "ptr*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[1]
 EndFunc   ;==>_GDIPlus_FontPrivateCreateCollection
 Func _GDIPlus_GraphicsClear($hGraphics, $iARGB = 0xFF000000)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGraphicsClear", "handle", $hGraphics, "dword", $iARGB)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_GraphicsClear
 Func _GDIPlus_GraphicsCreateFromHDC($hDC)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipCreateFromHDC", "handle", $hDC, "handle*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_GraphicsCreateFromHDC
 Func _GDIPlus_GraphicsCreateFromHWND($hWnd)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipCreateFromHWND", "hwnd", $hWnd, "handle*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_GraphicsCreateFromHWND
 Func _GDIPlus_GraphicsDispose($hGraphics)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipDeleteGraphics", "handle", $hGraphics)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_GraphicsDispose
 Func _GDIPlus_GraphicsDrawArc($hGraphics, $nX, $nY, $nWidth, $nHeight, $fStartAngle, $fSweepAngle, $hPen = 0)
 	__GDIPlus_PenDefCreate($hPen)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipDrawArc", "handle", $hGraphics, "handle", $hPen, "float", $nX, "float", $nY, _
 			"float", $nWidth, "float", $nHeight, "float", $fStartAngle, "float", $fSweepAngle)
 	__GDIPlus_PenDefDispose() ; does destroyed @error, @extended
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_GraphicsDrawArc
 Func _GDIPlus_GraphicsDrawBezier($hGraphics, $nX1, $nY1, $nX2, $nY2, $nX3, $nY3, $nX4, $nY4, $hPen = 0)
-	__GDIPlus_PenDefCreate($hPen)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipDrawBezier", "handle", $hGraphics, "handle", $hPen, "float", $nX1, "float", $nY1, _
 			"float", $nX2, "float", $nY2, "float", $nX3, "float", $nY3, "float", $nX4, "float", $nY4)
-	__GDIPlus_PenDefDispose() ; does destroyed @error, @extended
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_GraphicsDrawBezier
 Func _GDIPlus_GraphicsDrawClosedCurve($hGraphics, $aPoints, $hPen = 0)
 	Local $iCount = $aPoints[0][0]
 	Local $tPoints = DllStructCreate("float[" & $iCount * 2 & "]")
-	For $iI = 1 To $iCount
 		DllStructSetData($tPoints, 1, $aPoints[$iI][0], (($iI - 1) * 2) + 1)
 		DllStructSetData($tPoints, 1, $aPoints[$iI][1], (($iI - 1) * 2) + 2)
-	Next
-	__GDIPlus_PenDefCreate($hPen)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipDrawClosedCurve", "handle", $hGraphics, "handle", $hPen, "struct*", $tPoints, "int", $iCount)
-	__GDIPlus_PenDefDispose() ; does destroyed @error, @extended
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_GraphicsDrawClosedCurve
 Func _GDIPlus_GraphicsDrawClosedCurve2($hGraphics, $aPoints, $nTension, $hPen = 0)
 	Local $iI, $iCount, $tPoints, $aResult
-	__GDIPlus_PenDefCreate($hPen)
 	$iCount = $aPoints[0][0]
 	$tPoints = DllStructCreate("float[" & $iCount * 2 & "]")
-	For $iI = 1 To $iCount
-		DllStructSetData($tPoints, 1, $aPoints[$iI][0], (($iI - 1) * 2) + 1)
-		DllStructSetData($tPoints, 1, $aPoints[$iI][1], (($iI - 1) * 2) + 2)
-	Next
 	$aResult = DllCall($__g_hGDIPDll, "int", "GdipDrawClosedCurve2", "handle", $hGraphics, "handle", $hPen, "struct*", $tPoints, "int", $iCount, "float", $nTension)
-	__GDIPlus_PenDefDispose() ; does destroyed @error, @extended
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_GraphicsDrawClosedCurve2
 Func _GDIPlus_GraphicsDrawCurve($hGraphics, $aPoints, $hPen = 0)
-	Local $iCount = $aPoints[0][0]
-	Local $tPoints = DllStructCreate("float[" & $iCount * 2 & "]")
-	For $iI = 1 To $iCount
-		DllStructSetData($tPoints, 1, $aPoints[$iI][0], (($iI - 1) * 2) + 1)
-		DllStructSetData($tPoints, 1, $aPoints[$iI][1], (($iI - 1) * 2) + 2)
-	Next
-	__GDIPlus_PenDefCreate($hPen)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipDrawCurve", "handle", $hGraphics, "handle", $hPen, "struct*", $tPoints, "int", $iCount)
-	__GDIPlus_PenDefDispose() ; does destroyed @error, @extended
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_GraphicsDrawCurve
 Func _GDIPlus_GraphicsDrawCurve2($hGraphics, $aPoints, $nTension, $hPen = 0)
-	Local $iI, $iCount, $tPoints, $aResult
-	__GDIPlus_PenDefCreate($hPen)
-	$iCount = $aPoints[0][0]
-	$tPoints = DllStructCreate("float[" & $iCount * 2 & "]")
-	For $iI = 1 To $iCount
-		DllStructSetData($tPoints, 1, $aPoints[$iI][0], (($iI - 1) * 2) + 1)
-		DllStructSetData($tPoints, 1, $aPoints[$iI][1], (($iI - 1) * 2) + 2)
-	Next
 	$aResult = DllCall($__g_hGDIPDll, "int", "GdipDrawCurve2", "handle", $hGraphics, "handle", $hPen, "struct*", $tPoints, "int", $iCount, "float", $nTension)
-	__GDIPlus_PenDefDispose() ; does destroyed @error, @extended
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_GraphicsDrawCurve2
 Func _GDIPlus_GraphicsDrawEllipse($hGraphics, $nX, $nY, $nWidth, $nHeight, $hPen = 0)
-	__GDIPlus_PenDefCreate($hPen)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipDrawEllipse", "handle", $hGraphics, "handle", $hPen, "float", $nX, "float", $nY, _
 			"float", $nWidth, "float", $nHeight)
-	__GDIPlus_PenDefDispose() ; does destroyed @error, @extended
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_GraphicsDrawEllipse
 Func _GDIPlus_GraphicsDrawImage($hGraphics, $hImage, $nX, $nY)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipDrawImage", "handle", $hGraphics, "handle", $hImage, "float", $nX, "float", $nY)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_GraphicsDrawImage
 Func _GDIPlus_GraphicsDrawImagePointsRect($hGraphics, $hImage, $nULX, $nULY, $nURX, $nURY, $nLLX, $nLLY, $nSrcX, $nSrcY, $nSrcWidth, $nSrcHeight, $hImageAttributes = 0, $iUnit = 2)
 	Local $tPoints = DllStructCreate("float X; float Y; float X2; float Y2; float X3; float Y3;")
@@ -6013,74 +3912,32 @@ Func _GDIPlus_GraphicsDrawImagePointsRect($hGraphics, $hImage, $nULX, $nULY, $nU
 	DllStructSetData($tPoints, "X3", $nLLX)
 	DllStructSetData($tPoints, "Y3", $nLLY)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipDrawImagePointsRect", "handle", $hGraphics, "handle", $hImage, "struct*", $tPoints, "int", 3, "float", $nSrcX, "float", $nSrcY, "float", $nSrcWidth, "float", $nSrcHeight, "int", $iUnit, "handle", $hImageAttributes, "ptr", 0, "ptr", 0)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_GraphicsDrawImagePointsRect
 Func _GDIPlus_GraphicsDrawImageRect($hGraphics, $hImage, $nX, $nY, $nW, $nH)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipDrawImageRect", "handle", $hGraphics, "handle", $hImage, "float", $nX, "float", $nY, _
 			"float", $nW, "float", $nH)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_GraphicsDrawImageRect
 Func _GDIPlus_GraphicsDrawImageRectRect($hGraphics, $hImage, $nSrcX, $nSrcY, $nSrcWidth, $nSrcHeight, $nDstX, $nDstY, $nDstWidth, $nDstHeight, $pAttributes = 0, $iUnit = 2)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipDrawImageRectRect", "handle", $hGraphics, "handle", $hImage, _
 			"float", $nDstX, "float", $nDstY, "float", $nDstWidth, "float", $nDstHeight, _
 			"float", $nSrcX, "float", $nSrcY, "float", $nSrcWidth, "float", $nSrcHeight, _
 			"int", $iUnit, "handle", $pAttributes, "ptr", 0, "ptr", 0)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_GraphicsDrawImageRectRect
 Func _GDIPlus_GraphicsDrawLine($hGraphics, $nX1, $nY1, $nX2, $nY2, $hPen = 0)
-	__GDIPlus_PenDefCreate($hPen)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipDrawLine", "handle", $hGraphics, "handle", $hPen, "float", $nX1, "float", $nY1, _
 			"float", $nX2, "float", $nY2)
-	__GDIPlus_PenDefDispose() ; does destroyed @error, @extended
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_GraphicsDrawLine
 Func _GDIPlus_GraphicsDrawPath($hGraphics, $hPath, $hPen = 0)
-	__GDIPlus_PenDefCreate($hPen)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipDrawPath", "handle", $hGraphics, "handle", $hPen, "handle", $hPath)
-	__GDIPlus_PenDefDispose() ; does destroyed @error, @extended
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_GraphicsDrawPath
 Func _GDIPlus_GraphicsDrawPie($hGraphics, $nX, $nY, $nWidth, $nHeight, $fStartAngle, $fSweepAngle, $hPen = 0)
-	__GDIPlus_PenDefCreate($hPen)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipDrawPie", "handle", $hGraphics, "handle", $hPen, "float", $nX, "float", $nY, _
-			"float", $nWidth, "float", $nHeight, "float", $fStartAngle, "float", $fSweepAngle)
-	__GDIPlus_PenDefDispose() ; does destroyed @error, @extended
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_GraphicsDrawPie
 Func _GDIPlus_GraphicsDrawPolygon($hGraphics, $aPoints, $hPen = 0)
-	Local $iCount = $aPoints[0][0]
-	Local $tPoints = DllStructCreate("float[" & $iCount * 2 & "]")
-	For $iI = 1 To $iCount
-		DllStructSetData($tPoints, 1, $aPoints[$iI][0], (($iI - 1) * 2) + 1)
-		DllStructSetData($tPoints, 1, $aPoints[$iI][1], (($iI - 1) * 2) + 2)
-	Next
-	__GDIPlus_PenDefCreate($hPen)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipDrawPolygon", "handle", $hGraphics, "handle", $hPen, "struct*", $tPoints, "int", $iCount)
-	__GDIPlus_PenDefDispose() ; does destroyed @error, @extended
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_GraphicsDrawPolygon
 Func _GDIPlus_GraphicsDrawRect($hGraphics, $nX, $nY, $nWidth, $nHeight, $hPen = 0)
-	__GDIPlus_PenDefCreate($hPen)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipDrawRectangle", "handle", $hGraphics, "handle", $hPen, "float", $nX, "float", $nY, _
-			"float", $nWidth, "float", $nHeight)
-	__GDIPlus_PenDefDispose() ; does destroyed @error, @extended
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_GraphicsDrawRect
 Func _GDIPlus_GraphicsDrawString($hGraphics, $sString, $nX, $nY, $sFont = "Arial", $fSize = 10, $iFormat = 0)
 	Local $hBrush = _GDIPlus_BrushCreateSolid()
@@ -6089,7 +3946,6 @@ Func _GDIPlus_GraphicsDrawString($hGraphics, $sString, $nX, $nY, $sFont = "Arial
 	Local $hFont = _GDIPlus_FontCreate($hFamily, $fSize)
 	Local $tLayout = _GDIPlus_RectFCreate($nX, $nY, 0.0, 0.0)
 	Local $aInfo = _GDIPlus_GraphicsMeasureString($hGraphics, $sString, $hFont, $tLayout, $hFormat)
-	If @error Then Return SetError(@error, @extended, 0)
 	Local $aResult = _GDIPlus_GraphicsDrawStringEx($hGraphics, $sString, $hFont, $aInfo[0], $hFormat, $hBrush)
 	Local $iError = @error, $iExtended = @extended
 	_GDIPlus_FontDispose($hFont)
@@ -6101,373 +3957,181 @@ EndFunc   ;==>_GDIPlus_GraphicsDrawString
 Func _GDIPlus_GraphicsDrawStringEx($hGraphics, $sString, $hFont, $tLayout, $hFormat, $hBrush)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipDrawString", "handle", $hGraphics, "wstr", $sString, "int", -1, "handle", $hFont, _
 			"struct*", $tLayout, "handle", $hFormat, "handle", $hBrush)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_GraphicsDrawStringEx
 Func _GDIPlus_GraphicsFillClosedCurve($hGraphics, $aPoints, $hBrush = 0)
-	Local $iCount = $aPoints[0][0]
-	Local $tPoints = DllStructCreate("float[" & $iCount * 2 & "]")
-	For $iI = 1 To $iCount
-		DllStructSetData($tPoints, 1, $aPoints[$iI][0], (($iI - 1) * 2) + 1)
-		DllStructSetData($tPoints, 1, $aPoints[$iI][1], (($iI - 1) * 2) + 2)
-	Next
 	__GDIPlus_BrushDefCreate($hBrush)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipFillClosedCurve", "handle", $hGraphics, "handle", $hBrush, "struct*", $tPoints, "int", $iCount)
 	__GDIPlus_BrushDefDispose()
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_GraphicsFillClosedCurve
 Func _GDIPlus_GraphicsFillClosedCurve2($hGraphics, $aPoints, $nTension, $hBrush = 0, $iFillMode = 0)
-	Local $iI, $iCount, $tPoints, $aResult
-	__GDIPlus_BrushDefCreate($hBrush)
-	$iCount = $aPoints[0][0]
-	$tPoints = DllStructCreate("float[" & $iCount * 2 & "]")
-	For $iI = 1 To $iCount
-		DllStructSetData($tPoints, 1, $aPoints[$iI][0], (($iI - 1) * 2) + 1)
-		DllStructSetData($tPoints, 1, $aPoints[$iI][1], (($iI - 1) * 2) + 2)
-	Next
 	$aResult = DllCall($__g_hGDIPDll, "int", "GdipFillClosedCurve2", "handle", $hGraphics, "handle", $hBrush, "struct*", $tPoints, "int", $iCount, "float", $nTension, "int", $iFillMode)
-	__GDIPlus_BrushDefDispose()
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_GraphicsFillClosedCurve2
 Func _GDIPlus_GraphicsFillEllipse($hGraphics, $nX, $nY, $nWidth, $nHeight, $hBrush = 0)
-	__GDIPlus_BrushDefCreate($hBrush)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipFillEllipse", "handle", $hGraphics, "handle", $hBrush, "float", $nX, "float", $nY, _
-			"float", $nWidth, "float", $nHeight)
-	__GDIPlus_BrushDefDispose()
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_GraphicsFillEllipse
 Func _GDIPlus_GraphicsFillPath($hGraphics, $hPath, $hBrush = 0)
-	__GDIPlus_BrushDefCreate($hBrush)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipFillPath", "handle", $hGraphics, "handle", $hBrush, "handle", $hPath)
-	__GDIPlus_BrushDefDispose()
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_GraphicsFillPath
 Func _GDIPlus_GraphicsFillPie($hGraphics, $nX, $nY, $nWidth, $nHeight, $fStartAngle, $fSweepAngle, $hBrush = 0)
-	__GDIPlus_BrushDefCreate($hBrush)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipFillPie", "handle", $hGraphics, "handle", $hBrush, "float", $nX, "float", $nY, _
-			"float", $nWidth, "float", $nHeight, "float", $fStartAngle, "float", $fSweepAngle)
-	__GDIPlus_BrushDefDispose()
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_GraphicsFillPie
 Func _GDIPlus_GraphicsFillPolygon($hGraphics, $aPoints, $hBrush = 0)
-	Local $iCount = $aPoints[0][0]
-	Local $tPoints = DllStructCreate("float[" & $iCount * 2 & "]")
-	For $iI = 1 To $iCount
-		DllStructSetData($tPoints, 1, $aPoints[$iI][0], (($iI - 1) * 2) + 1)
-		DllStructSetData($tPoints, 1, $aPoints[$iI][1], (($iI - 1) * 2) + 2)
-	Next
-	__GDIPlus_BrushDefCreate($hBrush)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipFillPolygon", "handle", $hGraphics, "handle", $hBrush, _
 			"struct*", $tPoints, "int", $iCount, "int", "FillModeAlternate")
-	__GDIPlus_BrushDefDispose()
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_GraphicsFillPolygon
 Func _GDIPlus_GraphicsFillRect($hGraphics, $nX, $nY, $nWidth, $nHeight, $hBrush = 0)
-	__GDIPlus_BrushDefCreate($hBrush)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipFillRectangle", "handle", $hGraphics, "handle", $hBrush, "float", $nX, "float", $nY, _
-			"float", $nWidth, "float", $nHeight)
-	__GDIPlus_BrushDefDispose()
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_GraphicsFillRect
 Func _GDIPlus_GraphicsFillRegion($hGraphics, $hRegion, $hBrush = 0)
-	__GDIPlus_BrushDefCreate($hBrush)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipFillRegion", "handle", $hGraphics, "handle", $hBrush, "handle", $hRegion)
-	__GDIPlus_BrushDefDispose()
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_GraphicsFillRegion
 Func _GDIPlus_GraphicsGetCompositingMode($hGraphics)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetCompositingMode", "handle", $hGraphics, "int*", 0)
-	If @error Then Return SetError(@error, @extended, -1)
-	If $aResult[0] Then Return SetError(10, $aResult[0], -1)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_GraphicsGetCompositingMode
 Func _GDIPlus_GraphicsGetCompositingQuality($hGraphics)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetCompositingQuality", "handle", $hGraphics, "int*", 0)
-	If @error Then Return SetError(@error, @extended, -1)
-	If $aResult[0] Then Return SetError(10, $aResult[0], -1)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_GraphicsGetCompositingQuality
 Func _GDIPlus_GraphicsGetDC($hGraphics)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetDC", "handle", $hGraphics, "handle*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_GraphicsGetDC
 Func _GDIPlus_GraphicsGetInterpolationMode($hGraphics)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetInterpolationMode", "handle", $hGraphics, "int*", 0)
-	If @error Then Return SetError(@error, @extended, -1)
-	If $aResult[0] Then Return SetError(10, $aResult[0], -1)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_GraphicsGetInterpolationMode
 Func _GDIPlus_GraphicsGetSmoothingMode($hGraphics)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetSmoothingMode", "handle", $hGraphics, "int*", 0)
-	If @error Then Return SetError(@error, @extended, -1)
-	If $aResult[0] Then Return SetError(10, $aResult[0], -1)
 	Switch $aResult[2]
 		Case $GDIP_SMOOTHINGMODE_NONE
-			Return 0
 		Case $GDIP_SMOOTHINGMODE_HIGHQUALITY, $GDIP_SMOOTHINGMODE_ANTIALIAS8X4
 			Return 1
 		Case $GDIP_SMOOTHINGMODE_ANTIALIAS8X8
 			Return 2
-		Case Else
-			Return 0
-	EndSwitch
 EndFunc   ;==>_GDIPlus_GraphicsGetSmoothingMode
 Func _GDIPlus_GraphicsGetTransform($hGraphics, $hMatrix)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetWorldTransform", "handle", $hGraphics, "handle", $hMatrix)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_GraphicsGetTransform
 Func _GDIPlus_GraphicsMeasureCharacterRanges($hGraphics, $sString, $hFont, $tLayout, $hStringFormat)
 	Local $iCount = _GDIPlus_StringFormatGetMeasurableCharacterRangeCount($hStringFormat)
-	If @error Then Return SetError(@error, @extended, 0)
 	Local $tRegions = DllStructCreate("handle[" & $iCount & "]")
 	Local $aRegions[$iCount + 1] = [$iCount]
-	For $iI = 1 To $iCount
 		$aRegions[$iI] = _GDIPlus_RegionCreate()
 		DllStructSetData($tRegions, 1, $aRegions[$iI], $iI)
-	Next
 	DllCall($__g_hGDIPDll, "int", "GdipMeasureCharacterRanges", "handle", $hGraphics, "wstr", $sString, "int", -1, "hwnd", $hFont, "struct*", $tLayout, "handle", $hStringFormat, "int", $iCount, "struct*", $tRegions)
-	Local $iError = @error, $iExtended = @extended
 	If $iError Then
 		For $iI = 1 To $iCount
 			_GDIPlus_RegionDispose($aRegions[$iI])
-		Next
 		Return SetError($iError + 10, $iExtended, 0)
-	EndIf
 	Return $aRegions
 EndFunc   ;==>_GDIPlus_GraphicsMeasureCharacterRanges
 Func _GDIPlus_GraphicsMeasureString($hGraphics, $sString, $hFont, $tLayout, $hFormat)
 	Local $tRECTF = DllStructCreate($tagGDIPRECTF)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipMeasureString", "handle", $hGraphics, "wstr", $sString, "int", -1, "handle", $hFont, _
 			"struct*", $tLayout, "handle", $hFormat, "struct*", $tRECTF, "int*", 0, "int*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
 	Local $aInfo[3]
 	$aInfo[0] = $tRECTF
 	$aInfo[1] = $aResult[8]
 	$aInfo[2] = $aResult[9]
-	Return $aInfo
 EndFunc   ;==>_GDIPlus_GraphicsMeasureString
 Func _GDIPlus_GraphicsReleaseDC($hGraphics, $hDC)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipReleaseDC", "handle", $hGraphics, "handle", $hDC)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_GraphicsReleaseDC
 Func _GDIPlus_GraphicsResetClip($hGraphics)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipResetClip", "handle", $hGraphics)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_GraphicsResetClip
 Func _GDIPlus_GraphicsResetTransform($hGraphics)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipResetWorldTransform", "handle", $hGraphics)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_GraphicsResetTransform
 Func _GDIPlus_GraphicsRestore($hGraphics, $iState)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipRestoreGraphics", "handle", $hGraphics, "uint", $iState)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_GraphicsRestore
 Func _GDIPlus_GraphicsRotateTransform($hGraphics, $fAngle, $iOrder = 0)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipRotateWorldTransform", "handle", $hGraphics, "float", $fAngle, "int", $iOrder)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_GraphicsRotateTransform
 Func _GDIPlus_GraphicsSave($hGraphics)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSaveGraphics", "handle", $hGraphics, "uint*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_GraphicsSave
 Func _GDIPlus_GraphicsScaleTransform($hGraphics, $fScaleX, $fScaleY, $iOrder = 0)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipScaleWorldTransform", "handle", $hGraphics, "float", $fScaleX, "float", $fScaleY, "int", $iOrder)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_GraphicsScaleTransform
 Func _GDIPlus_GraphicsSetClipPath($hGraphics, $hPath, $iCombineMode = 0)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetClipPath", "handle", $hGraphics, "handle", $hPath, "int", $iCombineMode)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_GraphicsSetClipPath
 Func _GDIPlus_GraphicsSetClipRect($hGraphics, $nX, $nY, $nWidth, $nHeight, $iCombineMode = 0)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetClipRect", "handle", $hGraphics, "float", $nX, "float", $nY, "float", $nWidth, "float", $nHeight, "int", $iCombineMode)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_GraphicsSetClipRect
 Func _GDIPlus_GraphicsSetClipRegion($hGraphics, $hRegion, $iCombineMode = 0)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetClipRegion", "handle", $hGraphics, "handle", $hRegion, "int", $iCombineMode)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_GraphicsSetClipRegion
 Func _GDIPlus_GraphicsSetCompositingMode($hGraphics, $iCompositionMode)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetCompositingMode", "handle", $hGraphics, "int", $iCompositionMode)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_GraphicsSetCompositingMode
 Func _GDIPlus_GraphicsSetCompositingQuality($hGraphics, $iCompositionQuality)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetCompositingQuality", "handle", $hGraphics, "int", $iCompositionQuality)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_GraphicsSetCompositingQuality
 Func _GDIPlus_GraphicsSetInterpolationMode($hGraphics, $iInterpolationMode)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetInterpolationMode", "handle", $hGraphics, "int", $iInterpolationMode)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_GraphicsSetInterpolationMode
 Func _GDIPlus_GraphicsSetPixelOffsetMode($hGraphics, $iPixelOffsetMode)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetPixelOffsetMode", "handle", $hGraphics, "int", $iPixelOffsetMode)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_GraphicsSetPixelOffsetMode
 Func _GDIPlus_GraphicsSetSmoothingMode($hGraphics, $iSmooth)
 	If $iSmooth < $GDIP_SMOOTHINGMODE_DEFAULT Or $iSmooth > $GDIP_SMOOTHINGMODE_ANTIALIAS8X8 Then $iSmooth = $GDIP_SMOOTHINGMODE_DEFAULT
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetSmoothingMode", "handle", $hGraphics, "int", $iSmooth)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_GraphicsSetSmoothingMode
 Func _GDIPlus_GraphicsSetTextRenderingHint($hGraphics, $iTextRenderingHint)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetTextRenderingHint", "handle", $hGraphics, "int", $iTextRenderingHint)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_GraphicsSetTextRenderingHint
 Func _GDIPlus_GraphicsSetTransform($hGraphics, $hMatrix)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetWorldTransform", "handle", $hGraphics, "handle", $hMatrix)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_GraphicsSetTransform
 Func _GDIPlus_GraphicsTransformPoints($hGraphics, ByRef $aPoints, $iCoordSpaceTo = 0, $iCoordSpaceFrom = 1)
-	Local $iCount = $aPoints[0][0]
-	Local $tPoints = DllStructCreate("float[" & $iCount * 2 & "]")
-	For $iI = 1 To $iCount
 		DllStructSetData($tPoints, 1, $aPoints[$iI][0], ($iI - 1) * 2 + 1)
 		DllStructSetData($tPoints, 1, $aPoints[$iI][1], ($iI - 1) * 2 + 2)
-	Next
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipTransformPoints", "handle", $hGraphics, "int", $iCoordSpaceTo, "int", $iCoordSpaceFrom, "struct*", $tPoints, "int", $iCount)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	For $iI = 1 To $iCount
 		$aPoints[$iI][0] = DllStructGetData($tPoints, 1, ($iI - 1) * 2 + 1)
 		$aPoints[$iI][1] = DllStructGetData($tPoints, 1, ($iI - 1) * 2 + 2)
-	Next
-	Return True
 EndFunc   ;==>_GDIPlus_GraphicsTransformPoints
 Func _GDIPlus_GraphicsTranslateTransform($hGraphics, $nDX, $nDY, $iOrder = 0)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipTranslateWorldTransform", "handle", $hGraphics, "float", $nDX, "float", $nDY, "int", $iOrder)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_GraphicsTranslateTransform
 Func _GDIPlus_HatchBrushCreate($iHatchStyle = 0, $iARGBForeground = 0xFFFFFFFF, $iARGBBackground = 0xFFFFFFFF)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipCreateHatchBrush", "int", $iHatchStyle, "uint", $iARGBForeground, "uint", $iARGBBackground, "handle*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[4]
 EndFunc   ;==>_GDIPlus_HatchBrushCreate
 Func _GDIPlus_HICONCreateFromBitmap($hBitmap)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipCreateHICONFromBitmap", "handle", $hBitmap, "handle*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_HICONCreateFromBitmap
 Func _GDIPlus_ImageAttributesCreate()
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipCreateImageAttributes", "handle*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[1]
 EndFunc   ;==>_GDIPlus_ImageAttributesCreate
 Func _GDIPlus_ImageAttributesDispose($hImageAttributes)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipDisposeImageAttributes", "handle", $hImageAttributes)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_ImageAttributesDispose
 Func _GDIPlus_ImageAttributesSetColorKeys($hImageAttributes, $iColorAdjustType = 0, $bEnable = False, $iARGBLow = 0, $iARGBHigh = 0)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetImageAttributesColorKeys", "handle", $hImageAttributes, "int", $iColorAdjustType, "int", $bEnable, "uint", $iARGBLow, "uint", $iARGBHigh)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_ImageAttributesSetColorKeys
 Func _GDIPlus_ImageAttributesSetColorMatrix($hImageAttributes, $iColorAdjustType = 0, $bEnable = False, $tClrMatrix = 0, $tGrayMatrix = 0, $iColorMatrixFlags = 0)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetImageAttributesColorMatrix", "handle", $hImageAttributes, "int", $iColorAdjustType, "int", $bEnable, "struct*", $tClrMatrix, "struct*", $tGrayMatrix, "int", $iColorMatrixFlags)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_ImageAttributesSetColorMatrix
 Func _GDIPlus_ImageAttributesSetRemapTable($hImageAttributes, $aColorMap = 0, $iColorAdjustType = 0, $bEnable = True)
 	Local $aResult
 	If IsArray($aColorMap) Then
 		Local $iCount = $aColorMap[0][0]
 		Local $tColorMap = DllStructCreate("uint[" & $iCount * 2 & "]")
-		For $i = 1 To $iCount
 			DllStructSetData($tColorMap, 1, $aColorMap[$i][0], ($i - 1) * 2 + 1)
 			DllStructSetData($tColorMap, 1, $aColorMap[$i][1], ($i - 1) * 2 + 2)
-		Next
 		$aResult = DllCall($__g_hGDIPDll, "int", "GdipSetImageAttributesRemapTable", "handle", $hImageAttributes, "int", $iColorAdjustType, "int", $bEnable, "int", $iCount, "struct*", $tColorMap)
-	Else
 		$aResult = DllCall($__g_hGDIPDll, "int", "GdipSetImageAttributesRemapTable", "handle", $hImageAttributes, "int", $iColorAdjustType, "int", $bEnable, "int", 0, "struct*", 0)
-	EndIf
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_ImageAttributesSetRemapTable
 Func _GDIPlus_ImageAttributesSetThreshold($hImageAttributes, $fThreshold, $iColorAdjustType = $GDIP_COLORADJUSTTYPE_DEFAULT, $bEnable = True)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetImageAttributesThreshold", "handle", $hImageAttributes, "int", $iColorAdjustType, "bool", $bEnable, "float", $fThreshold)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_ImageAttributesSetThreshold
 Func _GDIPlus_ImageClone($hImage)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipCloneImage", "handle", $hImage, "handle*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_ImageClone
 Func _GDIPlus_ImageDispose($hImage)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipDisposeImage", "handle", $hImage)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_ImageDispose
 Func _GDIPlus_ImageGetDimension($hImage)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetImageDimension", "handle", $hImage, "float*", 0, "float*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
 	Local $aImgDim[2] = [$aResult[2], $aResult[3]]
 	Return $aImgDim
 EndFunc   ;==>_GDIPlus_ImageGetDimension
@@ -6494,41 +4158,27 @@ Func _GDIPlus_ImageGetFlags($hImage)
 	If $aResult[2] = $GDIP_IMAGEFLAGS_NONE Then
 		$aFlag[1] = "No pixel data"
 		Return SetError(12, $aResult[2], $aFlag)
-	EndIf
 	$aFlag[0] = $aResult[2]
 	For $i = 0 To 12
 		If BitAND($aResult[2], $aImageFlags[$i][1]) = $aImageFlags[$i][1] Then
 			If StringLen($aFlag[1]) Then $aFlag[1] &= "|"
 			$aResult[2] -= $aImageFlags[$i][1]
 			$aFlag[1] &= $aImageFlags[$i][0]
-		EndIf
-	Next
 	Return $aFlag
 EndFunc   ;==>_GDIPlus_ImageGetFlags
 Func _GDIPlus_ImageGetFrameCount($hImage, $sDimensionID)
 	Local $tGUID = _WinAPI_GUIDFromString($sDimensionID)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipImageGetFrameCount", "handle", $hImage, "struct*", $tGUID, "uint*", 0)
-	If @error Then Return SetError(@error, @extended, -1)
-	If $aResult[0] Then Return SetError(10, $aResult[0], -1)
-	Return $aResult[3]
 EndFunc   ;==>_GDIPlus_ImageGetFrameCount
 Func _GDIPlus_ImageGetGraphicsContext($hImage)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetImageGraphicsContext", "handle", $hImage, "handle*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_ImageGetGraphicsContext
 Func _GDIPlus_ImageGetHeight($hImage)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetImageHeight", "handle", $hImage, "uint*", 0)
-	If @error Then Return SetError(@error, @extended, -1)
-	If $aResult[0] Then Return SetError(10, $aResult[0], -1)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_ImageGetHeight
 Func _GDIPlus_ImageGetHorizontalResolution($hImage)
 	If ($hImage = -1) Or (Not $hImage) Then Return SetError(11, 0, 0)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetImageHorizontalResolution", "handle", $hImage, "float*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
 	Return Round($aResult[2])
 EndFunc   ;==>_GDIPlus_ImageGetHorizontalResolution
 Func _GDIPlus_ImageGetPixelFormat($hImage)
@@ -6557,23 +4207,15 @@ Func _GDIPlus_ImageGetPixelFormat($hImage)
 			$aFormat[0] = $aPixelFormat[$i][1]
 			$aFormat[1] = $aPixelFormat[$i][0]
 			Return $aFormat
-		EndIf
-	Next
 	Return SetError(12, 0, $aFormat)
 EndFunc   ;==>_GDIPlus_ImageGetPixelFormat
 Func __GDIPlus_ImageGetPropertyCount($hImage)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetPropertyCount", "handle", $hImage, "uint*", 0)
-	If @error Then Return SetError(@error, @extended, -1)
-	If $aResult[0] Then Return SetError(10, $aResult[0], -1)
-	Return $aResult[2]
 EndFunc   ;==>__GDIPlus_ImageGetPropertyCount
 Func _GDIPlus_ImageGetPropertyIdList($hImage)
 	Local $iCount = __GDIPlus_ImageGetPropertyCount($hImage)
-	If @error Then Return SetError(@error, @extended, False)
 	Local $tProperties = DllStructCreate("uint[" & $iCount & "]")
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetPropertyIdList", "handle", $hImage, "int", $iCount, "struct*", $tProperties)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
 	Local $sPropertyTagInfo = "0x0000=GpsVer;0x0001=GpsLatitudeRef;0x0002=GpsLatitude;0x0003=GpsLongitudeRef;0x0004=GpsLongitude;0x0005=GpsAltitudeRef;0x0006=GpsAltitude;0x0007=GpsGpsTime;0x0008=GpsGpsSatellites;0x0009=GpsGpsStatus;0x000A=GpsGpsMeasureMode;0x000B=GpsGpsDop;0x000C=GpsSpeedRef;0x000D=GpsSpeed;0x000E=GpsTrackRef;0x000F=GpsTrack;0x0010=GpsImgDirRef;0x0011=GpsImgDir;0x0012=GpsMapDatum;0x0013=GpsDestLatRef;0x0014=GpsDestLat;0x0015=GpsDestLongRef;0x0016=GpsDestLong;0x0017=GpsDestBearRef;0x0018=GpsDestBear;0x0019=GpsDestDistRef;0x001A=GpsDestDist;0x00FE=NewSubfileType;0x00FF=SubfileType;0x0100=ImageWidth;0x0101=ImageHeight;0x0102=BitsPerSample;0x0103=Compression;0x0106=PhotometricInterp;0x0107=ThreshHolding;0x0108=CellWidth;0x0109=CellHeight;0x010A=FillOrder;0x010D=DocumentName;0x010E=ImageDescription;0x010F=EquipMake;0x0110=EquipModel;0x0111=StripOffsets;0x0112=Orientation;0x0115=SamplesPerPixel;0x0116=RowsPerStrip;0x0117=StripBytesCount;0x0118=MinSampleValue;0x0119=MaxSampleValue;0x011A=XResolution;0x011B=YResolution;0x011C=PlanarConfig;0x011D=PageName;0x011E=XPosition;0x011F=YPosition;0x0120=FreeOffset;0x0121=FreeByteCounts;0x0122=GrayResponseUnit;0x0123=GrayResponseCurve;0x0124=T4Option;0x0125=T6Option;0x0128=ResolutionUnit;0x0129=PageNumber;0x012D=TransferFunction;0x0131=SoftwareUsed;0x0132=DateTime;0x013B=Artist;0x013C=HostComputer;0x013D=Predictor;0x013E=WhitePoint;0x013F=PrimaryChromaticities;0x0140=ColorMap;0x0141=HalftoneHints;0x0142=TileWidth;0x0143=TileLength;0x0144=TileOffset;0x0145=TileByteCounts;0x014C=InkSet;0x014D=InkNames;0x014E=NumberOfInks;0x0150=DotRange;0x0151=TargetPrinter;0x0152=ExtraSamples;0x0153=SampleFormat;0x0154=SMinSampleValue;0x0155=SMaxSampleValue;0x0156=TransferRange;0x0200=JPEGProc;0x0201=JPEGInterFormat;0x0202=JPEGInterLength;0x0203=JPEGRestartInterval;0x0205=JPEGLosslessPredictors;0x0206=JPEGPointTransforms;0x0207=JPEGQTables;0x0208=JPEGDCTables;0x0209=JPEGACTables;0x0211=YCbCrCoefficients;0x0212=YCbCrSubsampling;0x0213=YCbCrPositioning;0x0214=REFBlackWhite;0x0301=Gamma;0x0302=ICCProfileDescriptor;0x0303=SRGBRenderingIntent;0x0320=ImageTitle;0x5001=ResolutionXUnit;0x5002=ResolutionYUnit;0x5003=ResolutionXLengthUnit;0x5004=ResolutionYLengthUnit;0x5005=PrintFlags;0x5006=PrintFlagsVersion;0x5007=PrintFlagsCrop;0x5008=PrintFlagsBleedWidth;0x5009=PrintFlagsBleedWidthScale;0x500A=HalftoneLPI;0x500B=HalftoneLPIUnit;0x500C=HalftoneDegree;" & _
 			"0x500D=HalftoneShape;0x500E=HalftoneMisc;0x500F=HalftoneScreen;0x5010=JPEGQuality;0x5011=GridSize;0x5012=ThumbnailFormat;0x5013=ThumbnailWidth;0x5014=ThumbnailHeight;0x5015=ThumbnailColorDepth;0x5016=ThumbnailPlanes;0x5017=ThumbnailRawBytes;0x5018=ThumbnailSize;0x5019=ThumbnailCompressedSize;0x501A=ColorTransferFunction;0x501B=ThumbnailData;0x5020=ThumbnailImageWidth;0x5021=ThumbnailImageHeight;0x5022=ThumbnailBitsPerSample;0x5023=ThumbnailCompression;0x5024=ThumbnailPhotometricInterp;0x5025=ThumbnailImageDescription;0x5026=ThumbnailEquipMake;0x5027=ThumbnailEquipModel;0x5028=ThumbnailStripOffsets;0x5029=ThumbnailOrientation;0x502A=ThumbnailSamplesPerPixel;0x502B=ThumbnailRowsPerStrip;0x502C=ThumbnailStripBytesCount;0x502D=ThumbnailResolutionX;0x502E=ThumbnailResolutionY;0x502F=ThumbnailPlanarConfig;0x5030=ThumbnailResolutionUnit;0x5031=ThumbnailTransferFunction;0x5032=ThumbnailSoftwareUsed;0x5033=ThumbnailDateTime;0x5034=ThumbnailArtist;0x5035=ThumbnailWhitePoint;0x5036=ThumbnailPrimaryChromaticities;0x5037=ThumbnailYCbCrCoefficients;0x5038=ThumbnailYCbCrSubsampling;0x5039=ThumbnailYCbCrPositioning;0x503A=ThumbnailRefBlackWhite;0x503B=ThumbnailCopyRight;0x5090=LuminanceTable;0x5091=ChrominanceTable;0x5100=FrameDelay;0x5101=LoopCount;0x5102=GlobalPalette;0x5103=IndexBackground;0x5104=IndexTransparent;0x5110=PixelUnit;0x5111=PixelPerUnitX;0x5112=PixelPerUnitY;0x5113=PaletteHistogram;0x8298=Copyright;0x829A=ExifExposureTime;0x829D=ExifFNumber;0x8769=ExifIFD;0x8773=ICCProfile;0x8822=ExifExposureProg;0x8824=ExifSpectralSense;0x8825=GpsIFD;0x8827=ExifISOSpeed;0x8828=ExifOECF;0x9000=ExifVer;0x9003=ExifDTOrig;0x9004=ExifDTDigitized;0x9101=ExifCompConfig;0x9102=ExifCompBPP;0x9201=ExifShutterSpeed;0x9202=ExifAperture;0x9203=ExifBrightness;0x9204=ExifExposureBias;0x9205=ExifMaxAperture;0x9206=ExifSubjectDist;0x9207=ExifMeteringMode;0x9208=ExifLightSource;0x9209=ExifFlash;0x920A=ExifFocalLength;0x927C=ExifMakerNote;0x9286=ExifUserComment;0x9290=ExifDTSubsec;0x9291=ExifDTOrigSS;0x9292=ExifDTDigSS;0xA000=ExifFPXVer;0xA001=ExifColorSpace;0xA002=ExifPixXDim;0xA003=ExifPixYDim;0xA004=ExifRelatedWav;0xA005=ExifInterop;0xA20B=ExifFlashEnergy;0xA20C=ExifSpatialFR;0xA20E=ExifFocalXRes;0xA20F=ExifFocalYRes;0xA210=ExifFocalResUnit;0xA214=ExifSubjectLoc;0xA215=ExifExposureIndex;0xA217=ExifSensingMethod;0xA300=ExifFileSource;0xA301=ExifSceneType;0xA302=ExifCfaPattern"
 	Local $aProperties[$iCount + 1][2] = [[$iCount]]
@@ -6584,26 +4226,16 @@ Func _GDIPlus_ImageGetPropertyIdList($hImage)
 		Switch IsArray($aRegExp)
 			Case True
 				$aProperties[$i][1] = $aRegExp[0]
-			Case Else
 				$aProperties[$i][1] = "PropertyTagUnKnown"
-		EndSwitch
-	Next
 	Return $aProperties
 EndFunc   ;==>_GDIPlus_ImageGetPropertyIdList
 Func __GDIPlus_ImageGetPropertyItemSize($hImage, $iPropID)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetPropertyItemSize", "handle", $hImage, "uint", $iPropID, "uint*", 0)
-	If @error Then Return SetError(@error, @extended, -1)
-	If $aResult[0] Then Return SetError(10, $aResult[0], -1)
-	Return $aResult[3]
 EndFunc   ;==>__GDIPlus_ImageGetPropertyItemSize
 Func _GDIPlus_ImageGetPropertyItem($hImage, $iPropID)
 	Local $iSize = __GDIPlus_ImageGetPropertyItemSize($hImage, $iPropID)
-	If @error Then Return SetError(@error, @extended, False)
 	Local $tBuffer = DllStructCreate("byte[" & $iSize & "];")
-	Local $pBuffer = DllStructGetPtr($tBuffer)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetPropertyItem", "handle", $hImage, "uint", $iPropID, "uint", $iSize, "struct*", $tBuffer)
-	If @error Then Return SetError(@error, @extended, -1)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
 	Local $tPropertyItem = DllStructCreate("int id; int length; short type; ptr value;", $pBuffer)
 	Local $iBytes = DllStructGetData($tPropertyItem, "length")
 	Local $pValue = DllStructGetData($tPropertyItem, "value")
@@ -6619,28 +4251,19 @@ Func _GDIPlus_ImageGetPropertyItem($hImage, $iPropID)
 			$iValues = Int($iBytes / 4)
 			$tValues = DllStructCreate("uint[" & $iValues & "];", $pValue)
 		Case 9, 10 ;Array of Int / Fraction
-			$iValues = Int($iBytes / 4)
 			$tValues = DllStructCreate("int[" & $iValues & "];", $pValue)
 		Case Else ;Array of Bytes
-			$iValues = 1
 			$tValues = DllStructCreate("byte[" & $iBytes & "];", $pValue)
-	EndSwitch
 	Local $aValues[$iValues + 1] = [$iValues]
-	Switch DllStructGetData($tPropertyItem, "type")
 		Case 5, 10 ;Pair of UInt Fraction [numerator][denominator]
 			$iValues = Int($iValues / 2)
 			ReDim $aValues[$iValues + 1]
 			$aValues[0] = $iValues
 			For $j = 1 To $iValues
 				$aValues[$j] = DllStructGetData($tValues, 1, ($j - 1) * 2 + 1) / DllStructGetData($tValues, 1, ($j - 1) * 2 + 2)
-			Next
 		Case 3, 4, 9
-			For $j = 1 To $iValues
 				$aValues[$j] = DllStructGetData($tValues, 1, $j)
-			Next
-		Case Else
 			$aValues[1] = DllStructGetData($tValues, 1)
-	EndSwitch
 	Return $aValues
 EndFunc   ;==>_GDIPlus_ImageGetPropertyItem
 Func _GDIPlus_ImageGetRawFormat($hImage)
@@ -6670,8 +4293,6 @@ Func _GDIPlus_ImageGetRawFormat($hImage)
 			$aGuid[0] = $aImageType[$i][1]
 			$aGuid[1] = $aImageType[$i][0]
 			Return $aGuid
-		EndIf
-	Next
 	Return SetError(13, 0, $aGuid)
 EndFunc   ;==>_GDIPlus_ImageGetRawFormat
 Func _GDIPlus_ImageGetThumbnail($hImage, $iWidth = 0, $iHeight = 0, $bKeepRatio = True, $hCallback = Null, $hCallbackData = Null)
@@ -6682,70 +4303,37 @@ Func _GDIPlus_ImageGetThumbnail($hImage, $iWidth = 0, $iHeight = 0, $bKeepRatio 
 		If $iWidth < 1 Or $iHeight < 1 Then
 			$iWidth = 0
 			$iHeight = 0
-		Else
 			If ($aImgDim[0] / $aImgDim[1]) > 1 Then
 				$f = $aImgDim[0] / $iWidth
-			Else
 				$f = $aImgDim[1] / $iHeight
-			EndIf
 			$iWidth = Int($aImgDim[0] / $f)
 			$iHeight = Int($aImgDim[1] / $f)
-		EndIf
-	EndIf
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetImageThumbnail", "handle", $hImage, "uint", $iWidth, "uint", $iHeight, "ptr*", 0, "ptr", $hCallback, "ptr", $hCallbackData)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return $aResult[4]
 EndFunc   ;==>_GDIPlus_ImageGetThumbnail
 Func _GDIPlus_ImageGetType($hImage)
 	If ($hImage = -1) Or (Not $hImage) Then Return SetError(11, 0, -1)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetImageType", "handle", $hImage, "int*", 0)
-	If @error Then Return SetError(@error, @extended, -1)
-	If $aResult[0] Then Return SetError(10, $aResult[0], -1)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_ImageGetType
 Func _GDIPlus_ImageGetVerticalResolution($hImage)
-	If ($hImage = -1) Or (Not $hImage) Then Return SetError(11, 0, 0)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetImageVerticalResolution", "handle", $hImage, "float*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return Round($aResult[2])
 EndFunc   ;==>_GDIPlus_ImageGetVerticalResolution
 Func _GDIPlus_ImageGetWidth($hImage)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetImageWidth", "handle", $hImage, "uint*", -1)
-	If @error Then Return SetError(@error, @extended, -1)
-	If $aResult[0] Then Return SetError(10, $aResult[0], -1)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_ImageGetWidth
 Func _GDIPlus_ImageLoadFromFile($sFileName)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipLoadImageFromFile", "wstr", $sFileName, "handle*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_ImageLoadFromFile
 Func _GDIPlus_ImageLoadFromStream($pStream)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipLoadImageFromStream", "ptr", $pStream, "handle*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_ImageLoadFromStream
 Func _GDIPlus_ImageRotateFlip($hImage, $iRotateFlipType)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipImageRotateFlip", "handle", $hImage, "int", $iRotateFlipType)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_ImageRotateFlip
 Func _GDIPlus_ImageSaveAdd($hImage, $tParams)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSaveAdd", "handle", $hImage, "struct*", $tParams)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_ImageSaveAdd
 Func _GDIPlus_ImageSaveAddImage($hImage, $hImageNew, $tParams)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSaveAddImage", "handle", $hImage, "handle", $hImageNew, "struct*", $tParams)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_ImageSaveAddImage
 Func _GDIPlus_ImageSaveToFile($hImage, $sFileName)
 	Local $sExt = __GDIPlus_ExtractFileExt($sFileName)
@@ -6755,74 +4343,32 @@ Func _GDIPlus_ImageSaveToFile($hImage, $sFileName)
 	Return SetError(@error, @extended, $bRet)
 EndFunc   ;==>_GDIPlus_ImageSaveToFile
 Func _GDIPlus_ImageSaveToFileEx($hImage, $sFileName, $sEncoder, $tParams = 0)
-	Local $tGUID = _WinAPI_GUIDFromString($sEncoder)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSaveImageToFile", "handle", $hImage, "wstr", $sFileName, "struct*", $tGUID, "struct*", $tParams)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_ImageSaveToFileEx
 Func _GDIPlus_ImageSaveToStream($hImage, $pStream, $tEncoder, $tParams = 0)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSaveImageToStream", "handle", $hImage, "ptr", $pStream, "struct*", $tEncoder, "struct*", $tParams)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_ImageSaveToStream
 Func _GDIPlus_ImageScale($hImage, $iScaleW, $iScaleH, $iInterpolationMode = $GDIP_INTERPOLATIONMODE_HIGHQUALITYBICUBIC)
 	Local $iWidth = _GDIPlus_ImageGetWidth($hImage) * $iScaleW
-	If @error Then Return SetError(1, 0, 0)
 	Local $iHeight = _GDIPlus_ImageGetHeight($hImage) * $iScaleH
-	If @error Then Return SetError(2, 0, 0)
-	Local $hBitmap = _GDIPlus_BitmapCreateFromScan0($iWidth, $iHeight)
-	If @error Then Return SetError(3, 0, 0)
 	Local $hBmpCtxt = _GDIPlus_ImageGetGraphicsContext($hBitmap)
-	If @error Then
-		_GDIPlus_BitmapDispose($hBitmap)
 		Return SetError(4, 0, 0)
-	EndIf
 	_GDIPlus_GraphicsSetInterpolationMode($hBmpCtxt, $iInterpolationMode)
-	If @error Then
 		_GDIPlus_GraphicsDispose($hBmpCtxt)
-		_GDIPlus_BitmapDispose($hBitmap)
 		Return SetError(5, 0, 0)
-	EndIf
 	_GDIPlus_GraphicsDrawImageRect($hBmpCtxt, $hImage, 0, 0, $iWidth, $iHeight)
-	If @error Then
-		_GDIPlus_GraphicsDispose($hBmpCtxt)
-		_GDIPlus_BitmapDispose($hBitmap)
 		Return SetError(6, 0, 0)
-	EndIf
 	_GDIPlus_GraphicsDispose($hBmpCtxt)
-	Return $hBitmap
 EndFunc   ;==>_GDIPlus_ImageScale
 Func _GDIPlus_ImageSelectActiveFrame($hImage, $sDimensionID, $iFrameIndex)
-	Local $tGUID = _WinAPI_GUIDFromString($sDimensionID)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipImageSelectActiveFrame", "handle", $hImage, "struct*", $tGUID, "uint", $iFrameIndex)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_ImageSelectActiveFrame
 Func _GDIPlus_ImageResize($hImage, $iNewWidth, $iNewHeight, $iInterpolationMode = $GDIP_INTERPOLATIONMODE_HIGHQUALITYBICUBIC)
 	Local $hBitmap = _GDIPlus_BitmapCreateFromScan0($iNewWidth, $iNewHeight)
-	If @error Then Return SetError(1, 0, 0)
-	Local $hBmpCtxt = _GDIPlus_ImageGetGraphicsContext($hBitmap)
-	If @error Then
-		_GDIPlus_BitmapDispose($hBitmap)
 		Return SetError(2, @extended, 0)
-	EndIf
-	_GDIPlus_GraphicsSetInterpolationMode($hBmpCtxt, $iInterpolationMode)
-	If @error Then
-		_GDIPlus_GraphicsDispose($hBmpCtxt)
-		_GDIPlus_BitmapDispose($hBitmap)
 		Return SetError(3, @extended, 0)
-	EndIf
 	_GDIPlus_GraphicsDrawImageRect($hBmpCtxt, $hImage, 0, 0, $iNewWidth, $iNewHeight)
-	If @error Then
-		_GDIPlus_GraphicsDispose($hBmpCtxt)
-		_GDIPlus_BitmapDispose($hBitmap)
 		Return SetError(4, @extended, 0)
-	EndIf
-	_GDIPlus_GraphicsDispose($hBmpCtxt)
-	Return $hBitmap
 EndFunc   ;==>_GDIPlus_ImageResize
 Func _GDIPlus_LineBrushCreate($nX1, $nY1, $nX2, $nY2, $iARGBClr1, $iARGBClr2, $iWrapMode = 0)
 	Local $tPointF1, $tPointF2, $aResult
@@ -6833,206 +4379,109 @@ Func _GDIPlus_LineBrushCreate($nX1, $nY1, $nX2, $nY2, $iARGBClr1, $iARGBClr2, $i
 	DllStructSetData($tPointF2, 1, $nX2)
 	DllStructSetData($tPointF2, 2, $nY2)
 	$aResult = DllCall($__g_hGDIPDll, "int", "GdipCreateLineBrush", "struct*", $tPointF1, "struct*", $tPointF2, "uint", $iARGBClr1, "uint", $iARGBClr2, "int", $iWrapMode, "handle*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[6]
 EndFunc   ;==>_GDIPlus_LineBrushCreate
 Func _GDIPlus_LineBrushCreateFromRect($tRECTF, $iARGBClr1, $iARGBClr2, $iGradientMode = 0, $iWrapMode = 0)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipCreateLineBrushFromRect", "struct*", $tRECTF, "uint", $iARGBClr1, "uint", $iARGBClr2, "int", $iGradientMode, "int", $iWrapMode, "handle*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[6]
 EndFunc   ;==>_GDIPlus_LineBrushCreateFromRect
 Func _GDIPlus_LineBrushCreateFromRectWithAngle($tRECTF, $iARGBClr1, $iARGBClr2, $fAngle, $bIsAngleScalable = True, $iWrapMode = 0)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipCreateLineBrushFromRectWithAngle", "struct*", $tRECTF, "uint", $iARGBClr1, "uint", $iARGBClr2, "float", $fAngle, "int", $bIsAngleScalable, "int", $iWrapMode, "handle*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[7]
 EndFunc   ;==>_GDIPlus_LineBrushCreateFromRectWithAngle
 Func _GDIPlus_LineBrushGetColors($hLineGradientBrush)
 	Local $tARGBs, $aARGBs[2], $aResult
 	$tARGBs = DllStructCreate("uint;uint")
 	$aResult = DllCall($__g_hGDIPDll, "uint", "GdipGetLineColors", "handle", $hLineGradientBrush, "struct*", $tARGBs)
-	If @error Then Return SetError(@error, @extended, -1)
-	If $aResult[0] Then Return SetError(10, $aResult[0], -1)
 	$aARGBs[0] = DllStructGetData($tARGBs, 1)
 	$aARGBs[1] = DllStructGetData($tARGBs, 2)
 	Return $aARGBs
 EndFunc   ;==>_GDIPlus_LineBrushGetColors
 Func _GDIPlus_LineBrushGetRect($hLineGradientBrush)
-	Local $tRECTF = DllStructCreate($tagGDIPRECTF)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetLineRect", "handle", $hLineGradientBrush, "struct*", $tRECTF)
-	If @error Then Return SetError(@error, @extended, -1)
-	If $aResult[0] Then Return SetError(10, $aResult[0], -1)
 	Local $aRectF[4]
-	For $iI = 1 To 4
 		$aRectF[$iI - 1] = DllStructGetData($tRECTF, $iI)
-	Next
 	Return $aRectF
 EndFunc   ;==>_GDIPlus_LineBrushGetRect
 Func _GDIPlus_LineBrushMultiplyTransform($hLineGradientBrush, $hMatrix, $iOrder = 0)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipMultiplyLineTransform", "handle", $hLineGradientBrush, "handle", $hMatrix, "int", $iOrder)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_LineBrushMultiplyTransform
 Func _GDIPlus_LineBrushResetTransform($hLineGradientBrush)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipResetLineTransform", "handle", $hLineGradientBrush)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_LineBrushResetTransform
 Func _GDIPlus_LineBrushSetBlend($hLineGradientBrush, $aBlends)
 	Local $iI, $iCount, $tFactors, $tPositions, $aResult
 	$iCount = $aBlends[0][0]
 	$tFactors = DllStructCreate("float[" & $iCount & "]")
 	$tPositions = DllStructCreate("float[" & $iCount & "]")
-	For $iI = 1 To $iCount
 		DllStructSetData($tFactors, 1, $aBlends[$iI][0], $iI)
 		DllStructSetData($tPositions, 1, $aBlends[$iI][1], $iI)
-	Next
 	$aResult = DllCall($__g_hGDIPDll, "int", "GdipSetLineBlend", "handle", $hLineGradientBrush, "struct*", $tFactors, "struct*", $tPositions, "int", $iCount)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_LineBrushSetBlend
 Func _GDIPlus_LineBrushSetColors($hLineGradientBrush, $iARGBStart, $iARGBEnd)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetLineColors", "handle", $hLineGradientBrush, "uint", $iARGBStart, "uint", $iARGBEnd)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_LineBrushSetColors
 Func _GDIPlus_LineBrushSetGammaCorrection($hLineGradientBrush, $bUseGammaCorrection = True)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetLineGammaCorrection", "handle", $hLineGradientBrush, "int", $bUseGammaCorrection)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_LineBrushSetGammaCorrection
 Func _GDIPlus_LineBrushSetLinearBlend($hLineGradientBrush, $fFocus, $fScale = 1)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetLineLinearBlend", "handle", $hLineGradientBrush, "float", $fFocus, "float", $fScale)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_LineBrushSetLinearBlend
 Func _GDIPlus_LineBrushSetPresetBlend($hLineGradientBrush, $aInterpolations)
 	Local $iI, $iCount, $tColors, $tPositions, $aResult
 	$iCount = $aInterpolations[0][0]
 	$tColors = DllStructCreate("uint[" & $iCount & "]")
-	$tPositions = DllStructCreate("float[" & $iCount & "]")
-	For $iI = 1 To $iCount
 		DllStructSetData($tColors, 1, $aInterpolations[$iI][0], $iI)
 		DllStructSetData($tPositions, 1, $aInterpolations[$iI][1], $iI)
-	Next
 	$aResult = DllCall($__g_hGDIPDll, "int", "GdipSetLinePresetBlend", "handle", $hLineGradientBrush, "struct*", $tColors, "struct*", $tPositions, "int", $iCount)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_LineBrushSetPresetBlend
 Func _GDIPlus_LineBrushSetSigmaBlend($hLineGradientBrush, $fFocus, $fScale = 1)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetLineSigmaBlend", "handle", $hLineGradientBrush, "float", $fFocus, "float", $fScale)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_LineBrushSetSigmaBlend
 Func _GDIPlus_LineBrushSetTransform($hLineGradientBrush, $hMatrix)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetLineTransform", "handle", $hLineGradientBrush, "handle", $hMatrix)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_LineBrushSetTransform
 Func _GDIPlus_MatrixCreate()
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipCreateMatrix", "handle*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[1]
 EndFunc   ;==>_GDIPlus_MatrixCreate
 Func _GDIPlus_MatrixCreate2($nM11 = 1, $nM12 = 1, $nM21 = 1, $nM22 = 1, $nDX = 0, $nDY = 0)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipCreateMatrix2", "float", $nM11, "float", $nM12, "float", $nM21, "float", $nM22, "float", $nDX, "float", $nDY, "handle*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[7]
 EndFunc   ;==>_GDIPlus_MatrixCreate2
 Func _GDIPlus_MatrixClone($hMatrix)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipCloneMatrix", "handle", $hMatrix, "handle*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_MatrixClone
 Func _GDIPlus_MatrixDispose($hMatrix)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipDeleteMatrix", "handle", $hMatrix)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_MatrixDispose
 Func _GDIPlus_MatrixGetElements($hMatrix)
 	Local $tElements = DllStructCreate("float[6]")
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetMatrixElements", "handle", $hMatrix, "struct*", $tElements)
-	If @error Then Return SetError(@error, @extended, -1)
-	If $aResult[0] Then Return SetError(10, $aResult[0], -1)
 	Local $aElements[6]
 	For $iI = 1 To 6
 		$aElements[$iI - 1] = DllStructGetData($tElements, 1, $iI)
-	Next
 	Return $aElements
 EndFunc   ;==>_GDIPlus_MatrixGetElements
 Func _GDIPlus_MatrixInvert($hMatrix)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipInvertMatrix", "handle", $hMatrix)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_MatrixInvert
 Func _GDIPlus_MatrixMultiply($hMatrix1, $hMatrix2, $iOrder = 0)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipMultiplyMatrix", "handle", $hMatrix1, "handle", $hMatrix2, "int", $iOrder)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_MatrixMultiply
 Func _GDIPlus_MatrixRotate($hMatrix, $fAngle, $bAppend = False)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipRotateMatrix", "handle", $hMatrix, "float", $fAngle, "int", $bAppend)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_MatrixRotate
 Func _GDIPlus_MatrixScale($hMatrix, $fScaleX, $fScaleY, $bOrder = False)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipScaleMatrix", "handle", $hMatrix, "float", $fScaleX, "float", $fScaleY, "int", $bOrder)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_MatrixScale
 Func _GDIPlus_MatrixSetElements($hMatrix, $nM11 = 1, $nM12 = 0, $nM21 = 0, $nM22 = 1, $nDX = 0, $nDY = 0)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetMatrixElements", "handle", $hMatrix, "float", $nM11, "float", $nM12, _
 			"float", $nM21, "float", $nM22, "float", $nDX, "float", $nDY)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_MatrixSetElements
 Func _GDIPlus_MatrixShear($hMatrix, $fShearX, $fShearY, $iOrder = 0)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipShearMatrix", "handle", $hMatrix, "float", $fShearX, "float", $fShearY, "int", $iOrder)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_MatrixShear
 Func _GDIPlus_MatrixTransformPoints($hMatrix, ByRef $aPoints)
-	Local $iCount = $aPoints[0][0]
-	Local $tPoints = DllStructCreate("float[" & $iCount * 2 & "]")
-	For $iI = 1 To $iCount
-		DllStructSetData($tPoints, 1, $aPoints[$iI][0], ($iI - 1) * 2 + 1)
-		DllStructSetData($tPoints, 1, $aPoints[$iI][1], ($iI - 1) * 2 + 2)
-	Next
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipTransformMatrixPoints", "handle", $hMatrix, "struct*", $tPoints, "int", $iCount)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	For $iI = 1 To $iCount
-		$aPoints[$iI][0] = DllStructGetData($tPoints, 1, ($iI - 1) * 2 + 1)
-		$aPoints[$iI][1] = DllStructGetData($tPoints, 1, ($iI - 1) * 2 + 2)
-	Next
-	Return True
 EndFunc   ;==>_GDIPlus_MatrixTransformPoints
 Func _GDIPlus_MatrixTranslate($hMatrix, $fOffsetX, $fOffsetY, $bAppend = False)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipTranslateMatrix", "handle", $hMatrix, "float", $fOffsetX, "float", $fOffsetY, "int", $bAppend)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_MatrixTranslate
 Func _GDIPlus_ParamAdd(ByRef $tParams, $sGUID, $iNbOfValues, $iType, $pValues)
 	Local $iCount = DllStructGetData($tParams, "Count")
@@ -7048,7 +4497,6 @@ Func _GDIPlus_ParamInit($iCount)
 	Local $sStruct = $tagGDIPENCODERPARAMS
 	For $i = 2 To $iCount
 		$sStruct &= ";struct;byte[16];ulong;ulong;ptr;endstruct"
-	Next
 	Return DllStructCreate($sStruct)
 EndFunc   ;==>_GDIPlus_ParamInit
 Func _GDIPlus_ParamSize()
@@ -7057,162 +4505,59 @@ Func _GDIPlus_ParamSize()
 EndFunc   ;==>_GDIPlus_ParamSize
 Func _GDIPlus_PathAddArc($hPath, $nX, $nY, $nWidth, $nHeight, $fStartAngle, $fSweepAngle)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipAddPathArc", "handle", $hPath, "float", $nX, "float", $nY, _
-			"float", $nWidth, "float", $nHeight, "float", $fStartAngle, "float", $fSweepAngle)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PathAddArc
 Func _GDIPlus_PathAddBezier($hPath, $nX1, $nY1, $nX2, $nY2, $nX3, $nY3, $nX4, $nY4)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipAddPathBezier", "handle", $hPath, "float", $nX1, "float", $nY1, "float", $nX2, "float", $nY2, "float", $nX3, "float", $nY3, "float", $nX4, "float", $nY4)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PathAddBezier
 Func _GDIPlus_PathAddClosedCurve($hPath, $aPoints)
-	Local $iCount = $aPoints[0][0]
-	Local $tPoints = DllStructCreate("float[" & $iCount * 2 & "]")
-	For $iI = 1 To $iCount
-		DllStructSetData($tPoints, 1, $aPoints[$iI][0], (($iI - 1) * 2) + 1)
-		DllStructSetData($tPoints, 1, $aPoints[$iI][1], (($iI - 1) * 2) + 2)
-	Next
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipAddPathClosedCurve", "handle", $hPath, "struct*", $tPoints, "int", $iCount)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PathAddClosedCurve
 Func _GDIPlus_PathAddClosedCurve2($hPath, $aPoints, $nTension = 0.5)
-	Local $iCount = $aPoints[0][0]
-	Local $tPoints = DllStructCreate("float[" & $iCount * 2 & "]")
-	For $iI = 1 To $iCount
-		DllStructSetData($tPoints, 1, $aPoints[$iI][0], (($iI - 1) * 2) + 1)
-		DllStructSetData($tPoints, 1, $aPoints[$iI][1], (($iI - 1) * 2) + 2)
-	Next
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipAddPathClosedCurve2", "handle", $hPath, "struct*", $tPoints, "int", $iCount, "float", $nTension)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PathAddClosedCurve2
 Func _GDIPlus_PathAddCurve($hPath, $aPoints)
-	Local $iCount = $aPoints[0][0]
-	Local $tPoints = DllStructCreate("float[" & $iCount * 2 & "]")
-	For $iI = 1 To $iCount
-		DllStructSetData($tPoints, 1, $aPoints[$iI][0], (($iI - 1) * 2) + 1)
-		DllStructSetData($tPoints, 1, $aPoints[$iI][1], (($iI - 1) * 2) + 2)
-	Next
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipAddPathCurve", "handle", $hPath, "struct*", $tPoints, "int", $iCount)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PathAddCurve
 Func _GDIPlus_PathAddCurve2($hPath, $aPoints, $nTension = 0.5)
-	Local $iCount = $aPoints[0][0]
-	Local $tPoints = DllStructCreate("float[" & $iCount * 2 & "]")
-	For $iI = 1 To $iCount
-		DllStructSetData($tPoints, 1, $aPoints[$iI][0], (($iI - 1) * 2) + 1)
-		DllStructSetData($tPoints, 1, $aPoints[$iI][1], (($iI - 1) * 2) + 2)
-	Next
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipAddPathCurve2", "handle", $hPath, "struct*", $tPoints, "int", $iCount, "float", $nTension)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PathAddCurve2
 Func _GDIPlus_PathAddCurve3($hPath, $aPoints, $iOffset, $iNumOfSegments, $nTension = 0.5)
-	Local $iCount = $aPoints[0][0]
-	Local $tPoints = DllStructCreate("float[" & $iCount * 2 & "]")
-	For $iI = 1 To $iCount
-		DllStructSetData($tPoints, 1, $aPoints[$iI][0], (($iI - 1) * 2) + 1)
-		DllStructSetData($tPoints, 1, $aPoints[$iI][1], (($iI - 1) * 2) + 2)
-	Next
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipAddPathCurve3", "handle", $hPath, "struct*", $tPoints, "int", $iCount, "int", $iOffset, "int", $iNumOfSegments, "float", $nTension)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PathAddCurve3
 Func _GDIPlus_PathAddEllipse($hPath, $nX, $nY, $nWidth, $nHeight)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipAddPathEllipse", "handle", $hPath, "float", $nX, "float", $nY, "float", $nWidth, "float", $nHeight)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PathAddEllipse
 Func _GDIPlus_PathAddLine($hPath, $nX1, $nY1, $nX2, $nY2)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipAddPathLine", "handle", $hPath, "float", $nX1, "float", $nY1, "float", $nX2, "float", $nY2)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PathAddLine
 Func _GDIPlus_PathAddLine2($hPath, $aPoints)
-	Local $iCount = $aPoints[0][0]
-	Local $tPoints = DllStructCreate("float[" & $iCount * 2 & "]")
-	For $iI = 1 To $iCount
-		DllStructSetData($tPoints, 1, $aPoints[$iI][0], (($iI - 1) * 2) + 1)
-		DllStructSetData($tPoints, 1, $aPoints[$iI][1], (($iI - 1) * 2) + 2)
-	Next
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipAddPathLine2", "handle", $hPath, "struct*", $tPoints, "int", $iCount)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PathAddLine2
 Func _GDIPlus_PathAddPath($hPath1, $hPath2, $bConnect = True)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipAddPathPath", "handle", $hPath1, "handle", $hPath2, "int", $bConnect)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PathAddPath
 Func _GDIPlus_PathAddPie($hPath, $nX, $nY, $nWidth, $nHeight, $fStartAngle, $fSweepAngle)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipAddPathPie", "handle", $hPath, "float", $nX, "float", $nY, _
-			"float", $nWidth, "float", $nHeight, "float", $fStartAngle, "float", $fSweepAngle)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PathAddPie
 Func _GDIPlus_PathAddPolygon($hPath, $aPoints)
-	Local $iCount = $aPoints[0][0]
-	Local $tPoints = DllStructCreate("float[" & $iCount * 2 & "]")
-	For $iI = 1 To $iCount
-		DllStructSetData($tPoints, 1, $aPoints[$iI][0], (($iI - 1) * 2) + 1)
-		DllStructSetData($tPoints, 1, $aPoints[$iI][1], (($iI - 1) * 2) + 2)
-	Next
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipAddPathPolygon", "handle", $hPath, "struct*", $tPoints, "int", $iCount)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PathAddPolygon
 Func _GDIPlus_PathAddRectangle($hPath, $nX, $nY, $nWidth, $nHeight)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipAddPathRectangle", "handle", $hPath, "float", $nX, "float", $nY, "float", $nWidth, "float", $nHeight)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PathAddRectangle
 Func _GDIPlus_PathAddString($hPath, $sString, $tLayout, $hFamily, $iStyle = 0, $fSize = 8.5, $hFormat = 0)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipAddPathString", "handle", $hPath, "wstr", $sString, "int", -1, _
 			"handle", $hFamily, "int", $iStyle, "float", $fSize, "struct*", $tLayout, "handle", $hFormat)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PathAddString
 Func _GDIPlus_PathBrushCreate($aPoints, $iWrapMode = 0)
-	Local $iCount = $aPoints[0][0]
-	Local $tPoints = DllStructCreate("float[" & $iCount * 2 & "]")
-	For $iI = 1 To $iCount
-		DllStructSetData($tPoints, 1, $aPoints[$iI][0], (($iI - 1) * 2) + 1)
-		DllStructSetData($tPoints, 1, $aPoints[$iI][1], (($iI - 1) * 2) + 2)
-	Next
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipCreatePathGradient", "struct*", $tPoints, "int", $iCount, "int", $iWrapMode, "handle*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[4]
 EndFunc   ;==>_GDIPlus_PathBrushCreate
 Func _GDIPlus_PathBrushCreateFromPath($hPath)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipCreatePathGradientFromPath", "handle", $hPath, "handle*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_PathBrushCreateFromPath
 Func _GDIPlus_PathBrushGetCenterPoint($hPathGradientBrush)
 	Local $tPointF = DllStructCreate("float;float")
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetPathGradientCenterPoint", "handle", $hPathGradientBrush, "struct*", $tPointF)
-	If @error Then Return SetError(@error, @extended, -1)
-	If $aResult[0] Then Return SetError(10, $aResult[0], -1)
 	Local $aPointF[2]
 	$aPointF[0] = DllStructGetData($tPointF, 1)
 	$aPointF[1] = DllStructGetData($tPointF, 2)
@@ -7220,8 +4565,6 @@ Func _GDIPlus_PathBrushGetCenterPoint($hPathGradientBrush)
 EndFunc   ;==>_GDIPlus_PathBrushGetCenterPoint
 Func _GDIPlus_PathBrushGetFocusScales($hPathGradientBrush)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetPathGradientFocusScales", "handle", $hPathGradientBrush, "float*", 0, "float*", 0)
-	If @error Then Return SetError(@error, @extended, -1)
-	If $aResult[0] Then Return SetError(10, $aResult[0], -1)
 	Local $aScales[2]
 	$aScales[0] = $aResult[2]
 	$aScales[1] = $aResult[3]
@@ -7229,290 +4572,149 @@ Func _GDIPlus_PathBrushGetFocusScales($hPathGradientBrush)
 EndFunc   ;==>_GDIPlus_PathBrushGetFocusScales
 Func _GDIPlus_PathBrushGetPointCount($hPathGradientBrush)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetPathGradientPointCount", "handle", $hPathGradientBrush, "int*", 0)
-	If @error Then Return SetError(@error, @extended, -1)
-	If $aResult[0] Then Return SetError(10, $aResult[0], -1)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_PathBrushGetPointCount
 Func _GDIPlus_PathBrushGetRect($hPathGradientBrush)
-	Local $tRECTF = DllStructCreate($tagGDIPRECTF)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetPathGradientRect", "handle", $hPathGradientBrush, "struct*", $tRECTF)
-	If @error Then Return SetError(@error, @extended, -1)
-	If $aResult[0] Then Return SetError(10, $aResult[0], -1)
-	Local $aRectF[4]
-	For $iI = 1 To 4
-		$aRectF[$iI - 1] = DllStructGetData($tRECTF, $iI)
-	Next
-	Return $aRectF
 EndFunc   ;==>_GDIPlus_PathBrushGetRect
 Func _GDIPlus_PathBrushGetWrapMode($hPathGradientBrush)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetPathGradientWrapMode", "handle", $hPathGradientBrush, "int*", 0)
-	If @error Then Return SetError(@error, @extended, -1)
-	If $aResult[0] Then Return SetError(10, $aResult[0], -1)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_PathBrushGetWrapMode
 Func _GDIPlus_PathBrushMultiplyTransform($hPathGradientBrush, $hMatrix, $iOrder = 0)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipMultiplyPathGradientTransform", "handle", $hPathGradientBrush, "handle", $hMatrix, "int", $iOrder)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PathBrushMultiplyTransform
 Func _GDIPlus_PathBrushResetTransform($hPathGradientBrush)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipResetPathGradientTransform", "handle", $hPathGradientBrush)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PathBrushResetTransform
 Func _GDIPlus_PathBrushSetBlend($hPathGradientBrush, $aBlends)
 	Local $iCount = $aBlends[0][0]
 	Local $tFactors = DllStructCreate("float[" & $iCount & "]")
 	Local $tPositions = DllStructCreate("float[" & $iCount & "]")
-	For $iI = 1 To $iCount
-		DllStructSetData($tFactors, 1, $aBlends[$iI][0], $iI)
-		DllStructSetData($tPositions, 1, $aBlends[$iI][1], $iI)
-	Next
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetPathGradientBlend", "handle", $hPathGradientBrush, "struct*", $tFactors, "struct*", $tPositions, "int", $iCount)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PathBrushSetBlend
 Func _GDIPlus_PathBrushSetCenterColor($hPathGradientBrush, $iARGB)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetPathGradientCenterColor", "handle", $hPathGradientBrush, "uint", $iARGB)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PathBrushSetCenterColor
 Func _GDIPlus_PathBrushSetCenterPoint($hPathGradientBrush, $nX, $nY)
-	Local $tPointF = DllStructCreate("float;float")
 	DllStructSetData($tPointF, 1, $nX)
 	DllStructSetData($tPointF, 2, $nY)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetPathGradientCenterPoint", "handle", $hPathGradientBrush, "struct*", $tPointF)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PathBrushSetCenterPoint
 Func _GDIPlus_PathBrushSetFocusScales($hPathGradientBrush, $fScaleX, $fScaleY)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetPathGradientFocusScales", "handle", $hPathGradientBrush, "float", $fScaleX, "float", $fScaleY)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PathBrushSetFocusScales
 Func _GDIPlus_PathBrushSetGammaCorrection($hPathGradientBrush, $bUseGammaCorrection)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetPathGradientGammaCorrection", "handle", $hPathGradientBrush, "int", $bUseGammaCorrection)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PathBrushSetGammaCorrection
 Func _GDIPlus_PathBrushSetLinearBlend($hPathGradientBrush, $fFocus, $fScale = 1)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetPathGradientLinearBlend", "handle", $hPathGradientBrush, "float", $fFocus, "float", $fScale)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PathBrushSetLinearBlend
 Func _GDIPlus_PathBrushSetPresetBlend($hPathGradientBrush, $aInterpolations)
 	Local $iCount = $aInterpolations[0][0]
 	Local $tColors = DllStructCreate("uint[" & $iCount & "]")
-	Local $tPositions = DllStructCreate("float[" & $iCount & "]")
-	For $iI = 1 To $iCount
-		DllStructSetData($tColors, 1, $aInterpolations[$iI][0], $iI)
-		DllStructSetData($tPositions, 1, $aInterpolations[$iI][1], $iI)
-	Next
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetPathGradientPresetBlend", "handle", $hPathGradientBrush, "struct*", $tColors, "struct*", $tPositions, "int", $iCount)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PathBrushSetPresetBlend
 Func _GDIPlus_PathBrushSetSigmaBlend($hPathGradientBrush, $fFocus, $fScale = 1)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetPathGradientSigmaBlend", "handle", $hPathGradientBrush, "float", $fFocus, "float", $fScale)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PathBrushSetSigmaBlend
 Func _GDIPlus_PathBrushSetSurroundColor($hPathGradientBrush, $iARGB)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetPathGradientSurroundColorsWithCount", "handle", $hPathGradientBrush, "uint*", $iARGB, "int*", 1)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PathBrushSetSurroundColor
 Func _GDIPlus_PathBrushSetSurroundColorsWithCount($hPathGradientBrush, $aColors)
 	Local $iCount = $aColors[0]
 	Local $iColors = _GDIPlus_PathBrushGetPointCount($hPathGradientBrush)
 	If $iColors < $iCount Then $iCount = $iColors
-	Local $tColors = DllStructCreate("uint[" & $iCount & "]")
-	For $iI = 1 To $iCount
 		DllStructSetData($tColors, 1, $aColors[$iI], $iI)
-	Next
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetPathGradientSurroundColorsWithCount", "handle", $hPathGradientBrush, "struct*", $tColors, "int*", $iCount)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[3]
 EndFunc   ;==>_GDIPlus_PathBrushSetSurroundColorsWithCount
 Func _GDIPlus_PathBrushSetTransform($hPathGradientBrush, $hMatrix)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetPathGradientTransform", "handle", $hPathGradientBrush, "handle", $hMatrix)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PathBrushSetTransform
 Func _GDIPlus_PathBrushSetWrapMode($hPathGradientBrush, $iWrapMode)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetPathGradientWrapMode", "handle", $hPathGradientBrush, "int", $iWrapMode)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PathBrushSetWrapMode
 Func _GDIPlus_PathClone($hPath)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipClonePath", "handle", $hPath, "handle*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_PathClone
 Func _GDIPlus_PathCloseFigure($hPath)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipClosePathFigure", "handle", $hPath)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PathCloseFigure
 Func _GDIPlus_PathCreate($iFillMode = 0)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipCreatePath", "int", $iFillMode, "handle*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_PathCreate
 Func _GDIPlus_PathCreate2($aPathData, $iFillMode = 0)
 	Local $iCount = $aPathData[0][0]
-	Local $tPoints = DllStructCreate("float[" & $iCount * 2 & "]")
 	Local $tTypes = DllStructCreate("byte[" & $iCount & "]")
-	For $iI = 1 To $iCount
 		DllStructSetData($tPoints, 1, $aPathData[$iI][0], (($iI - 1) * 2) + 1)
 		DllStructSetData($tPoints, 1, $aPathData[$iI][1], (($iI - 1) * 2) + 2)
 		DllStructSetData($tTypes, 1, $aPathData[$iI][2], $iI)
-	Next
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipCreatePath2", "struct*", $tPoints, "struct*", $tTypes, "int", $iCount, "int", $iFillMode, "handle*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[5]
 EndFunc   ;==>_GDIPlus_PathCreate2
 Func _GDIPlus_PathDispose($hPath)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipDeletePath", "handle", $hPath)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PathDispose
 Func _GDIPlus_PathFlatten($hPath, $fFlatness = 0.25, $hMatrix = 0)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipFlattenPath", "handle", $hPath, "handle", $hMatrix, "float", $fFlatness)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PathFlatten
 Func _GDIPlus_PathGetData($hPath)
 	Local $iCount = _GDIPlus_PathGetPointCount($hPath)
 	Local $tPathData = DllStructCreate("int Count; ptr Points; ptr Types;")
-	Local $tPoints = DllStructCreate("float[" & $iCount * 2 & "]")
-	Local $tTypes = DllStructCreate("byte[" & $iCount & "]")
 	DllStructSetData($tPathData, "Count", $iCount)
 	DllStructSetData($tPathData, "Points", DllStructGetPtr($tPoints))
 	DllStructSetData($tPathData, "Types", DllStructGetPtr($tTypes))
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetPathData", "handle", $hPath, "struct*", $tPathData)
-	If @error Then Return SetError(@error, @extended, 0)
 	If $aResult[0] Then Return SetError($aResult[0], $aResult[0], -1)
 	Local $aData[$iCount + 1][3]
 	$aData[0][0] = $iCount
-	For $iI = 1 To $iCount
 		$aData[$iI][0] = DllStructGetData($tPoints, 1, (($iI - 1) * 2) + 1)
 		$aData[$iI][1] = DllStructGetData($tPoints, 1, (($iI - 1) * 2) + 2)
 		$aData[$iI][2] = DllStructGetData($tTypes, 1, $iI)
-	Next
 	Return $aData
 EndFunc   ;==>_GDIPlus_PathGetData
 Func _GDIPlus_PathGetFillMode($hPath)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetPathFillMode", "handle", $hPath, "int*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_PathGetFillMode
 Func _GDIPlus_PathGetLastPoint($hPath)
-	Local $tPointF = DllStructCreate("float;float")
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetPathLastPoint", "handle", $hPath, "struct*", $tPointF)
-	If @error Then Return SetError(@error, @extended, -1)
-	If $aResult[0] Then Return SetError(10, $aResult[0], -1)
-	Local $aPointF[2]
-	$aPointF[0] = DllStructGetData($tPointF, 1)
-	$aPointF[1] = DllStructGetData($tPointF, 2)
-	Return $aPointF
 EndFunc   ;==>_GDIPlus_PathGetLastPoint
 Func _GDIPlus_PathGetPointCount($hPath)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetPointCount", "handle", $hPath, "int*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_PathGetPointCount
 Func _GDIPlus_PathGetPoints($hPath)
 	Local $iI, $iCount, $tPoints, $aPoints[1][1], $aResult
 	$iCount = _GDIPlus_PathGetPointCount($hPath)
 	If @error Then Return SetError(@error + 10, @extended, -1)
-	$tPoints = DllStructCreate("float[" & $iCount * 2 & "]")
 	$aResult = DllCall($__g_hGDIPDll, "int", "GdipGetPathPoints", "handle", $hPath, "struct*", $tPoints, "int", $iCount)
-	If @error Then Return SetError(@error, @extended, -1)
-	If $aResult[0] Then Return SetError(10, $aResult[0], -1)
 	Local $aPoints[$iCount + 1][2]
 	$aPoints[0][0] = $iCount
-	For $iI = 1 To $iCount
 		$aPoints[$iI][0] = DllStructGetData($tPoints, 1, (($iI - 1) * 2) + 1)
 		$aPoints[$iI][1] = DllStructGetData($tPoints, 1, (($iI - 1) * 2) + 2)
-	Next
 	Return $aPoints
 EndFunc   ;==>_GDIPlus_PathGetPoints
 Func _GDIPlus_PathGetWorldBounds($hPath, $hMatrix = 0, $hPen = 0)
-	Local $tRECTF = DllStructCreate($tagGDIPRECTF)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetPathWorldBounds", "handle", $hPath, "struct*", $tRECTF, "handle", $hMatrix, "handle", $hPen)
-	If @error Then Return SetError(@error, @extended, -1)
-	If $aResult[0] Then Return SetError(10, $aResult[0], -1)
-	Local $aRectF[4]
-	For $iI = 1 To 4
-		$aRectF[$iI - 1] = DllStructGetData($tRECTF, $iI)
-	Next
-	Return $aRectF
 EndFunc   ;==>_GDIPlus_PathGetWorldBounds
 Func _GDIPlus_PathIsOutlineVisiblePoint($hPath, $nX, $nY, $hPen = 0, $hGraphics = 0)
-	__GDIPlus_PenDefCreate($hPen)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipIsOutlineVisiblePathPoint", "handle", $hPath, "float", $nX, "float", $nY, "handle", $hPen, "handle", $hGraphics, "int*", 0)
-	__GDIPlus_PenDefDispose() ; does destroyed @error, @extended
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
 	Return $aResult[6] <> 0
 EndFunc   ;==>_GDIPlus_PathIsOutlineVisiblePoint
 Func _GDIPlus_PathIsVisiblePoint($hPath, $nX, $nY, $hGraphics = 0)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipIsVisiblePathPoint", "handle", $hPath, "float", $nX, "float", $nY, "handle", $hGraphics, "int*", 0)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
 	Return $aResult[5] <> 0
 EndFunc   ;==>_GDIPlus_PathIsVisiblePoint
 Func _GDIPlus_PathIterCreate($hPath)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipCreatePathIter", "handle*", 0, "handle", $hPath)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[1]
 EndFunc   ;==>_GDIPlus_PathIterCreate
 Func _GDIPlus_PathIterDispose($hPathIter)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipDeletePathIter", "handle", $hPathIter)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PathIterDispose
 Func _GDIPlus_PathIterGetSubpathCount($hPathIter)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipPathIterGetSubpathCount", "handle", $hPathIter, "int*", 0)
-	If @error Then Return SetError(@error, @extended, -1)
-	If $aResult[0] Then Return SetError(10, $aResult[0], -1)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_PathIterGetSubpathCount
 Func _GDIPlus_PathIterNextMarkerPath($hPathIter, $hPath)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipPathIterNextMarkerPath", "handle", $hPathIter, "int*", 0, "handle", $hPath)
-	If @error Then Return SetError(@error, @extended, -1)
-	If $aResult[0] Then Return SetError(10, $aResult[0], -1)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_PathIterNextMarkerPath
 Func _GDIPlus_PathIterNextSubpathPath($hPathIter, $hPath)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipPathIterNextSubpathPath", "handle", $hPathIter, "int*", 0, "handle", $hPath, "bool*", 0)
-	If @error Then Return SetError(@error, @extended, -1)
-	If $aResult[0] Then Return SetError(10, $aResult[0], -1)
 	Local $aReturn[2]
 	$aReturn[0] = $aResult[2]
 	$aReturn[1] = $aResult[4]
@@ -7520,243 +4722,121 @@ Func _GDIPlus_PathIterNextSubpathPath($hPathIter, $hPath)
 EndFunc   ;==>_GDIPlus_PathIterNextSubpathPath
 Func _GDIPlus_PathIterRewind($hPathIter)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipPathIterRewind", "handle", $hPathIter)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PathIterRewind
 Func _GDIPlus_PathReset($hPath)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipResetPath", "handle", $hPath)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PathReset
 Func _GDIPlus_PathReverse($hPath)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipReversePath", "handle", $hPath)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PathReverse
 Func _GDIPlus_PathSetFillMode($hPath, $iFillMode)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetPathFillMode", "handle", $hPath, "int", $iFillMode)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PathSetFillMode
 Func _GDIPlus_PathSetMarker($hPath)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetPathMarker", "handle", $hPath)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PathSetMarker
 Func _GDIPlus_PathStartFigure($hPath)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipStartPathFigure", "handle", $hPath)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PathStartFigure
 Func _GDIPlus_PathTransform($hPath, $hMatrix)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipTransformPath", "handle", $hPath, "handle", $hMatrix)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PathTransform
 Func _GDIPlus_PathWarp($hPath, $hMatrix, $aPoints, $nX, $nY, $nWidth, $nHeight, $iWarpMode = 0, $fFlatness = 0.25)
-	Local $iCount = $aPoints[0][0]
 	If $iCount <> 3 And $iCount <> 4 Then Return SetError(11, 0, False)
-	Local $tPoints = DllStructCreate("float[" & $iCount * 2 & "]")
-	For $iI = 1 To $iCount
-		DllStructSetData($tPoints, 1, $aPoints[$iI][0], ($iI - 1) * 2 + 1)
-		DllStructSetData($tPoints, 1, $aPoints[$iI][1], ($iI - 1) * 2 + 2)
-	Next
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipWarpPath", "handle", $hPath, "handle", $hMatrix, "struct*", $tPoints, "int", $iCount, _
 			"float", $nX, "float", $nY, "float", $nWidth, "float", $nHeight, "int", $iWarpMode, "float", $fFlatness)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PathWarp
 Func _GDIPlus_PathWiden($hPath, $hPen, $hMatrix = 0, $fFlatness = 0.25)
-	__GDIPlus_PenDefCreate($hPen)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipWidenPath", "handle", $hPath, "handle", $hPen, "handle", $hMatrix, "float", $fFlatness)
-	__GDIPlus_PenDefDispose() ; does destroyed @error, @extended
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PathWiden
 Func _GDIPlus_PathWindingModeOutline($hPath, $hMatrix = 0, $fFlatness = 0.25)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipWindingModeOutline", "handle", $hPath, "handle", $hMatrix, "float", $fFlatness)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PathWindingModeOutline
 Func _GDIPlus_PenCreate($iARGB = 0xFF000000, $nWidth = 1, $iUnit = 2)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipCreatePen1", "dword", $iARGB, "float", $nWidth, "int", $iUnit, "handle*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[4]
 EndFunc   ;==>_GDIPlus_PenCreate
 Func _GDIPlus_PenCreate2($hBrush, $nWidth = 1, $iUnit = 2)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipCreatePen2", "handle", $hBrush, "float", $nWidth, "int", $iUnit, "handle*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[4]
 EndFunc   ;==>_GDIPlus_PenCreate2
 Func _GDIPlus_PenDispose($hPen)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipDeletePen", "handle", $hPen)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PenDispose
 Func _GDIPlus_PenGetAlignment($hPen)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetPenMode", "handle", $hPen, "int*", 0)
-	If @error Then Return SetError(@error, @extended, -1)
-	If $aResult[0] Then Return SetError(10, $aResult[0], -1)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_PenGetAlignment
 Func _GDIPlus_PenGetColor($hPen)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetPenColor", "handle", $hPen, "dword*", 0)
-	If @error Then Return SetError(@error, @extended, -1)
-	If $aResult[0] Then Return SetError(10, $aResult[0], -1)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_PenGetColor
 Func _GDIPlus_PenGetCustomEndCap($hPen)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetPenCustomEndCap", "handle", $hPen, "handle*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_PenGetCustomEndCap
 Func _GDIPlus_PenGetDashCap($hPen)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetPenDashCap197819", "handle", $hPen, "int*", 0)
-	If @error Then Return SetError(@error, @extended, -1)
-	If $aResult[0] Then Return SetError(10, $aResult[0], -1)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_PenGetDashCap
 Func _GDIPlus_PenGetDashStyle($hPen)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetPenDashStyle", "handle", $hPen, "int*", 0)
-	If @error Then Return SetError(@error, @extended, -1)
-	If $aResult[0] Then Return SetError(10, $aResult[0], -1)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_PenGetDashStyle
 Func _GDIPlus_PenGetEndCap($hPen)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetPenEndCap", "handle", $hPen, "int*", 0)
-	If @error Then Return SetError(@error, @extended, -1)
-	If $aResult[0] Then Return SetError(10, $aResult[0], -1)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_PenGetEndCap
 Func _GDIPlus_PenGetMiterLimit($hPen)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetPenMiterLimit", "handle", $hPen, "float*", 0)
-	If @error Then Return SetError(@error, @extended, -1)
-	If $aResult[0] Then Return SetError(10, $aResult[0], -1)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_PenGetMiterLimit
 Func _GDIPlus_PenGetWidth($hPen)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetPenWidth", "handle", $hPen, "float*", 0)
-	If @error Then Return SetError(@error, @extended, -1)
-	If $aResult[0] Then Return SetError(10, $aResult[0], -1)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_PenGetWidth
 Func _GDIPlus_PenResetTransform($hPen)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipResetPenTransform", "handle", $hPen)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PenResetTransform
 Func _GDIPlus_PenRotateTransform($hPen, $fAngle, $iOrder = 0)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipRotatePenTransform", "handle", $hPen, "float", $fAngle, "int", $iOrder)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PenRotateTransform
 Func _GDIPlus_PenScaleTransform($hPen, $fScaleX, $fScaleY, $iOrder = 0)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipScalePenTransform", "handle", $hPen, "float", $fScaleX, "float", $fScaleY, "int", $iOrder)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PenScaleTransform
 Func _GDIPlus_PenSetAlignment($hPen, $iAlignment = 0)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetPenMode", "handle", $hPen, "int", $iAlignment)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PenSetAlignment
 Func _GDIPlus_PenSetColor($hPen, $iARGB)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetPenColor", "handle", $hPen, "dword", $iARGB)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PenSetColor
 Func _GDIPlus_PenSetCompound($hPen, $aCompounds)
 	Local $iCount = $aCompounds[0]
 	Local $tCompounds = DllStructCreate("float[" & $iCount & "];")
-	For $i = 1 To $iCount
 		DllStructSetData($tCompounds, 1, $aCompounds[$i], $i)
-	Next
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetPenCompoundArray", "handle", $hPen, "struct*", $tCompounds, "int", $iCount)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PenSetCompound
 Func _GDIPlus_PenSetCustomEndCap($hPen, $hEndCap)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetPenCustomEndCap", "handle", $hPen, "handle", $hEndCap)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PenSetCustomEndCap
 Func _GDIPlus_PenSetDashCap($hPen, $iDash = 0)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetPenDashCap197819", "handle", $hPen, "int", $iDash)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PenSetDashCap
 Func _GDIPlus_PenSetDashStyle($hPen, $iStyle = 0)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetPenDashStyle", "handle", $hPen, "int", $iStyle)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PenSetDashStyle
 Func _GDIPlus_PenSetEndCap($hPen, $iEndCap)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetPenEndCap", "handle", $hPen, "int", $iEndCap)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PenSetEndCap
 Func _GDIPlus_PenSetLineCap($hPen, $iStartCap, $iEndCap, $iDashCap)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetPenLineCap197819", "handle", $hPen, "int", $iStartCap, "int", $iEndCap, "int", $iDashCap)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PenSetLineCap
 Func _GDIPlus_PenSetLineJoin($hPen, $iLineJoin)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetPenLineJoin", "handle", $hPen, "int", $iLineJoin)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PenSetLineJoin
 Func _GDIPlus_PenSetMiterLimit($hPen, $fMiterLimit)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetPenMiterLimit", "handle", $hPen, "float", $fMiterLimit)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PenSetMiterLimit
 Func _GDIPlus_PenSetStartCap($hPen, $iLineCap)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetPenStartCap", "handle", $hPen, "int", $iLineCap)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PenSetStartCap
 Func _GDIPlus_PenSetTransform($hPen, $hMatrix)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetPenTransform", "handle", $hPen, "handle", $hMatrix)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PenSetTransform
 Func _GDIPlus_PenSetWidth($hPen, $fWidth)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetPenWidth", "handle", $hPen, "float", $fWidth)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_PenSetWidth
 Func _GDIPlus_RectFCreate($nX = 0, $nY = 0, $nWidth = 0, $nHeight = 0)
-	Local $tRECTF = DllStructCreate($tagGDIPRECTF)
 	DllStructSetData($tRECTF, "X", $nX)
 	DllStructSetData($tRECTF, "Y", $nY)
 	DllStructSetData($tRECTF, "Width", $nWidth)
@@ -7765,94 +4845,49 @@ Func _GDIPlus_RectFCreate($nX = 0, $nY = 0, $nWidth = 0, $nHeight = 0)
 EndFunc   ;==>_GDIPlus_RectFCreate
 Func _GDIPlus_RegionClone($hRegion)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipCloneRegion", "handle", $hRegion, "handle*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_RegionClone
 Func _GDIPlus_RegionCombinePath($hRegion, $hPath, $iCombineMode = 2)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipCombineRegionPath", "handle", $hRegion, "handle", $hPath, "int", $iCombineMode)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_RegionCombinePath
 Func _GDIPlus_RegionCombineRect($hRegion, $nX, $nY, $nWidth, $nHeight, $iCombineMode = 2)
 	Local $tRECTF = _GDIPlus_RectFCreate($nX, $nY, $nWidth, $nHeight)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipCombineRegionRect", "handle", $hRegion, "struct*", $tRECTF, "int", $iCombineMode)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_RegionCombineRect
 Func _GDIPlus_RegionCombineRegion($hRegionDst, $hRegionSrc, $iCombineMode = 2)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipCombineRegionRegion", "handle", $hRegionDst, "handle", $hRegionSrc, "int", $iCombineMode)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_RegionCombineRegion
 Func _GDIPlus_RegionCreate()
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipCreateRegion", "handle*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[1]
 EndFunc   ;==>_GDIPlus_RegionCreate
 Func _GDIPlus_RegionCreateFromPath($hPath)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipCreateRegionPath", "handle", $hPath, "handle*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_RegionCreateFromPath
 Func _GDIPlus_RegionCreateFromRect($nX, $nY, $nWidth, $nHeight)
-	Local $tRECTF = _GDIPlus_RectFCreate($nX, $nY, $nWidth, $nHeight)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipCreateRegionRect", "struct*", $tRECTF, "handle*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_RegionCreateFromRect
 Func _GDIPlus_RegionDispose($hRegion)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipDeleteRegion", "handle", $hRegion)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_RegionDispose
 Func _GDIPlus_RegionGetBounds($hRegion, $hGraphics)
-	Local $tRECTF = DllStructCreate($tagGDIPRECTF)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetRegionBounds", "handle", $hRegion, "handle", $hGraphics, "struct*", $tRECTF)
-	If @error Then Return SetError(@error, @extended, -1)
-	If $aResult[0] Then Return SetError(10, $aResult[0], -1)
 	Local $aBounds[4]
-	For $iI = 1 To 4
 		$aBounds[$iI - 1] = DllStructGetData($tRECTF, $iI)
-	Next
 	Return $aBounds
 EndFunc   ;==>_GDIPlus_RegionGetBounds
 Func _GDIPlus_RegionGetHRgn($hRegion, $hGraphics = 0)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetRegionHRgn", "handle", $hRegion, "handle", $hGraphics, "handle*", 0)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return $aResult[3]
 EndFunc   ;==>_GDIPlus_RegionGetHRgn
 Func _GDIPlus_RegionSetEmpty($hRegion)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetEmpty", "handle", $hRegion)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_RegionSetEmpty
 Func _GDIPlus_RegionSetInfinite($hRegion)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetInfinite", "handle", $hRegion)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_RegionSetInfinite
 Func _GDIPlus_RegionTransform($hRegion, $hMatrix)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipTransformRegion", "handle", $hRegion, "handle", $hMatrix)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_RegionTransform
 Func _GDIPlus_RegionTranslate($hRegion, $nDX, $nDY)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipTranslateRegion", "handle", $hRegion, "float", $nDX, "float", $nDY)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_RegionTranslate
 Func _GDIPlus_Shutdown()
 	If $__g_hGDIPDll = 0 Then Return SetError(-1, -1, False)
@@ -7861,8 +4896,6 @@ Func _GDIPlus_Shutdown()
 		DllCall($__g_hGDIPDll, "none", "GdiplusShutdown", "ulong_ptr", $__g_iGDIPToken)
 		DllClose($__g_hGDIPDll)
 		$__g_hGDIPDll = 0
-	EndIf
-	Return True
 EndFunc   ;==>_GDIPlus_Shutdown
 Func _GDIPlus_Startup($sGDIPDLL = Default, $bRetDllHandle = False)
 	$__g_iGDIPRef += 1
@@ -7872,7 +4905,6 @@ Func _GDIPlus_Startup($sGDIPDLL = Default, $bRetDllHandle = False)
 	If $__g_hGDIPDll = -1 Then
 		$__g_iGDIPRef = 0
 		Return SetError(1, 2, False)
-	EndIf
 	Local $sVer = FileGetVersion($sGDIPDLL)
 	$sVer = StringSplit($sVer, ".")
 	If $sVer[1] > 5 Then $__g_bGDIP_V1_0 = False
@@ -7880,83 +4912,50 @@ Func _GDIPlus_Startup($sGDIPDLL = Default, $bRetDllHandle = False)
 	Local $tToken = DllStructCreate("ulong_ptr Data")
 	DllStructSetData($tInput, "Version", 1)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdiplusStartup", "struct*", $tToken, "struct*", $tInput, "ptr", 0)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
 	$__g_iGDIPToken = DllStructGetData($tToken, "Data")
 	If $bRetDllHandle Then Return $__g_hGDIPDll
 	Return SetExtended($sVer[1], True)
 EndFunc   ;==>_GDIPlus_Startup
 Func _GDIPlus_StringFormatCreate($iFormat = 0, $iLangID = 0)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipCreateStringFormat", "int", $iFormat, "word", $iLangID, "handle*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[3]
 EndFunc   ;==>_GDIPlus_StringFormatCreate
 Func _GDIPlus_StringFormatDispose($hFormat)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipDeleteStringFormat", "handle", $hFormat)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_StringFormatDispose
 Func _GDIPlus_StringFormatGetMeasurableCharacterRangeCount($hStringFormat)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetStringFormatMeasurableCharacterRangeCount", "handle", $hStringFormat, "int*", 0)
-	If @error Then Return SetError(@error, @extended, -1)
-	If $aResult[0] Then Return SetError(10, $aResult[0], -1)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_StringFormatGetMeasurableCharacterRangeCount
 Func _GDIPlus_StringFormatSetAlign($hStringFormat, $iFlag)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetStringFormatAlign", "handle", $hStringFormat, "int", $iFlag)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_StringFormatSetAlign
 Func _GDIPlus_StringFormatSetLineAlign($hStringFormat, $iStringAlign)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetStringFormatLineAlign", "handle", $hStringFormat, "int", $iStringAlign)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_StringFormatSetLineAlign
 Func _GDIPlus_StringFormatSetMeasurableCharacterRanges($hStringFormat, $aRanges)
 	Local $iCount = $aRanges[0][0]
 	Local $tCharacterRanges = DllStructCreate("int[" & $iCount * 2 & "]")
-	For $iI = 1 To $iCount
 		DllStructSetData($tCharacterRanges, 1, $aRanges[$iI][0], (($iI - 1) * 2) + 1)
 		DllStructSetData($tCharacterRanges, 1, $aRanges[$iI][1], (($iI - 1) * 2) + 2)
-	Next
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetStringFormatMeasurableCharacterRanges", "handle", $hStringFormat, "int", $iCount, "struct*", $tCharacterRanges)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_StringFormatSetMeasurableCharacterRanges
 Func _GDIPlus_TextureCreate($hImage, $iWrapMode = 0)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipCreateTexture", "handle", $hImage, "int", $iWrapMode, "handle*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[3]
 EndFunc   ;==>_GDIPlus_TextureCreate
 Func _GDIPlus_TextureCreate2($hImage, $nX, $nY, $nWidth, $nHeight, $iWrapMode = 0)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipCreateTexture2", "handle", $hImage, "int", $iWrapMode, "float", $nX, "float", $nY, "float", $nWidth, "float", $nHeight, "handle*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[7]
 EndFunc   ;==>_GDIPlus_TextureCreate2
 Func _GDIPlus_TextureCreateIA($hImage, $nX, $nY, $nWidth, $nHeight, $pImageAttributes = 0)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipCreateTextureIA", "handle", $hImage, "handle", $pImageAttributes, "float", $nX, "float", $nY, "float", $nWidth, "float", $nHeight, "ptr*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[7]
 EndFunc   ;==>_GDIPlus_TextureCreateIA
 Func __GDIPlus_BrushDefCreate(ByRef $hBrush)
 	If $hBrush = 0 Then
 		$__g_hGDIPBrush = _GDIPlus_BrushCreateSolid()
 		$hBrush = $__g_hGDIPBrush
-	EndIf
 EndFunc   ;==>__GDIPlus_BrushDefCreate
 Func __GDIPlus_BrushDefDispose($iCurError = @error, $iCurExtended = @extended)
 	If $__g_hGDIPBrush <> 0 Then
 		_GDIPlus_BrushDispose($__g_hGDIPBrush)
 		$__g_hGDIPBrush = 0
-	EndIf
 	Return SetError($iCurError, $iCurExtended) ; restore caller @error and @extended
 EndFunc   ;==>__GDIPlus_BrushDefDispose
 Func __GDIPlus_ExtractFileExt($sFileName, $bNoDot = True)
@@ -7964,12 +4963,8 @@ Func __GDIPlus_ExtractFileExt($sFileName, $bNoDot = True)
 	If ($iIndex > 0) And (StringMid($sFileName, $iIndex, 1) = '.') Then
 		If $bNoDot Then
 			Return StringMid($sFileName, $iIndex + 1)
-		Else
 			Return StringMid($sFileName, $iIndex)
-		EndIf
-	Else
 		Return ""
-	EndIf
 EndFunc   ;==>__GDIPlus_ExtractFileExt
 Func __GDIPlus_LastDelimiter($sDelimiters, $sString)
 	Local $sDelimiter, $iN
@@ -7977,75 +4972,46 @@ Func __GDIPlus_LastDelimiter($sDelimiters, $sString)
 		$sDelimiter = StringMid($sDelimiters, $iI, 1)
 		$iN = StringInStr($sString, $sDelimiter, $STR_NOCASESENSEBASIC, -1)
 		If $iN > 0 Then Return $iN
-	Next
 EndFunc   ;==>__GDIPlus_LastDelimiter
 Func __GDIPlus_PenDefCreate(ByRef $hPen)
 	If $hPen = 0 Then
 		$__g_hGDIPPen = _GDIPlus_PenCreate()
 		$hPen = $__g_hGDIPPen
-	EndIf
 EndFunc   ;==>__GDIPlus_PenDefCreate
 Func __GDIPlus_PenDefDispose($iCurError = @error, $iCurExtended = @extended)
 	If $__g_hGDIPPen <> 0 Then
 		_GDIPlus_PenDispose($__g_hGDIPPen)
 		$__g_hGDIPPen = 0
-	EndIf
-	Return SetError($iCurError, $iCurExtended) ; restore caller @error and @extended
 EndFunc   ;==>__GDIPlus_PenDefDispose
 Func _GDIPlus_BitmapApplyEffect($hBitmap, $hEffect, $tRECT = Null)
 	If $__g_bGDIP_V1_0 Then Return SetError(-1, 0, False)
 	If Not IsPtr($hEffect) Then Return SetError(10, 0, False)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipBitmapApplyEffect", "handle", $hBitmap, "handle", $hEffect, "struct*", $tRECT, "int", 0, "ptr*", 0, "int*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_BitmapApplyEffect
 Func _GDIPlus_BitmapApplyEffectEx($hBitmap, $hEffect, $iX = 0, $iY = 0, $iW = 0, $iH = 0)
-	If $__g_bGDIP_V1_0 Then Return SetError(-1, 0, False)
 	Local $tRECT = 0
 	If BitOR($iX, $iY, $iW, $iH) Then
 		$tRECT = DllStructCreate("int Left; int Top; int Right; int Bottom;")
 		DllStructSetData($tRECT, "Right", $iW + DllStructSetData($tRECT, "Left", $iX))
 		DllStructSetData($tRECT, "Bottom", $iH + DllStructSetData($tRECT, "Top", $iY))
-	EndIf
 	Local $iStatus = _GDIPlus_BitmapApplyEffect($hBitmap, $hEffect, $tRECT)
 	If Not $iStatus Then Return SetError(@error, @extended, False)
-	Return True
 EndFunc   ;==>_GDIPlus_BitmapApplyEffectEx
 Func _GDIPlus_BitmapConvertFormat($hBitmap, $iPixelFormat, $iDitherType, $iPaletteType, $tPalette, $fAlphaThresholdPercent = 0.0)
-	If $__g_bGDIP_V1_0 Then Return SetError(-1, 0, False)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipBitmapConvertFormat", "handle", $hBitmap, "uint", $iPixelFormat, "uint", $iDitherType, "uint", $iPaletteType, "struct*", $tPalette, "float", $fAlphaThresholdPercent)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_BitmapConvertFormat
 Func _GDIPlus_BitmapCreateApplyEffect($hBitmap, $hEffect, $tRECT = Null, $tOutRECT = Null)
 	If $__g_bGDIP_V1_0 Then Return SetError(-1, 0, 0)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipBitmapCreateApplyEffect", "handle*", $hBitmap, "int", 1, "handle", $hEffect, "struct*", $tRECT, "struct*", $tOutRECT, "handle*", 0, "int", 0, "ptr*", 0, "int*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[6]
 EndFunc   ;==>_GDIPlus_BitmapCreateApplyEffect
 Func _GDIPlus_BitmapCreateApplyEffectEx($hBitmap, $hEffect, $iX = 0, $iY = 0, $iW = 0, $iH = 0)
-	If $__g_bGDIP_V1_0 Then Return SetError(-1, 0, 0)
-	Local $tRECT = 0
-	If BitOR($iX, $iY, $iW, $iH) Then
-		$tRECT = DllStructCreate("int Left; int Top; int Right; int Bottom;")
-		DllStructSetData($tRECT, "Right", $iW + DllStructSetData($tRECT, "Left", $iX))
-		DllStructSetData($tRECT, "Bottom", $iH + DllStructSetData($tRECT, "Top", $iY))
-	EndIf
 	Local $hBitmap_FX = _GDIPlus_BitmapCreateApplyEffect($hBitmap, $hEffect, $tRECT, Null)
 	Return SetError(@error, @extended, $hBitmap_FX)
 EndFunc   ;==>_GDIPlus_BitmapCreateApplyEffectEx
 Func _GDIPlus_BitmapGetHistogram($hBitmap, $iHistogramFormat, $iHistogramSize, $tChannel_0, $tChannel_1 = 0, $tChannel_2 = 0, $tChannel_3 = 0)
-	If $__g_bGDIP_V1_0 Then Return SetError(-1, 0, False)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipBitmapGetHistogram", "handle", $hBitmap, "uint", $iHistogramFormat, "uint", $iHistogramSize, "struct*", $tChannel_0, "struct*", $tChannel_1, "struct*", $tChannel_2, "struct*", $tChannel_3)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_BitmapGetHistogram
 Func _GDIPlus_BitmapGetHistogramEx($hBitmap)
-	If $__g_bGDIP_V1_0 Then Return SetError(-1, 0, 0)
 	Local $iSize = _GDIPlus_BitmapGetHistogramSize($GDIP_HistogramFormatARGB)
 	Local $tHistogram = DllStructCreate("int Size; uint Red[" & $iSize & "]; uint MaxRed; uint Green[" & $iSize & "]; uint MaxGreen; uint Blue[" & $iSize & "]; uint MaxBlue; uint Alpha[" & $iSize & "]; uint MaxAlpha; uint Grey[" & $iSize & "]; uint MaxGrey;")
 	DllStructSetData($tHistogram, "Size", $iSize)
@@ -8054,13 +5020,11 @@ Func _GDIPlus_BitmapGetHistogramEx($hBitmap)
 	$iStatus = _GDIPlus_BitmapGetHistogram($hBitmap, $GDIP_HistogramFormatGray, $iSize, DllStructGetPtr($tHistogram, "Grey"))
 	If Not $iStatus Then Return SetError(@error + 10, @extended, 0)
 	Local $iMaxRed = 0, $iMaxGreen = 0, $iMaxBlue = 0, $iMaxAlpha = 0, $iMaxGrey = 0
-	For $i = 1 To $iSize
 		If DllStructGetData($tHistogram, "Red", $i) > $iMaxRed Then $iMaxRed = DllStructGetData($tHistogram, "Red", $i)
 		If DllStructGetData($tHistogram, "Green", $i) > $iMaxGreen Then $iMaxGreen = DllStructGetData($tHistogram, "Green", $i)
 		If DllStructGetData($tHistogram, "Blue", $i) > $iMaxBlue Then $iMaxBlue = DllStructGetData($tHistogram, "Blue", $i)
 		If DllStructGetData($tHistogram, "Alpha", $i) > $iMaxAlpha Then $iMaxAlpha = DllStructGetData($tHistogram, "Alpha", $i)
 		If DllStructGetData($tHistogram, "Grey", $i) > $iMaxGrey Then $iMaxGrey = DllStructGetData($tHistogram, "Grey", $i)
-	Next
 	DllStructSetData($tHistogram, "MaxRed", $iMaxRed)
 	DllStructSetData($tHistogram, "MaxGreen", $iMaxGreen)
 	DllStructSetData($tHistogram, "MaxBlue", $iMaxBlue)
@@ -8069,216 +5033,127 @@ Func _GDIPlus_BitmapGetHistogramEx($hBitmap)
 	Return $tHistogram
 EndFunc   ;==>_GDIPlus_BitmapGetHistogramEx
 Func _GDIPlus_BitmapGetHistogramSize($iFormat)
-	If $__g_bGDIP_V1_0 Then Return SetError(-1, 0, 0)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipBitmapGetHistogramSize", "uint", $iFormat, "uint*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[2]
 EndFunc   ;==>_GDIPlus_BitmapGetHistogramSize
 Func _GDIPlus_DrawImageFX($hGraphics, $hImage, $hEffect, $tRECTF = 0, $hMatrix = 0, $hImgAttributes = 0, $iUnit = 2)
-	If $__g_bGDIP_V1_0 Then Return SetError(-1, 0, False)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipDrawImageFX", "handle", $hGraphics, "handle", $hImage, "struct*", $tRECTF, "handle", $hMatrix, "handle", $hEffect, "handle", $hImgAttributes, "uint", $iUnit)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_DrawImageFX
 Func _GDIPlus_DrawImageFXEx($hGraphics, $hImage, $hEffect, $nX = 0, $nY = 0, $nW = 0, $nH = 0, $hMatrix = 0, $hImgAttributes = 0, $iUnit = 2)
-	If $__g_bGDIP_V1_0 Then Return SetError(-1, 0, False)
 	Local $tRECTF = 0
 	If BitOR($nX, $nY, $nW, $nH) Then $tRECTF = _GDIPlus_RectFCreate($nX, $nY, $nW, $nH)
 	Local $iStatus = _GDIPlus_DrawImageFX($hGraphics, $hImage, $hEffect, $tRECTF, $hMatrix, $hImgAttributes, $iUnit)
 	Return SetError(@error, @extended, $iStatus)
 EndFunc   ;==>_GDIPlus_DrawImageFXEx
 Func _GDIPlus_EffectCreate($sEffectGUID)
-	If $__g_bGDIP_V1_0 Then Return SetError(-1, 0, 0)
 	Local $tGUID = _WinAPI_GUIDFromString($sEffectGUID)
-	Local $aResult = 0
-	If @AutoItX64 Then
 		$aResult = DllCall($__g_hGDIPDll, "int", "GdipCreateEffect", "struct*", $tGUID, "handle*", 0)
-		If @error Then Return SetError(@error, @extended, 0)
 		If $aResult[0] Then Return SetError(10, $aResult[0], 0)
 		Return $aResult[2]
-	EndIf
 	Local $tElem = DllStructCreate("uint64[2];", DllStructGetPtr($tGUID))
 	$aResult = DllCall($__g_hGDIPDll, "int", "GdipCreateEffect", "uint64", DllStructGetData($tElem, 1, 1), "uint64", DllStructGetData($tElem, 1, 2), "handle*", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
-	Return $aResult[3]
 EndFunc   ;==>_GDIPlus_EffectCreate
 Func _GDIPlus_EffectCreateBlur($fRadius = 10.0, $bExpandEdge = False)
-	If $__g_bGDIP_V1_0 Then Return SetError(-1, 0, 0)
 	Local $tEffectParameters = DllStructCreate($tagGDIP_EFFECTPARAMS_Blur)
 	DllStructSetData($tEffectParameters, "Radius", $fRadius)
 	DllStructSetData($tEffectParameters, "ExpandEdge", $bExpandEdge)
 	Local $hEffect = _GDIPlus_EffectCreate($GDIP_BlurEffectGuid)
-	If @error Then Return SetError(@error, @extended, 0)
 	_GDIPlus_EffectSetParameters($hEffect, $tEffectParameters)
-	If @error Then Return SetError(@error + 10, @extended, 0)
 	Return $hEffect
 EndFunc   ;==>_GDIPlus_EffectCreateBlur
 Func _GDIPlus_EffectCreateBrightnessContrast($iBrightnessLevel = 0, $iContrastLevel = 0)
-	If $__g_bGDIP_V1_0 Then Return SetError(-1, 0, 0)
 	Local $tEffectParameters = DllStructCreate($tagGDIP_EFFECTPARAMS_BrightnessContrast)
 	DllStructSetData($tEffectParameters, "BrightnessLevel", $iBrightnessLevel)
 	DllStructSetData($tEffectParameters, "ContrastLevel", $iContrastLevel)
 	Local $hEffect = _GDIPlus_EffectCreate($GDIP_BrightnessContrastEffectGuid)
-	If @error Then Return SetError(@error, @extended, 0)
-	_GDIPlus_EffectSetParameters($hEffect, $tEffectParameters)
-	If @error Then Return SetError(@error + 10, @extended, 0)
-	Return $hEffect
 EndFunc   ;==>_GDIPlus_EffectCreateBrightnessContrast
 Func _GDIPlus_EffectCreateColorBalance($iCyanRed = 0, $iMagentaGreen = 0, $iYellowBlue = 0)
-	If $__g_bGDIP_V1_0 Then Return SetError(-1, 0, 0)
 	Local $tEffectParameters = DllStructCreate($tagGDIP_EFFECTPARAMS_ColorBalance)
 	DllStructSetData($tEffectParameters, "CyanRed", $iCyanRed)
 	DllStructSetData($tEffectParameters, "MagentaGreen", $iMagentaGreen)
 	DllStructSetData($tEffectParameters, "YellowBlue", $iYellowBlue)
 	Local $hEffect = _GDIPlus_EffectCreate($GDIP_ColorBalanceEffectGuid)
-	If @error Then Return SetError(@error, @extended, 0)
-	_GDIPlus_EffectSetParameters($hEffect, $tEffectParameters)
-	If @error Then Return SetError(@error + 10, @extended, 0)
-	Return $hEffect
 EndFunc   ;==>_GDIPlus_EffectCreateColorBalance
 Func _GDIPlus_EffectCreateColorCurve($iAdjustment, $iChannel, $iAdjustValue)
-	If $__g_bGDIP_V1_0 Then Return SetError(-1, 0, 0)
 	Local $tEffectParameters = DllStructCreate($tagGDIP_EFFECTPARAMS_ColorCurve)
 	DllStructSetData($tEffectParameters, "Adjustment", $iAdjustment)
 	DllStructSetData($tEffectParameters, "Channel", $iChannel)
 	DllStructSetData($tEffectParameters, "AdjustValue", $iAdjustValue)
 	Local $hEffect = _GDIPlus_EffectCreate($GDIP_ColorCurveEffectGuid)
-	If @error Then Return SetError(@error, @extended, 0)
-	_GDIPlus_EffectSetParameters($hEffect, $tEffectParameters)
-	If @error Then Return SetError(@error + 10, @extended, 0)
-	Return $hEffect
 EndFunc   ;==>_GDIPlus_EffectCreateColorCurve
 Func _GDIPlus_EffectCreateColorLUT($aColorLUT)
-	If $__g_bGDIP_V1_0 Then Return SetError(-1, 0, 0)
 	Local $tEffectParameters = DllStructCreate($tagGDIP_EFFECTPARAMS_ColorLUT)
 	For $iI = 0 To 255
 		DllStructSetData($tEffectParameters, "LutA", $aColorLUT[$iI][0], $iI + 1)
 		DllStructSetData($tEffectParameters, "LutR", $aColorLUT[$iI][1], $iI + 1)
 		DllStructSetData($tEffectParameters, "LutG", $aColorLUT[$iI][2], $iI + 1)
 		DllStructSetData($tEffectParameters, "LutB", $aColorLUT[$iI][3], $iI + 1)
-	Next
 	Local $hEffect = _GDIPlus_EffectCreate($GDIP_ColorLUTEffectGuid)
-	If @error Then Return SetError(@error, @extended, 0)
-	_GDIPlus_EffectSetParameters($hEffect, $tEffectParameters)
-	If @error Then Return SetError(@error + 10, @extended, 0)
-	Return $hEffect
 EndFunc   ;==>_GDIPlus_EffectCreateColorLUT
 Func _GDIPlus_EffectCreateColorMatrix($tColorMatrix)
-	If $__g_bGDIP_V1_0 Then Return SetError(-1, 0, 0)
 	Local $hEffect = _GDIPlus_EffectCreate($GDIP_ColorMatrixEffectGuid)
-	If @error Then Return SetError(@error, @extended, 0)
 	_GDIPlus_EffectSetParameters($hEffect, $tColorMatrix)
-	If @error Then Return SetError(@error + 10, @extended, 0)
-	Return $hEffect
 EndFunc   ;==>_GDIPlus_EffectCreateColorMatrix
 Func _GDIPlus_EffectCreateHueSaturationLightness($iHueLevel = 0, $iSaturationLevel = 0, $iLightnessLevel = 0)
-	If $__g_bGDIP_V1_0 Then Return SetError(-1, 0, 0)
 	Local $tEffectParameters = DllStructCreate($tagGDIP_EFFECTPARAMS_HueSaturationLightness)
 	DllStructSetData($tEffectParameters, "HueLevel", $iHueLevel)
 	DllStructSetData($tEffectParameters, "SaturationLevel", $iSaturationLevel)
 	DllStructSetData($tEffectParameters, "LightnessLevel", $iLightnessLevel)
 	Local $hEffect = _GDIPlus_EffectCreate($GDIP_HueSaturationLightnessEffectGuid)
-	If @error Then Return SetError(@error, @extended, 0)
-	_GDIPlus_EffectSetParameters($hEffect, $tEffectParameters)
-	If @error Then Return SetError(@error + 10, @extended, 0)
-	Return $hEffect
 EndFunc   ;==>_GDIPlus_EffectCreateHueSaturationLightness
 Func _GDIPlus_EffectCreateLevels($iHighlight = 100, $iMidtone = 0, $iShadow = 0)
-	If $__g_bGDIP_V1_0 Then Return SetError(-1, 0, 0)
 	Local $tEffectParameters = DllStructCreate($tagGDIP_EFFECTPARAMS_Levels)
 	DllStructSetData($tEffectParameters, "Highlight", $iHighlight)
 	DllStructSetData($tEffectParameters, "Midtone", $iMidtone)
 	DllStructSetData($tEffectParameters, "Shadow", $iShadow)
 	Local $hEffect = _GDIPlus_EffectCreate($GDIP_LevelsEffectGuid)
-	If @error Then Return SetError(@error, @extended, 0)
-	_GDIPlus_EffectSetParameters($hEffect, $tEffectParameters)
-	If @error Then Return SetError(@error + 10, @extended, 0)
-	Return $hEffect
 EndFunc   ;==>_GDIPlus_EffectCreateLevels
 Func _GDIPlus_EffectCreateRedEyeCorrection($aAreas)
-	If $__g_bGDIP_V1_0 Then Return SetError(-1, 0, 0)
 	Local $iCount = $aAreas[0][0]
 	Local $tAreas = DllStructCreate("long[" & $iCount * 4 & "]")
-	For $iI = 1 To $iCount
 		DllStructSetData($tAreas, 1, DllStructSetData($tAreas, 1, $aAreas[$iI][0], (($iI - 1) * 4) + 1) + $aAreas[$iI][2], (($iI - 1) * 4) + 3)
 		DllStructSetData($tAreas, 1, DllStructSetData($tAreas, 1, $aAreas[$iI][1], (($iI - 1) * 4) + 2) + $aAreas[$iI][3], (($iI - 1) * 4) + 4)
-	Next
 	Local $tEffectParameters = DllStructCreate($tagGDIP_EFFECTPARAMS_RedEyeCorrection)
 	DllStructSetData($tEffectParameters, "NumberOfAreas", $iCount)
 	DllStructSetData($tEffectParameters, "Areas", DllStructGetPtr($tAreas))
 	Local $hEffect = _GDIPlus_EffectCreate($GDIP_RedEyeCorrectionEffectGuid)
-	If @error Then Return SetError(@error, @extended, 0)
 	_GDIPlus_EffectSetParameters($hEffect, $tEffectParameters, (DllStructGetSize($tAreas) + DllStructGetSize($tEffectParameters)) / DllStructGetSize($tEffectParameters))
-	If @error Then Return SetError(@error + 10, @extended, 0)
-	Return $hEffect
 EndFunc   ;==>_GDIPlus_EffectCreateRedEyeCorrection
 Func _GDIPlus_EffectCreateSharpen($fRadius = 10.0, $fAmount = 50.0)
-	If $__g_bGDIP_V1_0 Then Return SetError(-1, 0, 0)
 	Local $tEffectParameters = DllStructCreate($tagGDIP_EFFECTPARAMS_Sharpen)
-	DllStructSetData($tEffectParameters, "Radius", $fRadius)
 	DllStructSetData($tEffectParameters, "Amount", $fAmount)
 	Local $hEffect = _GDIPlus_EffectCreate($GDIP_SharpenEffectGuid)
-	If @error Then Return SetError(@error, @extended, 0)
-	_GDIPlus_EffectSetParameters($hEffect, $tEffectParameters)
-	If @error Then Return SetError(@error + 10, @extended, 0)
-	Return $hEffect
 EndFunc   ;==>_GDIPlus_EffectCreateSharpen
 Func _GDIPlus_EffectCreateTint($iHue = 0, $iAmount = 0)
-	If $__g_bGDIP_V1_0 Then Return SetError(-1, 0, 0)
 	Local $tEffectParameters = DllStructCreate($tagGDIP_EFFECTPARAMS_Tint)
 	DllStructSetData($tEffectParameters, "Hue", $iHue)
 	DllStructSetData($tEffectParameters, "Amount", $iAmount)
 	Local $hEffect = _GDIPlus_EffectCreate($GDIP_TintEffectGuid)
-	If @error Then Return SetError(@error, @extended, 0)
-	_GDIPlus_EffectSetParameters($hEffect, $tEffectParameters)
-	If @error Then Return SetError(@error + 10, @extended, 0)
-	Return $hEffect
 EndFunc   ;==>_GDIPlus_EffectCreateTint
 Func _GDIPlus_EffectDispose($hEffect)
-	If $__g_bGDIP_V1_0 Then Return SetError(-1, 0, False)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipDeleteEffect", "handle", $hEffect)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_EffectDispose
 Func _GDIPlus_EffectGetParameters($hEffect, $tEffectParameters)
-	If $__g_bGDIP_V1_0 Then Return SetError(-1, 0, False)
 	If DllStructGetSize($tEffectParameters) < __GDIPlus_EffectGetParameterSize($hEffect) Then Return SetError(2, 5, False)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetEffectParameters", "handle", $hEffect, "uint*", DllStructGetSize($tEffectParameters), "struct*", $tEffectParameters)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_EffectGetParameters
 Func __GDIPlus_EffectGetParameterSize($hEffect)
 	If $__g_bGDIP_V1_0 Then Return SetError(-1, 0, -1)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipGetEffectParameterSize", "handle", $hEffect, "uint*", 0)
-	If @error Then Return SetError(@error, @extended, -1)
-	If $aResult[0] Then Return SetError(10, $aResult[0], -1)
-	Return $aResult[2]
 EndFunc   ;==>__GDIPlus_EffectGetParameterSize
 Func _GDIPlus_EffectSetParameters($hEffect, $tEffectParameters, $iSizeAdjust = 1)
-	If $__g_bGDIP_V1_0 Then Return SetError(-1, 0, False)
 	Local $iSize = __GDIPlus_EffectGetParameterSize($hEffect)
-	If @error Then Return SetError(@error, @extended, False)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipSetEffectParameters", "handle", $hEffect, "struct*", $tEffectParameters, "uint", $iSize * $iSizeAdjust)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] Then Return SetError(10, $aResult[0], False)
-	Return True
 EndFunc   ;==>_GDIPlus_EffectSetParameters
 Func _GDIPlus_PaletteInitialize($iEntries, $iPaletteType = $GDIP_PaletteTypeOptimal, $iOptimalColors = 0, $bUseTransparentColor = True, $hBitmap = Null)
-	If $__g_bGDIP_V1_0 Then Return SetError(-1, 0, 0)
 	If $iOptimalColors > 0 Then $iPaletteType = $GDIP_PaletteTypeOptimal
 	Local $tPalette = DllStructCreate("uint Flags; uint Count; uint ARGB[" & $iEntries & "];")
 	DllStructSetData($tPalette, "Flags", $iPaletteType)
 	DllStructSetData($tPalette, "Count", $iEntries)
 	Local $aResult = DllCall($__g_hGDIPDll, "int", "GdipInitializePalette", "struct*", $tPalette, "uint", $iPaletteType, "uint", $iOptimalColors, "bool", $bUseTransparentColor, "handle", $hBitmap)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return SetError(10, $aResult[0], 0)
 	Return $tPalette
 EndFunc   ;==>_GDIPlus_PaletteInitialize
+#include "MenuConstants.au3"
+#include "WinAPISysInternals.au3"
 Global Const $__MENUCONSTANT_OBJID_CLIENT = 0xFFFFFFFC
 Global Const $tagMENUBARINFO = "dword Size;" & $tagRECT & ";handle hMenu;handle hWndMenu;bool Focused"
 Global Const $tagMDINEXTMENU = "handle hMenuIn;handle hMenuNext;hwnd hWndNext"
@@ -8293,15 +5168,12 @@ Func _GUICtrlMenu_AddMenuItem($hMenu, $sText, $iCmdID = 0, $hSubMenu = 0)
 	If $sText = "" Then
 		DllStructSetData($tMenu, "Mask", $MIIM_FTYPE)
 		DllStructSetData($tMenu, "Type", $MFT_SEPARATOR)
-	Else
 		DllStructSetData($tMenu, "Mask", BitOR($MIIM_ID, $MIIM_STRING, $MIIM_SUBMENU))
 		DllStructSetData($tMenu, "Type", $MFT_STRING)
 		Local $tText = DllStructCreate("wchar Text[" & StringLen($sText) + 1 & "]")
 		DllStructSetData($tText, "Text", $sText)
 		DllStructSetData($tMenu, "TypeData", DllStructGetPtr($tText))
-	EndIf
 	Local $aResult = DllCall("user32.dll", "bool", "InsertMenuItemW", "handle", $hMenu, "uint", $iIndex, "bool", True, "struct*", $tMenu)
-	If @error Then Return SetError(@error, @extended, -1)
 	Return SetExtended($aResult[0], $iIndex)
 EndFunc   ;==>_GUICtrlMenu_AddMenuItem
 Func _GUICtrlMenu_AppendMenu($hMenu, $iFlags, $iNewItem, $vNewItem)
@@ -8309,10 +5181,8 @@ Func _GUICtrlMenu_AppendMenu($hMenu, $iFlags, $iNewItem, $vNewItem)
 	If BitAND($iFlags, $MF_BITMAP) Then $sType = "handle"
 	If BitAND($iFlags, $MF_OWNERDRAW) Then $sType = "ulong_ptr"
 	Local $aResult = DllCall("user32.dll", "bool", "AppendMenuW", "handle", $hMenu, "uint", $iFlags, "uint_ptr", $iNewItem, $sType, $vNewItem)
-	If @error Then Return SetError(@error, @extended, False)
 	If $aResult[0] = 0 Then Return SetError(10, 0, False)
 	_GUICtrlMenu_DrawMenuBar(_GUICtrlMenu_FindParent($hMenu))
-	Return True
 EndFunc   ;==>_GUICtrlMenu_AppendMenu
 Func _GUICtrlMenu_CalculatePopupWindowPosition($iX, $iY, $iWidth, $iHeight, $iFlags = 0, $tExclude = 0)
 	Local $tAnchor = DllStructCreate($tagPOINT)
@@ -8324,7 +5194,6 @@ Func _GUICtrlMenu_CalculatePopupWindowPosition($iX, $iY, $iWidth, $iHeight, $iFl
 	Local $tPos = DllStructCreate($tagRECT)
 	Local $aRet = DllCall('user32.dll', 'bool', 'CalculatePopupWindowPosition', 'struct*', $tAnchor, 'struct*', $tSIZE, _
 			'uint', $iFlags, 'struct*', $tExclude, 'struct*', $tPos)
-	If @error Or Not $aRet[0] Then Return SetError(@error + 10, @extended, 0)
 	Return $tPos
 EndFunc   ;==>_GUICtrlMenu_CalculatePopupWindowPosition
 Func _GUICtrlMenu_CheckMenuItem($hMenu, $iItem, $bCheck = True, $bByPos = True)
@@ -8332,62 +5201,34 @@ Func _GUICtrlMenu_CheckMenuItem($hMenu, $iItem, $bCheck = True, $bByPos = True)
 	If $bCheck Then $iByPos = BitOR($iByPos, $MF_CHECKED)
 	If $bByPos Then $iByPos = BitOR($iByPos, $MF_BYPOSITION)
 	Local $aResult = DllCall("user32.dll", "dword", "CheckMenuItem", "handle", $hMenu, "uint", $iItem, "uint", $iByPos)
-	If @error Then Return SetError(@error, @extended, -1)
-	Return $aResult[0]
 EndFunc   ;==>_GUICtrlMenu_CheckMenuItem
 Func _GUICtrlMenu_CheckRadioItem($hMenu, $iFirst, $iLast, $iCheck, $bByPos = True)
-	Local $iByPos = 0
 	If $bByPos Then $iByPos = $MF_BYPOSITION
 	Local $aResult = DllCall("user32.dll", "bool", "CheckMenuRadioItem", "handle", $hMenu, "uint", $iFirst, "uint", $iLast, "uint", $iCheck, "uint", $iByPos)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aResult[0]
 EndFunc   ;==>_GUICtrlMenu_CheckRadioItem
 Func _GUICtrlMenu_CreateMenu($iStyle = $MNS_CHECKORBMP)
 	Local $aResult = DllCall("user32.dll", "handle", "CreateMenu")
-	If @error Then Return SetError(@error, @extended, 0)
 	If $aResult[0] = 0 Then Return SetError(10, 0, 0)
 	_GUICtrlMenu_SetMenuStyle($aResult[0], $iStyle)
-	Return $aResult[0]
 EndFunc   ;==>_GUICtrlMenu_CreateMenu
 Func _GUICtrlMenu_CreatePopup($iStyle = $MNS_CHECKORBMP)
 	Local $aResult = DllCall("user32.dll", "handle", "CreatePopupMenu")
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] = 0 Then Return SetError(10, 0, 0)
-	_GUICtrlMenu_SetMenuStyle($aResult[0], $iStyle)
-	Return $aResult[0]
 EndFunc   ;==>_GUICtrlMenu_CreatePopup
 Func _GUICtrlMenu_DeleteMenu($hMenu, $iItem, $bByPos = True)
-	Local $iByPos = 0
-	If $bByPos Then $iByPos = $MF_BYPOSITION
 	Local $aResult = DllCall("user32.dll", "bool", "DeleteMenu", "handle", $hMenu, "uint", $iItem, "uint", $iByPos)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] = 0 Then Return SetError(10, 0, False)
-	_GUICtrlMenu_DrawMenuBar(_GUICtrlMenu_FindParent($hMenu))
-	Return True
 EndFunc   ;==>_GUICtrlMenu_DeleteMenu
 Func _GUICtrlMenu_DestroyMenu($hMenu)
 	Local $aResult = DllCall("user32.dll", "bool", "DestroyMenu", "handle", $hMenu)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aResult[0]
 EndFunc   ;==>_GUICtrlMenu_DestroyMenu
 Func _GUICtrlMenu_DrawMenuBar($hWnd)
 	Local $aResult = DllCall("user32.dll", "bool", "DrawMenuBar", "hwnd", $hWnd)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aResult[0]
 EndFunc   ;==>_GUICtrlMenu_DrawMenuBar
 Func _GUICtrlMenu_EnableMenuItem($hMenu, $iItem, $iState = 0, $bByPos = True)
 	Local $iByPos = $iState
-	If $bByPos Then $iByPos = BitOR($iByPos, $MF_BYPOSITION)
 	Local $aResult = DllCall("user32.dll", "bool", "EnableMenuItem", "handle", $hMenu, "uint", $iItem, "uint", $iByPos)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] = 0 Then Return SetError(10, 0, False)
-	_GUICtrlMenu_DrawMenuBar(_GUICtrlMenu_FindParent($hMenu))
-	Return True
 EndFunc   ;==>_GUICtrlMenu_EnableMenuItem
 Func _GUICtrlMenu_EndMenu()
 	Local $aResult = DllCall("user32.dll", "bool", "EndMenu")
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aResult[0]
 EndFunc   ;==>_GUICtrlMenu_EndMenu
 Func _GUICtrlMenu_FindItem($hMenu, $sText, $bInStr = False, $iStart = 0)
 	Local $sMenu
@@ -8396,28 +5237,22 @@ Func _GUICtrlMenu_FindItem($hMenu, $sText, $bInStr = False, $iStart = 0)
 		Switch $bInStr
 			Case False
 				If $sMenu = $sText Then Return $iI
-			Case True
 				If StringInStr($sMenu, $sText) Then Return $iI
-		EndSwitch
-	Next
 	Return -1
 EndFunc   ;==>_GUICtrlMenu_FindItem
 Func _GUICtrlMenu_FindParent($hMenu)
 	Local $hList = _WinAPI_EnumWindowsTop()
 	For $iI = 1 To $hList[0][0]
 		If _GUICtrlMenu_GetMenu($hList[$iI][0]) = $hMenu Then Return $hList[$iI][0]
-	Next
 EndFunc   ;==>_GUICtrlMenu_FindParent
 Func _GUICtrlMenu_GetItemBmp($hMenu, $iItem, $bByPos = True)
 	Local $tInfo = _GUICtrlMenu_GetItemInfo($hMenu, $iItem, $bByPos)
 	Return DllStructGetData($tInfo, "BmpItem")
 EndFunc   ;==>_GUICtrlMenu_GetItemBmp
 Func _GUICtrlMenu_GetItemBmpChecked($hMenu, $iItem, $bByPos = True)
-	Local $tInfo = _GUICtrlMenu_GetItemInfo($hMenu, $iItem, $bByPos)
 	Return DllStructGetData($tInfo, "BmpChecked")
 EndFunc   ;==>_GUICtrlMenu_GetItemBmpChecked
 Func _GUICtrlMenu_GetItemBmpUnchecked($hMenu, $iItem, $bByPos = True)
-	Local $tInfo = _GUICtrlMenu_GetItemInfo($hMenu, $iItem, $bByPos)
 	Return DllStructGetData($tInfo, "BmpUnchecked")
 EndFunc   ;==>_GUICtrlMenu_GetItemBmpUnchecked
 Func _GUICtrlMenu_GetItemChecked($hMenu, $iItem, $bByPos = True)
@@ -8425,11 +5260,8 @@ Func _GUICtrlMenu_GetItemChecked($hMenu, $iItem, $bByPos = True)
 EndFunc   ;==>_GUICtrlMenu_GetItemChecked
 Func _GUICtrlMenu_GetItemCount($hMenu)
 	Local $aResult = DllCall("user32.dll", "int", "GetMenuItemCount", "handle", $hMenu)
-	If @error Then Return SetError(@error, @extended, -1)
-	Return $aResult[0]
 EndFunc   ;==>_GUICtrlMenu_GetItemCount
 Func _GUICtrlMenu_GetItemData($hMenu, $iItem, $bByPos = True)
-	Local $tInfo = _GUICtrlMenu_GetItemInfo($hMenu, $iItem, $bByPos)
 	Return DllStructGetData($tInfo, "ItemData")
 EndFunc   ;==>_GUICtrlMenu_GetItemData
 Func _GUICtrlMenu_GetItemDefault($hMenu, $iItem, $bByPos = True)
@@ -8448,7 +5280,6 @@ Func _GUICtrlMenu_GetItemHighlighted($hMenu, $iItem, $bByPos = True)
 	Return BitAND(_GUICtrlMenu_GetItemStateEx($hMenu, $iItem, $bByPos), $MF_HILITE) <> 0
 EndFunc   ;==>_GUICtrlMenu_GetItemHighlighted
 Func _GUICtrlMenu_GetItemID($hMenu, $iItem, $bByPos = True)
-	Local $tInfo = _GUICtrlMenu_GetItemInfo($hMenu, $iItem, $bByPos)
 	Return DllStructGetData($tInfo, "ID")
 EndFunc   ;==>_GUICtrlMenu_GetItemID
 Func _GUICtrlMenu_GetItemInfo($hMenu, $iItem, $bByPos = True)
@@ -8456,7 +5287,6 @@ Func _GUICtrlMenu_GetItemInfo($hMenu, $iItem, $bByPos = True)
 	DllStructSetData($tInfo, "Size", DllStructGetSize($tInfo))
 	DllStructSetData($tInfo, "Mask", $MIIM_DATAMASK)
 	Local $aResult = DllCall("user32.dll", "bool", "GetMenuItemInfo", "handle", $hMenu, "uint", $iItem, "bool", $bByPos, "struct*", $tInfo)
-	If @error Then Return SetError(@error, @extended, 0)
 	Return SetExtended($aResult[0], $tInfo)
 EndFunc   ;==>_GUICtrlMenu_GetItemInfo
 Func _GUICtrlMenu_GetItemRect($hWnd, $hMenu, $iItem)
@@ -8469,13 +5299,10 @@ Func _GUICtrlMenu_GetItemRect($hWnd, $hMenu, $iItem)
 	Return $aRect
 EndFunc   ;==>_GUICtrlMenu_GetItemRect
 Func _GUICtrlMenu_GetItemRectEx($hWnd, $hMenu, $iItem)
-	Local $tRECT = DllStructCreate($tagRECT)
 	Local $aResult = DllCall("user32.dll", "bool", "GetMenuItemRect", "hwnd", $hWnd, "handle", $hMenu, "uint", $iItem, "struct*", $tRECT)
-	If @error Then Return SetError(@error, @extended, 0)
 	Return SetExtended($aResult[0], $tRECT)
 EndFunc   ;==>_GUICtrlMenu_GetItemRectEx
 Func _GUICtrlMenu_GetItemState($hMenu, $iItem, $bByPos = True)
-	Local $iRet = 0
 	Local $iState = _GUICtrlMenu_GetItemStateEx($hMenu, $iItem, $bByPos)
 	If BitAND($iState, $MFS_CHECKED) <> 0 Then $iRet = BitOR($iRet, 1)
 	If BitAND($iState, $MFS_DEFAULT) <> 0 Then $iRet = BitOR($iRet, 2)
@@ -8485,29 +5312,19 @@ Func _GUICtrlMenu_GetItemState($hMenu, $iItem, $bByPos = True)
 	Return $iRet
 EndFunc   ;==>_GUICtrlMenu_GetItemState
 Func _GUICtrlMenu_GetItemStateEx($hMenu, $iItem, $bByPos = True)
-	Local $tInfo = _GUICtrlMenu_GetItemInfo($hMenu, $iItem, $bByPos)
 	Return DllStructGetData($tInfo, "State")
 EndFunc   ;==>_GUICtrlMenu_GetItemStateEx
 Func _GUICtrlMenu_GetItemSubMenu($hMenu, $iItem)
 	Local $aResult = DllCall("user32.dll", "handle", "GetSubMenu", "handle", $hMenu, "int", $iItem)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aResult[0]
 EndFunc   ;==>_GUICtrlMenu_GetItemSubMenu
 Func _GUICtrlMenu_GetItemText($hMenu, $iItem, $bByPos = True)
-	Local $iByPos = 0
-	If $bByPos Then $iByPos = $MF_BYPOSITION
 	Local $aResult = DllCall("user32.dll", "int", "GetMenuStringW", "handle", $hMenu, "uint", $iItem, "wstr", "", "int", 4096, "uint", $iByPos)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return SetExtended($aResult[0], $aResult[3])
 EndFunc   ;==>_GUICtrlMenu_GetItemText
 Func _GUICtrlMenu_GetItemType($hMenu, $iItem, $bByPos = True)
-	Local $tInfo = _GUICtrlMenu_GetItemInfo($hMenu, $iItem, $bByPos)
 	Return DllStructGetData($tInfo, "Type")
 EndFunc   ;==>_GUICtrlMenu_GetItemType
 Func _GUICtrlMenu_GetMenu($hWnd)
 	Local $aResult = DllCall("user32.dll", "handle", "GetMenu", "hwnd", $hWnd)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aResult[0]
 EndFunc   ;==>_GUICtrlMenu_GetMenu
 Func _GUICtrlMenu_GetMenuBackground($hMenu)
 	Local $tInfo = _GUICtrlMenu_GetMenuInfo($hMenu)
@@ -8516,9 +5333,7 @@ EndFunc   ;==>_GUICtrlMenu_GetMenuBackground
 Func _GUICtrlMenu_GetMenuBarInfo($hWnd, $iItem = 0, $iObject = 1)
 	Local $aObject[3] = [$__MENUCONSTANT_OBJID_CLIENT, $OBJID_MENU, $OBJID_SYSMENU]
 	Local $tInfo = DllStructCreate($tagMENUBARINFO)
-	DllStructSetData($tInfo, "Size", DllStructGetSize($tInfo))
 	Local $aResult = DllCall("user32.dll", "bool", "GetMenuBarInfo", "hwnd", $hWnd, "long", $aObject[$iObject], "long", $iItem, "struct*", $tInfo)
-	If @error Then Return SetError(@error, @extended, 0)
 	Local $aInfo[8]
 	$aInfo[0] = DllStructGetData($tInfo, "Left")
 	$aInfo[1] = DllStructGetData($tInfo, "Top")
@@ -8531,133 +5346,74 @@ Func _GUICtrlMenu_GetMenuBarInfo($hWnd, $iItem = 0, $iObject = 1)
 	Return SetExtended($aResult[0], $aInfo)
 EndFunc   ;==>_GUICtrlMenu_GetMenuBarInfo
 Func _GUICtrlMenu_GetMenuContextHelpID($hMenu)
-	Local $tInfo = _GUICtrlMenu_GetMenuInfo($hMenu)
 	Return DllStructGetData($tInfo, "ContextHelpID")
 EndFunc   ;==>_GUICtrlMenu_GetMenuContextHelpID
 Func _GUICtrlMenu_GetMenuData($hMenu)
-	Local $tInfo = _GUICtrlMenu_GetMenuInfo($hMenu)
 	Return DllStructGetData($tInfo, "MenuData")
 EndFunc   ;==>_GUICtrlMenu_GetMenuData
 Func _GUICtrlMenu_GetMenuDefaultItem($hMenu, $bByPos = True, $iFlags = 0)
 	Local $aResult = DllCall("user32.dll", "INT", "GetMenuDefaultItem", "handle", $hMenu, "uint", $bByPos, "uint", $iFlags)
-	If @error Then Return SetError(@error, @extended, -1)
-	Return $aResult[0]
 EndFunc   ;==>_GUICtrlMenu_GetMenuDefaultItem
 Func _GUICtrlMenu_GetMenuHeight($hMenu)
-	Local $tInfo = _GUICtrlMenu_GetMenuInfo($hMenu)
 	Return DllStructGetData($tInfo, "YMax")
 EndFunc   ;==>_GUICtrlMenu_GetMenuHeight
 Func _GUICtrlMenu_GetMenuInfo($hMenu)
 	Local $tInfo = DllStructCreate($tagMENUINFO)
-	DllStructSetData($tInfo, "Size", DllStructGetSize($tInfo))
 	DllStructSetData($tInfo, "Mask", BitOR($MIM_BACKGROUND, $MIM_HELPID, $MIM_MAXHEIGHT, $MIM_MENUDATA, $MIM_STYLE))
 	Local $aResult = DllCall("user32.dll", "bool", "GetMenuInfo", "handle", $hMenu, "struct*", $tInfo)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return SetExtended($aResult[0], $tInfo)
 EndFunc   ;==>_GUICtrlMenu_GetMenuInfo
 Func _GUICtrlMenu_GetMenuStyle($hMenu)
-	Local $tInfo = _GUICtrlMenu_GetMenuInfo($hMenu)
 	Return DllStructGetData($tInfo, "Style")
 EndFunc   ;==>_GUICtrlMenu_GetMenuStyle
 Func _GUICtrlMenu_GetSystemMenu($hWnd, $bRevert = False)
 	Local $aResult = DllCall("user32.dll", "hwnd", "GetSystemMenu", "hwnd", $hWnd, "int", $bRevert)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aResult[0]
 EndFunc   ;==>_GUICtrlMenu_GetSystemMenu
 Func _GUICtrlMenu_InsertMenuItem($hMenu, $iIndex, $sText, $iCmdID = 0, $hSubMenu = 0)
-	Local $tMenu = DllStructCreate($tagMENUITEMINFO)
-	DllStructSetData($tMenu, "Size", DllStructGetSize($tMenu))
-	DllStructSetData($tMenu, "ID", $iCmdID)
-	DllStructSetData($tMenu, "SubMenu", $hSubMenu)
-	If $sText = "" Then
-		DllStructSetData($tMenu, "Mask", $MIIM_FTYPE)
-		DllStructSetData($tMenu, "Type", $MFT_SEPARATOR)
-	Else
-		DllStructSetData($tMenu, "Mask", BitOR($MIIM_ID, $MIIM_STRING, $MIIM_SUBMENU))
-		DllStructSetData($tMenu, "Type", $MFT_STRING)
-		Local $tText = DllStructCreate("wchar Text[" & StringLen($sText) + 1 & "]")
-		DllStructSetData($tText, "Text", $sText)
-		DllStructSetData($tMenu, "TypeData", DllStructGetPtr($tText))
-	EndIf
-	Local $aResult = DllCall("user32.dll", "bool", "InsertMenuItemW", "handle", $hMenu, "uint", $iIndex, "bool", True, "struct*", $tMenu)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aResult[0]
 EndFunc   ;==>_GUICtrlMenu_InsertMenuItem
 Func _GUICtrlMenu_InsertMenuItemEx($hMenu, $iIndex, ByRef $tMenu, $bByPos = True)
 	Local $aResult = DllCall("user32.dll", "bool", "InsertMenuItemW", "handle", $hMenu, "uint", $iIndex, "bool", $bByPos, "struct*", $tMenu)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aResult[0]
 EndFunc   ;==>_GUICtrlMenu_InsertMenuItemEx
 Func _GUICtrlMenu_IsMenu($hMenu)
 	Local $aResult = DllCall("user32.dll", "bool", "IsMenu", "handle", $hMenu)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aResult[0]
 EndFunc   ;==>_GUICtrlMenu_IsMenu
 Func _GUICtrlMenu_LoadMenu($hInst, $sMenuName)
 	Local $aResult = DllCall("user32.dll", "handle", "LoadMenuW", "handle", $hInst, "wstr", $sMenuName)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aResult[0]
 EndFunc   ;==>_GUICtrlMenu_LoadMenu
 Func _GUICtrlMenu_MapAccelerator($hMenu, $sAccelKey)
-	Local $sText
 	Local $iCount = _GUICtrlMenu_GetItemCount($hMenu)
 	For $iI = 0 To $iCount - 1
 		$sText = _GUICtrlMenu_GetItemText($hMenu, $iI)
 		If StringInStr($sText, "&" & $sAccelKey) > 0 Then Return $iI
-	Next
-	Return -1
 EndFunc   ;==>_GUICtrlMenu_MapAccelerator
 Func _GUICtrlMenu_MenuItemFromPoint($hWnd, $hMenu, $iX = -1, $iY = -1)
 	If $iX = -1 Then $iX = _WinAPI_GetMousePosX()
 	If $iY = -1 Then $iY = _WinAPI_GetMousePosY()
 	Local $aResult = DllCall("user32.dll", "int", "MenuItemFromPoint", "hwnd", $hWnd, "handle", $hMenu, "int", $iX, "int", $iY)
-	If @error Then Return SetError(@error, @extended, -1)
-	Return $aResult[0]
 EndFunc   ;==>_GUICtrlMenu_MenuItemFromPoint
 Func _GUICtrlMenu_RemoveMenu($hMenu, $iItem, $bByPos = True)
-	Local $iByPos = 0
-	If $bByPos Then $iByPos = $MF_BYPOSITION
 	Local $aResult = DllCall("user32.dll", "bool", "RemoveMenu", "handle", $hMenu, "uint", $iItem, "uint", $iByPos)
-	If @error Then Return SetError(@error, @extended, False)
-	If $aResult[0] = 0 Then Return SetError(10, 0, False)
-	_GUICtrlMenu_DrawMenuBar(_GUICtrlMenu_FindParent($hMenu))
-	Return True
 EndFunc   ;==>_GUICtrlMenu_RemoveMenu
 Func _GUICtrlMenu_SetItemBitmaps($hMenu, $iItem, $hChecked, $hUnChecked, $bByPos = True)
-	Local $iByPos = 0
-	If $bByPos Then $iByPos = $MF_BYPOSITION
 	Local $aResult = DllCall("user32.dll", "bool", "SetMenuItemBitmaps", "handle", $hMenu, "uint", $iItem, "uint", $iByPos, "handle", $hUnChecked, "handle", $hChecked)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aResult[0]
 EndFunc   ;==>_GUICtrlMenu_SetItemBitmaps
 Func _GUICtrlMenu_SetItemBmp($hMenu, $iItem, $hBitmap, $bByPos = True)
-	Local $tInfo = DllStructCreate($tagMENUITEMINFO)
-	DllStructSetData($tInfo, "Size", DllStructGetSize($tInfo))
 	DllStructSetData($tInfo, "Mask", $MIIM_BITMAP)
 	DllStructSetData($tInfo, "BmpItem", $hBitmap)
 	Return _GUICtrlMenu_SetItemInfo($hMenu, $iItem, $tInfo, $bByPos)
 EndFunc   ;==>_GUICtrlMenu_SetItemBmp
 Func _GUICtrlMenu_SetItemBmpChecked($hMenu, $iItem, $hBitmap, $bByPos = True)
-	Local $tInfo = _GUICtrlMenu_GetItemInfo($hMenu, $iItem, $bByPos)
 	DllStructSetData($tInfo, "Mask", $MIIM_CHECKMARKS)
 	DllStructSetData($tInfo, "BmpChecked", $hBitmap)
-	Return _GUICtrlMenu_SetItemInfo($hMenu, $iItem, $tInfo, $bByPos)
 EndFunc   ;==>_GUICtrlMenu_SetItemBmpChecked
 Func _GUICtrlMenu_SetItemBmpUnchecked($hMenu, $iItem, $hBitmap, $bByPos = True)
-	Local $tInfo = _GUICtrlMenu_GetItemInfo($hMenu, $iItem, $bByPos)
-	DllStructSetData($tInfo, "Mask", $MIIM_CHECKMARKS)
 	DllStructSetData($tInfo, "BmpUnchecked", $hBitmap)
-	Return _GUICtrlMenu_SetItemInfo($hMenu, $iItem, $tInfo, $bByPos)
 EndFunc   ;==>_GUICtrlMenu_SetItemBmpUnchecked
 Func _GUICtrlMenu_SetItemChecked($hMenu, $iItem, $bState = True, $bByPos = True)
 	Return _GUICtrlMenu_SetItemState($hMenu, $iItem, $MFS_CHECKED, $bState, $bByPos)
 EndFunc   ;==>_GUICtrlMenu_SetItemChecked
 Func _GUICtrlMenu_SetItemData($hMenu, $iItem, $iData, $bByPos = True)
-	Local $tInfo = DllStructCreate($tagMENUITEMINFO)
-	DllStructSetData($tInfo, "Size", DllStructGetSize($tInfo))
 	DllStructSetData($tInfo, "Mask", $MIIM_DATA)
 	DllStructSetData($tInfo, "ItemData", $iData)
-	Return _GUICtrlMenu_SetItemInfo($hMenu, $iItem, $tInfo, $bByPos)
 EndFunc   ;==>_GUICtrlMenu_SetItemData
 Func _GUICtrlMenu_SetItemDefault($hMenu, $iItem, $bState = True, $bByPos = True)
 	Return _GUICtrlMenu_SetItemState($hMenu, $iItem, $MFS_DEFAULT, $bState, $bByPos)
@@ -8675,169 +5431,107 @@ Func _GUICtrlMenu_SetItemHighlighted($hMenu, $iItem, $bState = True, $bByPos = T
 	Return _GUICtrlMenu_SetItemState($hMenu, $iItem, $MFS_HILITE, $bState, $bByPos)
 EndFunc   ;==>_GUICtrlMenu_SetItemHighlighted
 Func _GUICtrlMenu_SetItemID($hMenu, $iItem, $iID, $bByPos = True)
-	Local $tInfo = DllStructCreate($tagMENUITEMINFO)
-	DllStructSetData($tInfo, "Size", DllStructGetSize($tInfo))
 	DllStructSetData($tInfo, "Mask", $MIIM_ID)
 	DllStructSetData($tInfo, "ID", $iID)
-	Return _GUICtrlMenu_SetItemInfo($hMenu, $iItem, $tInfo, $bByPos)
 EndFunc   ;==>_GUICtrlMenu_SetItemID
 Func _GUICtrlMenu_SetItemInfo($hMenu, $iItem, ByRef $tInfo, $bByPos = True)
-	DllStructSetData($tInfo, "Size", DllStructGetSize($tInfo))
 	Local $aResult = DllCall("user32.dll", "bool", "SetMenuItemInfoW", "handle", $hMenu, "uint", $iItem, "bool", $bByPos, "struct*", $tInfo)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aResult[0]
 EndFunc   ;==>_GUICtrlMenu_SetItemInfo
 Func _GUICtrlMenu_SetItemState($hMenu, $iItem, $iState, $bState = True, $bByPos = True)
 	Local $iFlag = _GUICtrlMenu_GetItemStateEx($hMenu, $iItem, $bByPos)
 	If $bState Then
 		$iState = BitOR($iFlag, $iState)
-	Else
 		$iState = BitAND($iFlag, BitNOT($iState))
-	EndIf
-	Local $tInfo = DllStructCreate($tagMENUITEMINFO)
-	DllStructSetData($tInfo, "Size", DllStructGetSize($tInfo))
 	DllStructSetData($tInfo, "Mask", $MIIM_STATE)
 	DllStructSetData($tInfo, "State", $iState)
-	Return _GUICtrlMenu_SetItemInfo($hMenu, $iItem, $tInfo, $bByPos)
 EndFunc   ;==>_GUICtrlMenu_SetItemState
 Func _GUICtrlMenu_SetItemSubMenu($hMenu, $iItem, $hSubMenu, $bByPos = True)
-	Local $tInfo = DllStructCreate($tagMENUITEMINFO)
-	DllStructSetData($tInfo, "Size", DllStructGetSize($tInfo))
 	DllStructSetData($tInfo, "Mask", $MIIM_SUBMENU)
 	DllStructSetData($tInfo, "SubMenu", $hSubMenu)
-	Return _GUICtrlMenu_SetItemInfo($hMenu, $iItem, $tInfo, $bByPos)
 EndFunc   ;==>_GUICtrlMenu_SetItemSubMenu
 Func _GUICtrlMenu_SetItemText($hMenu, $iItem, $sText, $bByPos = True)
 	Local $tBuffer = DllStructCreate("wchar Text[" & StringLen($sText) + 1 & "]")
 	DllStructSetData($tBuffer, "Text", $sText)
-	Local $tInfo = DllStructCreate($tagMENUITEMINFO)
-	DllStructSetData($tInfo, "Size", DllStructGetSize($tInfo))
 	DllStructSetData($tInfo, "Mask", $MIIM_STRING)
 	DllStructSetData($tInfo, "TypeData", DllStructGetPtr($tBuffer))
-	Return _GUICtrlMenu_SetItemInfo($hMenu, $iItem, $tInfo, $bByPos)
 EndFunc   ;==>_GUICtrlMenu_SetItemText
 Func _GUICtrlMenu_SetItemType($hMenu, $iItem, $iType, $bByPos = True)
-	Local $tInfo = DllStructCreate($tagMENUITEMINFO)
-	DllStructSetData($tInfo, "Size", DllStructGetSize($tInfo))
 	DllStructSetData($tInfo, "Mask", $MIIM_FTYPE)
 	DllStructSetData($tInfo, "Type", $iType)
-	Return _GUICtrlMenu_SetItemInfo($hMenu, $iItem, $tInfo, $bByPos)
 EndFunc   ;==>_GUICtrlMenu_SetItemType
 Func _GUICtrlMenu_SetMenu($hWnd, $hMenu)
 	Local $aResult = DllCall("user32.dll", "bool", "SetMenu", "hwnd", $hWnd, "handle", $hMenu)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aResult[0]
 EndFunc   ;==>_GUICtrlMenu_SetMenu
 Func _GUICtrlMenu_SetMenuBackground($hMenu, $hBrush)
-	Local $tInfo = DllStructCreate($tagMENUINFO)
 	DllStructSetData($tInfo, "Mask", $MIM_BACKGROUND)
 	DllStructSetData($tInfo, "hBack", $hBrush)
 	Return _GUICtrlMenu_SetMenuInfo($hMenu, $tInfo)
 EndFunc   ;==>_GUICtrlMenu_SetMenuBackground
 Func _GUICtrlMenu_SetMenuContextHelpID($hMenu, $iHelpID)
-	Local $tInfo = DllStructCreate($tagMENUINFO)
 	DllStructSetData($tInfo, "Mask", $MIM_HELPID)
 	DllStructSetData($tInfo, "ContextHelpID", $iHelpID)
-	Return _GUICtrlMenu_SetMenuInfo($hMenu, $tInfo)
 EndFunc   ;==>_GUICtrlMenu_SetMenuContextHelpID
 Func _GUICtrlMenu_SetMenuData($hMenu, $iData)
-	Local $tInfo = DllStructCreate($tagMENUINFO)
 	DllStructSetData($tInfo, "Mask", $MIM_MENUDATA)
 	DllStructSetData($tInfo, "MenuData", $iData)
-	Return _GUICtrlMenu_SetMenuInfo($hMenu, $tInfo)
 EndFunc   ;==>_GUICtrlMenu_SetMenuData
 Func _GUICtrlMenu_SetMenuDefaultItem($hMenu, $iItem, $bByPos = True)
 	Local $aResult = DllCall("user32.dll", "bool", "SetMenuDefaultItem", "handle", $hMenu, "uint", $iItem, "uint", $bByPos)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aResult[0]
 EndFunc   ;==>_GUICtrlMenu_SetMenuDefaultItem
 Func _GUICtrlMenu_SetMenuHeight($hMenu, $iHeight)
-	Local $tInfo = DllStructCreate($tagMENUINFO)
 	DllStructSetData($tInfo, "Mask", $MIM_MAXHEIGHT)
 	DllStructSetData($tInfo, "YMax", $iHeight)
-	Return _GUICtrlMenu_SetMenuInfo($hMenu, $tInfo)
 EndFunc   ;==>_GUICtrlMenu_SetMenuHeight
 Func _GUICtrlMenu_SetMenuInfo($hMenu, ByRef $tInfo)
-	DllStructSetData($tInfo, "Size", DllStructGetSize($tInfo))
 	Local $aResult = DllCall("user32.dll", "bool", "SetMenuInfo", "handle", $hMenu, "struct*", $tInfo)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aResult[0]
 EndFunc   ;==>_GUICtrlMenu_SetMenuInfo
 Func _GUICtrlMenu_SetMenuStyle($hMenu, $iStyle)
-	Local $tInfo = DllStructCreate($tagMENUINFO)
 	DllStructSetData($tInfo, "Mask", $MIM_STYLE)
 	DllStructSetData($tInfo, "Style", $iStyle)
-	Return _GUICtrlMenu_SetMenuInfo($hMenu, $tInfo)
 EndFunc   ;==>_GUICtrlMenu_SetMenuStyle
 Func _GUICtrlMenu_TrackPopupMenu($hMenu, $hWnd, $iX = -1, $iY = -1, $iAlignX = 1, $iAlignY = 1, $iNotify = 0, $iButtons = 0)
-	If $iX = -1 Then $iX = _WinAPI_GetMousePosX()
-	If $iY = -1 Then $iY = _WinAPI_GetMousePosY()
 	Local $iFlags = 0
 	Switch $iAlignX
-		Case 1
 			$iFlags = BitOR($iFlags, $TPM_LEFTALIGN)
-		Case 2
 			$iFlags = BitOR($iFlags, $TPM_RIGHTALIGN)
-		Case Else
 			$iFlags = BitOR($iFlags, $TPM_CENTERALIGN)
-	EndSwitch
 	Switch $iAlignY
-		Case 1
 			$iFlags = BitOR($iFlags, $TPM_TOPALIGN)
-		Case 2
 			$iFlags = BitOR($iFlags, $TPM_VCENTERALIGN)
-		Case Else
 			$iFlags = BitOR($iFlags, $TPM_BOTTOMALIGN)
-	EndSwitch
 	If BitAND($iNotify, 1) <> 0 Then $iFlags = BitOR($iFlags, $TPM_NONOTIFY)
 	If BitAND($iNotify, 2) <> 0 Then $iFlags = BitOR($iFlags, $TPM_RETURNCMD)
 	Switch $iButtons
-		Case 1
 			$iFlags = BitOR($iFlags, $TPM_RIGHTBUTTON)
-		Case Else
 			$iFlags = BitOR($iFlags, $TPM_LEFTBUTTON)
-	EndSwitch
 	Local $aResult = DllCall("user32.dll", "bool", "TrackPopupMenu", "handle", $hMenu, "uint", $iFlags, "int", $iX, "int", $iY, "int", 0, "hwnd", $hWnd, "ptr", 0)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aResult[0]
 EndFunc   ;==>_GUICtrlMenu_TrackPopupMenu
+#include "MemoryConstants.au3"
+#include "ProcessConstants.au3"
 Global Const $tagMEMMAP = "handle hProc;ulong_ptr Size;ptr Mem"
 Func _MemFree(ByRef $tMemMap)
 	Local $pMemory = DllStructGetData($tMemMap, "Mem")
 	Local $hProcess = DllStructGetData($tMemMap, "hProc")
 	Local $bResult = _MemVirtualFreeEx($hProcess, $pMemory, 0, $MEM_RELEASE)
-	DllCall("kernel32.dll", "bool", "CloseHandle", "handle", $hProcess)
-	If @error Then Return SetError(@error, @extended, False)
 	Return $bResult
 EndFunc   ;==>_MemFree
 Func _MemGlobalAlloc($iBytes, $iFlags = 0)
 	Local $aResult = DllCall("kernel32.dll", "handle", "GlobalAlloc", "uint", $iFlags, "ulong_ptr", $iBytes)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aResult[0]
 EndFunc   ;==>_MemGlobalAlloc
 Func _MemGlobalFree($hMemory)
 	Local $aResult = DllCall("kernel32.dll", "ptr", "GlobalFree", "handle", $hMemory)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aResult[0]
 EndFunc   ;==>_MemGlobalFree
 Func _MemGlobalLock($hMemory)
 	Local $aResult = DllCall("kernel32.dll", "ptr", "GlobalLock", "handle", $hMemory)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aResult[0]
 EndFunc   ;==>_MemGlobalLock
 Func _MemGlobalSize($hMemory)
 	Local $aResult = DllCall("kernel32.dll", "ulong_ptr", "GlobalSize", "handle", $hMemory)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aResult[0]
 EndFunc   ;==>_MemGlobalSize
 Func _MemGlobalUnlock($hMemory)
 	Local $aResult = DllCall("kernel32.dll", "bool", "GlobalUnlock", "handle", $hMemory)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aResult[0]
 EndFunc   ;==>_MemGlobalUnlock
 Func _MemInit($hWnd, $iSize, ByRef $tMemMap)
 	Local $aResult = DllCall("user32.dll", "dword", "GetWindowThreadProcessId", "hwnd", $hWnd, "dword*", 0)
-	If @error Then Return SetError(@error + 10, @extended, 0)
 	Local $iProcessID = $aResult[2]
 	If $iProcessID = 0 Then Return SetError(1, 0, 0) ; Invalid window handle
 	Local $iAccess = BitOR($PROCESS_VM_OPERATION, $PROCESS_VM_READ, $PROCESS_VM_WRITE)
@@ -8853,68 +5547,30 @@ Func _MemInit($hWnd, $iSize, ByRef $tMemMap)
 EndFunc   ;==>_MemInit
 Func _MemMoveMemory($pSource, $pDest, $iLength)
 	DllCall("kernel32.dll", "none", "RtlMoveMemory", "struct*", $pDest, "struct*", $pSource, "ulong_ptr", $iLength)
-	If @error Then Return SetError(@error, @extended)
 EndFunc   ;==>_MemMoveMemory
 Func _MemRead(ByRef $tMemMap, $pSrce, $pDest, $iSize)
 	Local $aResult = DllCall("kernel32.dll", "bool", "ReadProcessMemory", "handle", DllStructGetData($tMemMap, "hProc"), _
 			"ptr", $pSrce, "struct*", $pDest, "ulong_ptr", $iSize, "ulong_ptr*", 0)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aResult[0]
 EndFunc   ;==>_MemRead
 Func _MemWrite(ByRef $tMemMap, $pSrce, $pDest = 0, $iSize = 0, $sSrce = "struct*")
 	If $pDest = 0 Then $pDest = DllStructGetData($tMemMap, "Mem")
 	If $iSize = 0 Then $iSize = DllStructGetData($tMemMap, "Size")
 	Local $aResult = DllCall("kernel32.dll", "bool", "WriteProcessMemory", "handle", DllStructGetData($tMemMap, "hProc"), _
 			"ptr", $pDest, $sSrce, $pSrce, "ulong_ptr", $iSize, "ulong_ptr*", 0)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aResult[0]
 EndFunc   ;==>_MemWrite
 Func _MemVirtualAlloc($pAddress, $iSize, $iAllocation, $iProtect)
 	Local $aResult = DllCall("kernel32.dll", "ptr", "VirtualAlloc", "ptr", $pAddress, "ulong_ptr", $iSize, "dword", $iAllocation, "dword", $iProtect)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aResult[0]
 EndFunc   ;==>_MemVirtualAlloc
 Func _MemVirtualAllocEx($hProcess, $pAddress, $iSize, $iAllocation, $iProtect)
 	Local $aResult = DllCall("kernel32.dll", "ptr", "VirtualAllocEx", "handle", $hProcess, "ptr", $pAddress, "ulong_ptr", $iSize, "dword", $iAllocation, "dword", $iProtect)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aResult[0]
 EndFunc   ;==>_MemVirtualAllocEx
 Func _MemVirtualFree($pAddress, $iSize, $iFreeType)
 	Local $aResult = DllCall("kernel32.dll", "bool", "VirtualFree", "ptr", $pAddress, "ulong_ptr", $iSize, "dword", $iFreeType)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aResult[0]
 EndFunc   ;==>_MemVirtualFree
 Func _MemVirtualFreeEx($hProcess, $pAddress, $iSize, $iFreeType)
 	Local $aResult = DllCall("kernel32.dll", "bool", "VirtualFreeEx", "handle", $hProcess, "ptr", $pAddress, "ulong_ptr", $iSize, "dword", $iFreeType)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aResult[0]
 EndFunc   ;==>_MemVirtualFreeEx
 Func __Mem_OpenProcess($iAccess, $bInherit, $iPID, $bDebugPriv = False)
-	Local $aResult = DllCall("kernel32.dll", "handle", "OpenProcess", "dword", $iAccess, "bool", $bInherit, "dword", $iPID)
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aResult[0] Then Return $aResult[0]
-	If Not $bDebugPriv Then Return SetError(100, 0, 0)
-	Local $hToken = _Security__OpenThreadTokenEx(BitOR($TOKEN_ADJUST_PRIVILEGES, $TOKEN_QUERY))
-	If @error Then Return SetError(@error + 10, @extended, 0)
-	_Security__SetPrivilege($hToken, "SeDebugPrivilege", True)
-	Local $iError = @error
-	Local $iExtended = @extended
-	Local $iRet = 0
-	If Not @error Then
-		$aResult = DllCall("kernel32.dll", "handle", "OpenProcess", "dword", $iAccess, "bool", $bInherit, "dword", $iPID)
-		$iError = @error
-		$iExtended = @extended
-		If $aResult[0] Then $iRet = $aResult[0]
-		_Security__SetPrivilege($hToken, "SeDebugPrivilege", False)
-		If @error Then
-			$iError = @error + 20
-			$iExtended = @extended
-		EndIf
-	Else
-		$iError = @error + 30 ; SeDebugPrivilege=True error
-	EndIf
-	DllCall("kernel32.dll", "bool", "CloseHandle", "handle", $hToken)
-	Return SetError($iError, $iExtended, $iRet)
 EndFunc   ;==>__Mem_OpenProcess
 Global Const $SS_LEFT = 0x0
 Global Const $SS_CENTER = 0x1
@@ -8947,25 +5603,16 @@ Global Const $STM_SETICON = 0x0170
 Global Const $STM_GETICON = 0x0171
 Global Const $STM_SETIMAGE = 0x0172
 Global Const $STM_GETIMAGE = 0x0173
-#Region Global Variables and Constants
-#EndRegion Global Variables and Constants
-#Region Functions list
-#EndRegion Functions list
-#Region Public Functions
+#include "APIMiscConstants.au3"
 Func _WinAPI_ArrayToStruct(Const ByRef $aData, $iStart = 0, $iEnd = -1)
 	If __CheckErrorArrayBounds($aData, $iStart, $iEnd) Then Return SetError(@error + 10, @extended, 0)
 	Local $tagStruct = ''
 	For $i = $iStart To $iEnd
 		$tagStruct &= 'wchar[' & (StringLen($aData[$i]) + 1) & '];'
-	Next
 	Local $tData = DllStructCreate($tagStruct & 'wchar[1]')
 	Local $iCount = 1
-	For $i = $iStart To $iEnd
 		DllStructSetData($tData, $iCount, $aData[$i])
-		$iCount += 1
-	Next
 	DllStructSetData($tData, $iCount, ChrW(0))
-	Return $tData
 EndFunc   ;==>_WinAPI_ArrayToStruct
 Func _WinAPI_CreateMargins($iLeftWidth, $iRightWidth, $iTopHeight, $iBottomHeight)
 	Local $tMARGINS = DllStructCreate($tagMARGINS)
@@ -8976,31 +5623,23 @@ Func _WinAPI_CreateMargins($iLeftWidth, $iRightWidth, $iTopHeight, $iBottomHeigh
 	Return $tMARGINS
 EndFunc   ;==>_WinAPI_CreateMargins
 Func _WinAPI_CreatePoint($iX, $iY)
-	Local $tPOINT = DllStructCreate($tagPOINT)
 	DllStructSetData($tPOINT, 1, $iX)
 	DllStructSetData($tPOINT, 2, $iY)
 	Return $tPOINT
 EndFunc   ;==>_WinAPI_CreatePoint
 Func _WinAPI_CreateRect($iLeft, $iTop, $iRight, $iBottom)
-	Local $tRECT = DllStructCreate($tagRECT)
 	DllStructSetData($tRECT, 1, $iLeft)
 	DllStructSetData($tRECT, 2, $iTop)
 	DllStructSetData($tRECT, 3, $iRight)
 	DllStructSetData($tRECT, 4, $iBottom)
-	Return $tRECT
 EndFunc   ;==>_WinAPI_CreateRect
 Func _WinAPI_CreateRectEx($iX, $iY, $iWidth, $iHeight)
-	Local $tRECT = DllStructCreate($tagRECT)
 	DllStructSetData($tRECT, 1, $iX)
 	DllStructSetData($tRECT, 2, $iY)
 	DllStructSetData($tRECT, 3, $iX + $iWidth)
 	DllStructSetData($tRECT, 4, $iY + $iHeight)
-	Return $tRECT
 EndFunc   ;==>_WinAPI_CreateRectEx
 Func _WinAPI_CreateSize($iWidth, $iHeight)
-	Local $tSIZE = DllStructCreate($tagSIZE)
-	DllStructSetData($tSIZE, 1, $iWidth)
-	DllStructSetData($tSIZE, 2, $iHeight)
 	Return $tSIZE
 EndFunc   ;==>_WinAPI_CreateSize
 Func _WinAPI_CopyStruct($tStruct, $sStruct = '')
@@ -9009,9 +5648,7 @@ Func _WinAPI_CopyStruct($tStruct, $sStruct = '')
 	Local $tResult
 	If Not StringStripWS($sStruct, $STR_STRIPLEADING + $STR_STRIPTRAILING + $STR_STRIPSPACES) Then
 		$tResult = DllStructCreate('byte[' & $iSize & ']')
-	Else
 		$tResult = DllStructCreate($sStruct)
-	EndIf
 	If DllStructGetSize($tResult) < $iSize Then Return SetError(2, 0, 0)
 	_WinAPI_MoveMemory($tResult, $tStruct, $iSize)
 	Return $tResult
@@ -9023,92 +5660,60 @@ Func _WinAPI_GetMousePos($bToClient = False, $hWnd = 0)
 	Local $iMode = Opt("MouseCoordMode", 1)
 	Local $aPos = MouseGetPos()
 	Opt("MouseCoordMode", $iMode)
-	Local $tPoint = DllStructCreate($tagPOINT)
 	DllStructSetData($tPoint, "X", $aPos[0])
 	DllStructSetData($tPoint, "Y", $aPos[1])
 	If $bToClient And Not _WinAPI_ScreenToClient($hWnd, $tPoint) Then Return SetError(@error + 20, @extended, 0)
-	Return $tPoint
 EndFunc   ;==>_WinAPI_GetMousePos
 Func _WinAPI_GetMousePosX($bToClient = False, $hWnd = 0)
 	Local $tPoint = _WinAPI_GetMousePos($bToClient, $hWnd)
-	If @error Then Return SetError(@error, @extended, 0)
 	Return DllStructGetData($tPoint, "X")
 EndFunc   ;==>_WinAPI_GetMousePosX
 Func _WinAPI_GetMousePosY($bToClient = False, $hWnd = 0)
-	Local $tPoint = _WinAPI_GetMousePos($bToClient, $hWnd)
-	If @error Then Return SetError(@error, @extended, 0)
 	Return DllStructGetData($tPoint, "Y")
 EndFunc   ;==>_WinAPI_GetMousePosY
 Func _WinAPI_MulDiv($iNumber, $iNumerator, $iDenominator)
 	Local $aResult = DllCall("kernel32.dll", "int", "MulDiv", "int", $iNumber, "int", $iNumerator, "int", $iDenominator)
-	If @error Then Return SetError(@error, @extended, -1)
-	Return $aResult[0]
 EndFunc   ;==>_WinAPI_MulDiv
 Func _WinAPI_PlaySound($sSound, $iFlags = $SND_SYSTEM_NOSTOP, $hInstance = 0)
 	Local $sTypeOfSound = 'ptr'
 	If $sSound Then
 		If IsString($sSound) Then
 			$sTypeOfSound = 'wstr'
-		EndIf
-	Else
 		$sSound = 0
 		$iFlags = 0
-	EndIf
 	Local $aRet = DllCall('winmm.dll', 'bool', 'PlaySoundW', $sTypeOfSound, $sSound, 'handle', $hInstance, 'dword', $iFlags)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_PlaySound
 Func _WinAPI_StringLenA(Const ByRef $tString)
 	Local $aResult = DllCall("kernel32.dll", "int", "lstrlenA", "struct*", $tString)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aResult[0]
 EndFunc   ;==>_WinAPI_StringLenA
 Func _WinAPI_StringLenW(Const ByRef $tString)
 	Local $aResult = DllCall("kernel32.dll", "int", "lstrlenW", "struct*", $tString)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aResult[0]
 EndFunc   ;==>_WinAPI_StringLenW
 Func _WinAPI_StructToArray(ByRef $tStruct, $iItems = 0)
 	Local $iSize = 2 * Floor(DllStructGetSize($tStruct) / 2)
 	Local $pStruct = DllStructGetPtr($tStruct)
 	If Not $iSize Or Not $pStruct Then Return SetError(1, 0, 0)
 	Local $tData, $iLength, $iOffset = 0
-	Local $aResult[101] = [0]
-	While 1
 		$iLength = _WinAPI_StrLen($pStruct + $iOffset)
 		If Not $iLength Then
-			ExitLoop
-		EndIf
 		If 2 * (1 + $iLength) + $iOffset > $iSize Then Return SetError(3, 0, 0)
 		$tData = DllStructCreate('wchar[' & (1 + $iLength) & ']', $pStruct + $iOffset)
 		If @error Then Return SetError(@error + 10, 0, 0)
 		__Inc($aResult)
 		$aResult[$aResult[0]] = DllStructGetData($tData, 1)
 		If $aResult[0] = $iItems Then
-			ExitLoop
-		EndIf
 		$iOffset += 2 * (1 + $iLength)
 		If $iOffset >= $iSize Then Return SetError(3, 0, 0)
-	WEnd
 	If Not $aResult[0] Then Return SetError(2, 0, 0)
-	__Inc($aResult, -1)
-	Return $aResult
 EndFunc   ;==>_WinAPI_StructToArray
 Func _WinAPI_UnionStruct($tStruct1, $tStruct2, $sStruct = '')
 	Local $aSize[2] = [DllStructGetSize($tStruct1), DllStructGetSize($tStruct2)]
 	If Not $aSize[0] Or Not $aSize[1] Then Return SetError(1, 0, 0)
-	Local $tResult
-	If Not StringStripWS($sStruct, $STR_STRIPLEADING + $STR_STRIPTRAILING + $STR_STRIPSPACES) Then
 		$tResult = DllStructCreate('byte[' & ($aSize[0] + $aSize[1]) & ']')
-	Else
-		$tResult = DllStructCreate($sStruct)
-	EndIf
 	If DllStructGetSize($tResult) < ($aSize[0] + $aSize[1]) Then Return SetError(2, 0, 0)
 	_WinAPI_MoveMemory($tResult, $tStruct1, $aSize[0])
 	_WinAPI_MoveMemory(DllStructGetPtr($tResult) + $aSize[0], $tStruct2, $aSize[1])
-	Return $tResult
 EndFunc   ;==>_WinAPI_UnionStruct
-#EndRegion Public Functions
 Global Const $WC_ANIMATE = 'SysAnimate32'
 Global Const $WC_BUTTON = 'Button'
 Global Const $WC_COMBOBOX = 'ComboBox'
@@ -9856,23 +6461,15 @@ Global Const $tagFLASHWINFO = "uint Size;hwnd hWnd;dword Flags;uint Count;dword 
 Func _WinAPI_AdjustWindowRectEx(ByRef $tRECT, $iStyle, $iExStyle = 0, $bMenu = False)
 	Local $aRet = DllCall('user32.dll', 'bool', 'AdjustWindowRectEx', 'struct*', $tRECT, 'dword', $iStyle, 'bool', $bMenu, _
 			'dword', $iExStyle)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_AdjustWindowRectEx
 Func _WinAPI_AnimateWindow($hWnd, $iFlags, $iDuration = 1000)
 	Local $aRet = DllCall('user32.dll', 'bool', 'AnimateWindow', 'hwnd', $hWnd, 'dword', $iDuration, 'dword', $iFlags)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_AnimateWindow
 Func _WinAPI_BeginDeferWindowPos($iAmount = 1)
 	Local $aRet = DllCall('user32.dll', 'handle', 'BeginDeferWindowPos', 'int', $iAmount)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_BeginDeferWindowPos
 Func _WinAPI_BringWindowToTop($hWnd)
 	Local $aRet = DllCall('user32.dll', 'bool', 'BringWindowToTop', 'hwnd', $hWnd)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_BringWindowToTop
 Func _WinAPI_BroadcastSystemMessage($iMsg, $wParam = 0, $lParam = 0, $iFlags = 0, $iRecipients = 0)
 	Local $aRet = DllCall('user32.dll', 'long', 'BroadcastSystemMessageW', 'dword', $iFlags, 'dword*', $iRecipients, _
@@ -9883,28 +6480,19 @@ EndFunc   ;==>_WinAPI_BroadcastSystemMessage
 Func _WinAPI_CallWindowProc($pPrevWndFunc, $hWnd, $iMsg, $wParam, $lParam)
 	Local $aResult = DllCall("user32.dll", "lresult", "CallWindowProc", "ptr", $pPrevWndFunc, "hwnd", $hWnd, "uint", $iMsg, _
 			"wparam", $wParam, "lparam", $lParam)
-	If @error Then Return SetError(@error, @extended, -1)
-	Return $aResult[0]
 EndFunc   ;==>_WinAPI_CallWindowProc
 Func _WinAPI_CallWindowProcW($pPrevWndProc, $hWnd, $iMsg, $wParam, $lParam)
 	Local $aRet = DllCall('user32.dll', 'lresult', 'CallWindowProcW', 'ptr', $pPrevWndProc, 'hwnd', $hWnd, 'uint', $iMsg, _
 			'wparam', $wParam, 'lparam', $lParam)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_CallWindowProcW
 Func _WinAPI_CascadeWindows($aWnds, $tRECT = 0, $hParent = 0, $iFlags = 0, $iStart = 0, $iEnd = -1)
 	If __CheckErrorArrayBounds($aWnds, $iStart, $iEnd) Then Return SetError(@error + 10, @extended, 0)
 	Local $iCount = $iEnd - $iStart + 1
 	Local $tWnds = DllStructCreate('hwnd[' & $iCount & ']')
 	$iCount = 1
-	For $i = $iStart To $iEnd
 		DllStructSetData($tWnds, 1, $aWnds[$i], $iCount)
-		$iCount += 1
-	Next
 	Local $aRet = DllCall('user32.dll', 'word', 'CascadeWindows', 'hwnd', $hParent, 'uint', $iFlags, 'struct*', $tRECT, _
 			'uint', $iCount - 1, 'struct*', $tWnds)
-	If @error Or Not $aRet[0] Then Return SetError(@error + 10, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_CascadeWindows
 Func _WinAPI_ChangeWindowMessageFilterEx($hWnd, $iMsg, $iAction)
 	Local $tCFS, $aRet
@@ -9914,59 +6502,39 @@ Func _WinAPI_ChangeWindowMessageFilterEx($hWnd, $iMsg, $iAction)
 		DllStructSetData($tCFS, 1, DllStructGetSize($tCFS))
 		$aRet = DllCall('user32.dll', 'bool', 'ChangeWindowMessageFilterEx', 'hwnd', $hWnd, 'uint', $iMsg, 'dword', $iAction, _
 				'struct*', $tCFS)
-	Else
 		$tCFS = 0
 		$aRet = DllCall('user32.dll', 'bool', 'ChangeWindowMessageFilter', 'uint', $iMsg, 'dword', $iAction)
-	EndIf
-	If @error Or Not $aRet[0] Then Return SetError(@error + 10, @extended, 0)
 	Return SetExtended(DllStructGetData($tCFS, 2), 1)
 EndFunc   ;==>_WinAPI_ChangeWindowMessageFilterEx
 Func _WinAPI_ChildWindowFromPointEx($hWnd, $tPOINT, $iFlags = 0)
 	Local $aRet = DllCall('user32.dll', 'hwnd', 'ChildWindowFromPointEx', 'hwnd', $hWnd, 'struct', $tPOINT, 'uint', $iFlags)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_ChildWindowFromPointEx
 Func _WinAPI_CloseWindow($hWnd)
 	Local $aRet = DllCall('user32.dll', 'bool', 'CloseWindow', 'hwnd', $hWnd)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_CloseWindow
 Func _WinAPI_DeferWindowPos($hInfo, $hWnd, $hAfter, $iX, $iY, $iWidth, $iHeight, $iFlags)
 	Local $aRet = DllCall('user32.dll', 'handle', 'DeferWindowPos', 'handle', $hInfo, 'hwnd', $hWnd, 'hwnd', $hAfter, _
 			'int', $iX, 'int', $iY, 'int', $iWidth, 'int', $iHeight, 'uint', $iFlags)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_DeferWindowPos
 Func _WinAPI_DefWindowProc($hWnd, $iMsg, $wParam, $lParam)
 	Local $aResult = DllCall("user32.dll", "lresult", "DefWindowProc", "hwnd", $hWnd, "uint", $iMsg, "wparam", $wParam, _
 			"lparam", $lParam)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aResult[0]
 EndFunc   ;==>_WinAPI_DefWindowProc
 Func _WinAPI_DefWindowProcW($hWnd, $iMsg, $wParam, $lParam)
 	Local $aRet = DllCall('user32.dll', 'lresult', 'DefWindowProcW', 'hwnd', $hWnd, 'uint', $iMsg, 'wparam', $wParam, _
 			'lparam', $lParam)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_DefWindowProcW
 Func _WinAPI_DeregisterShellHookWindow($hWnd)
 	Local $aRet = DllCall('user32.dll', 'bool', 'DeregisterShellHookWindow', 'hwnd', $hWnd)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_DeregisterShellHookWindow
 Func _WinAPI_DragAcceptFiles($hWnd, $bAccept = True)
 	DllCall('shell32.dll', 'none', 'DragAcceptFiles', 'hwnd', $hWnd, 'bool', $bAccept)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return 1
 EndFunc   ;==>_WinAPI_DragAcceptFiles
 Func _WinAPI_DragFinish($hDrop)
 	DllCall('shell32.dll', 'none', 'DragFinish', 'handle', $hDrop)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return 1
 EndFunc   ;==>_WinAPI_DragFinish
 Func _WinAPI_DragQueryFileEx($hDrop, $iFlag = 0)
 	Local $aRet = DllCall('shell32.dll', 'uint', 'DragQueryFileW', 'handle', $hDrop, 'uint', -1, 'ptr', 0, 'uint', 0)
-	If @error Then Return SetError(@error, @extended, 0)
 	If Not $aRet[0] Then Return SetError(10, 0, 0)
 	Local $iCount = $aRet[0]
 	Local $aResult[$iCount + 1]
@@ -9976,49 +6544,26 @@ Func _WinAPI_DragQueryFileEx($hDrop, $iFlag = 0)
 		If $iFlag Then
 			Local $bDir = _WinAPI_PathIsDirectory($aRet[3])
 			If (($iFlag = 1) And $bDir) Or (($iFlag = 2) And Not $bDir) Then
-				ContinueLoop
-			EndIf
-		EndIf
 		$aResult[$i + 1] = $aRet[3]
 		$aResult[0] += 1
-	Next
 	If Not $aResult[0] Then Return SetError(12, 0, 0)
-	__Inc($aResult, -1)
-	Return $aResult
 EndFunc   ;==>_WinAPI_DragQueryFileEx
 Func _WinAPI_DragQueryPoint($hDrop)
-	Local $tPOINT = DllStructCreate($tagPOINT)
 	Local $aRet = DllCall('shell32.dll', 'bool', 'DragQueryPoint', 'handle', $hDrop, 'struct*', $tPOINT)
-	If @error Or Not $aRet[0] Then Return SetError(@error + 10, @extended, 0)
-	Return $tPOINT
 EndFunc   ;==>_WinAPI_DragQueryPoint
 Func _WinAPI_EndDeferWindowPos($hInfo)
 	Local $aRet = DllCall('user32.dll', 'bool', 'EndDeferWindowPos', 'handle', $hInfo)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_EndDeferWindowPos
 Func _WinAPI_EnumChildWindows($hWnd, $bVisible = True)
 	If Not _WinAPI_GetWindow($hWnd, 5) Then Return SetError(2, 0, 0) ; $GW_CHILD
-	Local $hEnumProc = DllCallbackRegister('__EnumWindowsProc', 'bool', 'hwnd;lparam')
-	Dim $__g_vEnum[101][2] = [[0]]
 	DllCall('user32.dll', 'bool', 'EnumChildWindows', 'hwnd', $hWnd, 'ptr', DllCallbackGetPtr($hEnumProc), 'lparam', $bVisible)
 	If @error Or Not $__g_vEnum[0][0] Then
-		$__g_vEnum = @error + 10
-	EndIf
-	DllCallbackFree($hEnumProc)
-	If $__g_vEnum Then Return SetError($__g_vEnum, 0, 0)
-	__Inc($__g_vEnum, -1)
-	Return $__g_vEnum
 EndFunc   ;==>_WinAPI_EnumChildWindows
 Func _WinAPI_FindWindow($sClassName, $sWindowName)
 	Local $aResult = DllCall("user32.dll", "hwnd", "FindWindowW", "wstr", $sClassName, "wstr", $sWindowName)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aResult[0]
 EndFunc   ;==>_WinAPI_FindWindow
 Func _WinAPI_FlashWindow($hWnd, $bInvert = True)
 	Local $aResult = DllCall("user32.dll", "bool", "FlashWindow", "hwnd", $hWnd, "bool", $bInvert)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aResult[0]
 EndFunc   ;==>_WinAPI_FlashWindow
 Func _WinAPI_FlashWindowEx($hWnd, $iFlags = 3, $iCount = 3, $iTimeout = 0)
 	Local $tFlash = DllStructCreate($tagFLASHWINFO)
@@ -10034,75 +6579,49 @@ Func _WinAPI_FlashWindowEx($hWnd, $iFlags = 3, $iCount = 3, $iTimeout = 0)
 	DllStructSetData($tFlash, "Count", $iCount)
 	DllStructSetData($tFlash, "Timeout", $iTimeout)
 	Local $aResult = DllCall("user32.dll", "bool", "FlashWindowEx", "struct*", $tFlash)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aResult[0]
 EndFunc   ;==>_WinAPI_FlashWindowEx
 Func _WinAPI_GetAncestor($hWnd, $iFlags = 1)
 	Local $aResult = DllCall("user32.dll", "hwnd", "GetAncestor", "hwnd", $hWnd, "uint", $iFlags)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aResult[0]
 EndFunc   ;==>_WinAPI_GetAncestor
 Func _WinAPI_GetClassInfoEx($sClass, $hInstance = 0)
 	Local $sTypeOfClass = 'ptr'
 	If IsString($sClass) Then
 		$sTypeOfClass = 'wstr'
-	EndIf
 	Local $tWNDCLASSEX = DllStructCreate($tagWNDCLASSEX)
 	Local $aRet = DllCall('user32.dll', 'bool', 'GetClassInfoExW', 'handle', $hInstance, $sTypeOfClass, $sClass, _
 			'struct*', $tWNDCLASSEX)
-	If @error Or Not $aRet[0] Then Return SetError(@error + 10, @extended, 0)
 	Return $tWNDCLASSEX
 EndFunc   ;==>_WinAPI_GetClassInfoEx
 Func _WinAPI_GetClassLongEx($hWnd, $iIndex)
-	Local $aRet
-	If @AutoItX64 Then
 		$aRet = DllCall('user32.dll', 'ulong_ptr', 'GetClassLongPtrW', 'hwnd', $hWnd, 'int', $iIndex)
-	Else
 		$aRet = DllCall('user32.dll', 'dword', 'GetClassLongW', 'hwnd', $hWnd, 'int', $iIndex)
-	EndIf
-	If @error Or Not $aRet[0] Then Return SetError(@error, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_GetClassLongEx
 Func _WinAPI_GetClientHeight($hWnd)
 	Local $tRECT = _WinAPI_GetClientRect($hWnd)
-	If @error Then Return SetError(@error, @extended, 0)
 	Return DllStructGetData($tRECT, "Bottom") - DllStructGetData($tRECT, "Top")
 EndFunc   ;==>_WinAPI_GetClientHeight
 Func _WinAPI_GetClientWidth($hWnd)
-	Local $tRECT = _WinAPI_GetClientRect($hWnd)
-	If @error Then Return SetError(@error, @extended, 0)
 	Return DllStructGetData($tRECT, "Right") - DllStructGetData($tRECT, "Left")
 EndFunc   ;==>_WinAPI_GetClientWidth
 Func _WinAPI_GetDlgItem($hWnd, $iItemID)
 	Local $aResult = DllCall("user32.dll", "hwnd", "GetDlgItem", "hwnd", $hWnd, "int", $iItemID)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aResult[0]
 EndFunc   ;==>_WinAPI_GetDlgItem
 Func _WinAPI_GetForegroundWindow()
 	Local $aResult = DllCall("user32.dll", "hwnd", "GetForegroundWindow")
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aResult[0]
 EndFunc   ;==>_WinAPI_GetForegroundWindow
 Func _WinAPI_GetGUIThreadInfo($iThreadId)
     Local Const $tagGUITHREADINFO = 'dword Size;dword Flags;hwnd hWndActive;hwnd hWndFocus;hwnd hWndCapture;hwnd hWndMenuOwner;hwnd hWndMoveSize;hwnd hWndCaret;struct rcCaret;long left;long top;long right;long bottom;endstruct'
 	Local $tGTI = DllStructCreate($tagGUITHREADINFO)
 	DllStructSetData($tGTI, 1, DllStructGetSize($tGTI))
 	Local $aRet = DllCall('user32.dll', 'bool', 'GetGUIThreadInfo', 'dword', $iThreadId, 'struct*', $tGTI)
-	If @error Or Not $aRet[0] Then Return SetError(@error + 10, @extended, 0)
 	Local $aResult[11]
-	For $i = 0 To 10
 		$aResult[$i] = DllStructGetData($tGTI, $i + 2)
-	Next
 	For $i = 9 To 10
 		$aResult[$i] -= $aResult[$i - 2]
-	Next
-	Return $aResult
 EndFunc   ;==>_WinAPI_GetGUIThreadInfo
 Func _WinAPI_GetLastActivePopup($hWnd)
 	Local $aRet = DllCall('user32.dll', 'hwnd', 'GetLastActivePopup', 'hwnd', $hWnd)
-	If @error Or Not $aRet[0] Then Return SetError(@error + 10, @extended, 0)
 	If $aRet[0] = $hWnd Then Return SetError(1, 0, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_GetLastActivePopup
 Func _WinAPI_GetLayeredWindowAttributes($hWnd, ByRef $iTransColor, ByRef $iTransGUI, $bColorRef = False)
 	$iTransColor = -1
@@ -10112,142 +6631,90 @@ Func _WinAPI_GetLayeredWindowAttributes($hWnd, ByRef $iTransColor, ByRef $iTrans
 	If @error Or Not $aResult[0] Then Return SetError(@error, @extended, 0)
 	If Not $bColorRef Then
 		$aResult[2] = Int(BinaryMid($aResult[2], 3, 1) & BinaryMid($aResult[2], 2, 1) & BinaryMid($aResult[2], 1, 1))
-	EndIf
 	$iTransColor = $aResult[2]
 	$iTransGUI = $aResult[3]
-	Return $aResult[4]
 EndFunc   ;==>_WinAPI_GetLayeredWindowAttributes
 Func _WinAPI_GetMessageExtraInfo()
 	Local $aRet = DllCall('user32.dll', 'lparam', 'GetMessageExtraInfo')
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_GetMessageExtraInfo
 Func _WinAPI_GetShellWindow()
 	Local $aRet = DllCall('user32.dll', 'hwnd', 'GetShellWindow')
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_GetShellWindow
 Func _WinAPI_GetTopWindow($hWnd)
 	Local $aRet = DllCall('user32.dll', 'hwnd', 'GetTopWindow', 'hwnd', $hWnd)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_GetTopWindow
 Func _WinAPI_GetWindowDisplayAffinity($hWnd)
 	Local $aRet = DllCall('user32.dll', 'bool', 'GetWindowDisplayAffinity', 'hwnd', $hWnd, 'dword*', 0)
-	If @error Or Not $aRet[0] Then Return SetError(@error + 10, @extended, 0)
-	Return $aRet[2]
 EndFunc   ;==>_WinAPI_GetWindowDisplayAffinity
 Func _WinAPI_GetWindowInfo($hWnd)
 	Local $tWINDOWINFO = DllStructCreate($tagWINDOWINFO)
 	DllStructSetData($tWINDOWINFO, 'Size', DllStructGetSize($tWINDOWINFO))
 	Local $aRet = DllCall('user32.dll', 'bool', 'GetWindowInfo', 'hwnd', $hWnd, 'struct*', $tWINDOWINFO)
-	If @error Or Not $aRet[0] Then Return SetError(@error + 10, @extended, 0)
 	Return $tWINDOWINFO
 EndFunc   ;==>_WinAPI_GetWindowInfo
 Func _WinAPI_GetWindowPlacement($hWnd)
 	Local $tWindowPlacement = DllStructCreate($tagWINDOWPLACEMENT)
 	DllStructSetData($tWindowPlacement, "length", DllStructGetSize($tWindowPlacement))
 	Local $aRet = DllCall("user32.dll", "bool", "GetWindowPlacement", "hwnd", $hWnd, "struct*", $tWindowPlacement)
-	If @error Or Not $aRet[0] Then Return SetError(@error + 10, @extended, 0)
 	Return $tWindowPlacement
 EndFunc   ;==>_WinAPI_GetWindowPlacement
 Func _WinAPI_IsChild($hWnd, $hWndParent)
 	Local $aRet = DllCall('user32.dll', 'bool', 'IsChild', 'hwnd', $hWndParent, 'hwnd', $hWnd)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_IsChild
 Func _WinAPI_IsHungAppWindow($hWnd)
 	Local $aRet = DllCall('user32.dll', 'bool', 'IsHungAppWindow', 'hwnd', $hWnd)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_IsHungAppWindow
 Func _WinAPI_IsIconic($hWnd)
 	Local $aRet = DllCall('user32.dll', 'bool', 'IsIconic', 'hwnd', $hWnd)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_IsIconic
 Func _WinAPI_IsWindowUnicode($hWnd)
 	Local $aRet = DllCall('user32.dll', 'bool', 'IsWindowUnicode', 'hwnd', $hWnd)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_IsWindowUnicode
 Func _WinAPI_IsZoomed($hWnd)
 	Local $aRet = DllCall('user32.dll', 'bool', 'IsZoomed', 'hwnd', $hWnd)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_IsZoomed
 Func _WinAPI_KillTimer($hWnd, $iTimerID)
 	Local $aRet = DllCall('user32.dll', 'bool', 'KillTimer', 'hwnd', $hWnd, 'uint_ptr', $iTimerID)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_KillTimer
 Func _WinAPI_OpenIcon($hWnd)
 	Local $aRet = DllCall('user32.dll', 'bool', 'OpenIcon', 'hwnd', $hWnd)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_OpenIcon
 Func _WinAPI_PostMessage($hWnd, $iMsg, $wParam, $lParam)
 	Local $aResult = DllCall("user32.dll", "bool", "PostMessage", "hwnd", $hWnd, "uint", $iMsg, "wparam", $wParam, _
-			"lparam", $lParam)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aResult[0]
 EndFunc   ;==>_WinAPI_PostMessage
 Func _WinAPI_RegisterClass($tWNDCLASS)
 	Local $aRet = DllCall('user32.dll', 'word', 'RegisterClassW', 'struct*', $tWNDCLASS)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_RegisterClass
 Func _WinAPI_RegisterClassEx($tWNDCLASSEX)
 	Local $aRet = DllCall('user32.dll', 'word', 'RegisterClassExW', 'struct*', $tWNDCLASSEX)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_RegisterClassEx
 Func _WinAPI_RegisterShellHookWindow($hWnd)
 	Local $aRet = DllCall('user32.dll', 'bool', 'RegisterShellHookWindow', 'hwnd', $hWnd)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_RegisterShellHookWindow
 Func _WinAPI_RegisterWindowMessage($sMessage)
 	Local $aResult = DllCall("user32.dll", "uint", "RegisterWindowMessageW", "wstr", $sMessage)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aResult[0]
 EndFunc   ;==>_WinAPI_RegisterWindowMessage
 Func _WinAPI_SendMessageTimeout($hWnd, $iMsg, $wParam = 0, $lParam = 0, $iTimeout = 1000, $iFlags = 0)
 	Local $aRet = DllCall('user32.dll', 'lresult', 'SendMessageTimeoutW', 'hwnd', $hWnd, 'uint', $iMsg, 'wparam', $wParam, _
 			'lparam', $lParam, 'uint', $iFlags, 'uint', $iTimeout, 'dword_ptr*', 0)
-	If @error Then Return SetError(@error, @extended, -1)
 	If Not $aRet[0] Then Return SetError(10, _WinAPI_GetLastError(), -1)
 	Return $aRet[7]
 EndFunc   ;==>_WinAPI_SendMessageTimeout
 Func _WinAPI_SetClassLongEx($hWnd, $iIndex, $iNewLong)
-	Local $aRet
-	If @AutoItX64 Then
 		$aRet = DllCall('user32.dll', 'ulong_ptr', 'SetClassLongPtrW', 'hwnd', $hWnd, 'int', $iIndex, 'long_ptr', $iNewLong)
-	Else
 		$aRet = DllCall('user32.dll', 'dword', 'SetClassLongW', 'hwnd', $hWnd, 'int', $iIndex, 'long', $iNewLong)
-	EndIf
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_SetClassLongEx
 Func _WinAPI_SetForegroundWindow($hWnd)
 	Local $aRet = DllCall('user32.dll', 'bool', 'SetForegroundWindow', 'hwnd', $hWnd)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_SetForegroundWindow
 Func _WinAPI_SetLayeredWindowAttributes($hWnd, $iTransColor, $iTransGUI = 255, $iFlags = 0x03, $bColorRef = False)
 	If $iFlags = Default Or $iFlags = "" Or $iFlags < 0 Then $iFlags = 0x03
-	If Not $bColorRef Then
 		$iTransColor = Int(BinaryMid($iTransColor, 3, 1) & BinaryMid($iTransColor, 2, 1) & BinaryMid($iTransColor, 1, 1))
-	EndIf
 	Local $aResult = DllCall("user32.dll", "bool", "SetLayeredWindowAttributes", "hwnd", $hWnd, "INT", $iTransColor, _
 			"byte", $iTransGUI, "dword", $iFlags)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aResult[0]
 EndFunc   ;==>_WinAPI_SetLayeredWindowAttributes
 Func _WinAPI_SetMessageExtraInfo($lParam)
 	Local $aRet = DllCall('user32.dll', 'lparam', 'SetMessageExtraInfo', 'lparam', $lParam)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_SetMessageExtraInfo
 Func _WinAPI_SetSysColors($vElements, $vColors)
 	Local $bIsEArray = IsArray($vElements), $bIsCArray = IsArray($vColors)
@@ -10258,89 +6725,48 @@ Func _WinAPI_SetSysColors($vElements, $vColors)
 		If Not $bIsCArray Or Not $bIsEArray Then Return SetError(-1, -1, False)
 		If UBound($vElements) <> UBound($vColors) Then Return SetError(-1, -1, False)
 		$iElementNum = UBound($vElements)
-	EndIf
 	Local $tElements = DllStructCreate("int Element[" & $iElementNum & "]")
 	Local $tColors = DllStructCreate("INT NewColor[" & $iElementNum & "]")
 	If Not $bIsEArray Then
 		DllStructSetData($tElements, "Element", $vElements, 1)
-	Else
 		For $x = 0 To $iElementNum - 1
 			DllStructSetData($tElements, "Element", $vElements[$x], $x + 1)
-		Next
-	EndIf
 	If Not $bIsCArray Then
 		DllStructSetData($tColors, "NewColor", $vColors, 1)
-	Else
-		For $x = 0 To $iElementNum - 1
 			DllStructSetData($tColors, "NewColor", $vColors[$x], $x + 1)
-		Next
-	EndIf
 	Local $aResult = DllCall("user32.dll", "bool", "SetSysColors", "int", $iElementNum, "struct*", $tElements, "struct*", $tColors)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aResult[0]
 EndFunc   ;==>_WinAPI_SetSysColors
 Func _WinAPI_SetTimer($hWnd, $iTimerID, $iElapse, $pTimerFunc)
 	Local $aRet = DllCall('user32.dll', 'uint_ptr', 'SetTimer', 'hwnd', $hWnd, 'uint_ptr', $iTimerID, 'uint', $iElapse, _
 			'ptr', $pTimerFunc)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_SetTimer
 Func _WinAPI_SetWindowDisplayAffinity($hWnd, $iAffinity)
 	Local $aRet = DllCall('user32.dll', 'bool', 'SetWindowDisplayAffinity', 'hwnd', $hWnd, 'dword', $iAffinity)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_SetWindowDisplayAffinity
 Func _WinAPI_SetWindowLong($hWnd, $iIndex, $iValue)
 	_WinAPI_SetLastError(0) ; as suggested in MSDN
 	Local $sFuncName = "SetWindowLongW"
 	If @AutoItX64 Then $sFuncName = "SetWindowLongPtrW"
 	Local $aResult = DllCall("user32.dll", "long_ptr", $sFuncName, "hwnd", $hWnd, "int", $iIndex, "long_ptr", $iValue)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aResult[0]
 EndFunc   ;==>_WinAPI_SetWindowLong
 Func _WinAPI_SetWindowPlacement($hWnd, $tWindowPlacement)
 	Local $aResult = DllCall("user32.dll", "bool", "SetWindowPlacement", "hwnd", $hWnd, "struct*", $tWindowPlacement)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aResult[0]
 EndFunc   ;==>_WinAPI_SetWindowPlacement
 Func _WinAPI_ShowOwnedPopups($hWnd, $bShow)
 	Local $aRet = DllCall('user32.dll', 'bool', 'ShowOwnedPopups', 'hwnd', $hWnd, 'bool', $bShow)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_ShowOwnedPopups
 Func _WinAPI_SwitchToThisWindow($hWnd, $bAltTab = False)
 	DllCall('user32.dll', 'none', 'SwitchToThisWindow', 'hwnd', $hWnd, 'bool', $bAltTab)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return 1
 EndFunc   ;==>_WinAPI_SwitchToThisWindow
 Func _WinAPI_TileWindows($aWnds, $tRECT = 0, $hParent = 0, $iFlags = 0, $iStart = 0, $iEnd = -1)
-	If __CheckErrorArrayBounds($aWnds, $iStart, $iEnd) Then Return SetError(@error + 10, @extended, 0)
-	Local $iCount = $iEnd - $iStart + 1
-	Local $tWnds = DllStructCreate('hwnd[' & $iCount & ']')
-	$iCount = 1
-	For $i = $iStart To $iEnd
-		DllStructSetData($tWnds, 1, $aWnds[$i], $iCount)
-		$iCount += 1
-	Next
 	Local $aRet = DllCall('user32.dll', 'word', 'TileWindows', 'hwnd', $hParent, 'uint', $iFlags, 'struct*', $tRECT, _
-			'uint', $iCount - 1, 'struct*', $tWnds)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_TileWindows
 Func _WinAPI_UnregisterClass($sClass, $hInstance = 0)
-	Local $sTypeOfClass = 'ptr'
-	If IsString($sClass) Then
-		$sTypeOfClass = 'wstr'
-	EndIf
 	Local $aRet = DllCall('user32.dll', 'bool', 'UnregisterClassW', $sTypeOfClass, $sClass, 'handle', $hInstance)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_UnregisterClass
 Func _WinAPI_UpdateLayeredWindow($hWnd, $hDestDC, $tPTDest, $tSize, $hSrcDC, $tPTSrce, $iRGB, $tBlend, $iFlags)
 	Local $aResult = DllCall("user32.dll", "bool", "UpdateLayeredWindow", "hwnd", $hWnd, "handle", $hDestDC, "struct*", $tPTDest, _
 			"struct*", $tSize, "handle", $hSrcDC, "struct*", $tPTSrce, "dword", $iRGB, "struct*", $tBlend, "dword", $iFlags)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aResult[0]
 EndFunc   ;==>_WinAPI_UpdateLayeredWindow
 Func _WinAPI_UpdateLayeredWindowEx($hWnd, $iX, $iY, $hBitmap, $iOpacity = 255, $bDelete = False)
 	Local $aRet = DllCall('user32.dll', 'handle', 'GetDC', 'hwnd', $hWnd)
@@ -10352,11 +6778,9 @@ Func _WinAPI_UpdateLayeredWindowEx($hWnd, $iX, $iY, $hBitmap, $iOpacity = 255, $
 	Local $tPOINT
 	If ($iX = -1) And ($iY = -1) Then
 		$tPOINT = DllStructCreate('int;int')
-	Else
 		$tPOINT = DllStructCreate('int;int;int;int')
 		DllStructSetData($tPOINT, 3, $iX)
 		DllStructSetData($tPOINT, 4, $iY)
-	EndIf
 	DllStructSetData($tPOINT, 1, 0)
 	DllStructSetData($tPOINT, 2, 0)
 	Local $tBLENDFUNCTION = DllStructCreate($tagBLENDFUNCTION)
@@ -10370,40 +6794,24 @@ Func _WinAPI_UpdateLayeredWindowEx($hWnd, $iX, $iY, $hBitmap, $iOpacity = 255, $
 	Local $tSize = DllStructCreate($tagSIZE, DllStructGetPtr($tObj, "bmWidth"))
 	$aRet = DllCall('user32.dll', 'bool', 'UpdateLayeredWindow', 'hwnd', $hWnd, 'handle', $hDC, 'ptr', DllStructGetPtr($tPOINT, 3), _
 			'struct*', $tSIZE, 'handle', $hDestDC, 'struct*', $tPOINT, 'dword', 0, 'struct*', $tBLENDFUNCTION, 'dword', 0x02)
-	Local $iError = @error
 	DllCall('user32.dll', 'bool', 'ReleaseDC', 'hwnd', $hWnd, 'handle', $hDC)
 	DllCall('gdi32.dll', 'handle', 'SelectObject', 'handle', $hDestDC, 'handle', $hDestSv)
 	DllCall('gdi32.dll', 'bool', 'DeleteDC', 'handle', $hDestDC)
-	If $iError Then Return SetError($iError, 0, False)
 	If $bDelete Then
 		DllCall("gdi32.dll", "bool", "DeleteObject", "handle", $hBitmap)
-	EndIf
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_UpdateLayeredWindowEx
 Func _WinAPI_UpdateLayeredWindowIndirect($hWnd, $tULWINFO)
 	Local $aRet = DllCall('user32.dll', 'bool', 'UpdateLayeredWindowIndirect', 'hwnd', $hWnd, 'struct*', $tULWINFO)
-	If @error Then Return SetError(@error, @extended, False)
-	Return $aRet[0]
 EndFunc   ;==>_WinAPI_UpdateLayeredWindowIndirect
 Func _WinAPI_WindowFromPoint(ByRef $tPoint)
 	Local $aResult = DllCall("user32.dll", "hwnd", "WindowFromPoint", "struct", $tPoint)
-	If @error Then Return SetError(@error, @extended, 0)
-	Return $aResult[0]
 EndFunc   ;==>_WinAPI_WindowFromPoint
-#EndRegion Public Functions
-#Region Internal Functions
 Func __EnumDefaultProc($pData, $lParam)
 	#forceref $lParam
 	Local $iLength = _WinAPI_StrLen($pData)
-	__Inc($__g_vEnum)
-	If $iLength Then
 		$__g_vEnum[$__g_vEnum[0]] = DllStructGetData(DllStructCreate('wchar[' & ($iLength + 1) & ']', $pData), 1)
-	Else
 		$__g_vEnum[$__g_vEnum[0]] = ''
-	EndIf
-	Return 1
 EndFunc   ;==>__EnumDefaultProc
-#EndRegion Internal Functions
 Global Const $GUI_EVENT_SINGLE = 0 ; (default) Returns a single event.
 Global Const $GUI_EVENT_ARRAY = 1 ; returns an array containing the event and extended information.
 Global Const $GUI_EVENT_NONE = 0
@@ -10477,51 +6885,9 @@ Global Const $GUI_READ_EXTENDED = 1 ; Returns extended information of a control 
 Global Const $GUI_CURSOR_NOOVERRIDE = 0 ; (default) Don't override a control's default mouse cursor.
 Global Const $GUI_CURSOR_OVERRIDE = 1 ; override control's default mouse cursor.
 Global Const $GUI_WS_EX_PARENTDRAG = 0x00100000
+#include "AutoItConstants.au3"
+#include "FileConstants.au3"
 #Region Header
-#cs
-	Title:   Internet Explorer Automation UDF Library for AutoIt3
-	Filename:  IE.au3
-	Description: A collection of functions for creating, attaching to, reading from and manipulating Internet Explorer
-	Author:   DaleHohm
-	Modified: jpm, Jon
-	Version:  T3.0-2
-	Last Update: 14/08/19
-	Requirements: AutoIt3 3.3.9 or higher
-	Update History:
-	===================================================
-	T3.0-2 14/8/19
-	Enhancements
-	- Updated  __IEErrorHandlerRegister to work with or without COM errors being fatal
-	T3.0-1 13/6/2
-	Enhancements
-	- Fixed _IE_Introduction, _IE_Examples generate HTML5
-	- Added check in __IEComErrorUnrecoverable for COM error -2147023174, "RPC server not accessible."
-	- Fixed check in __IEComErrorUnrecoverable for COM error -2147024891, "Access is denied."
-	- Fixed check in __IEComErrorUnrecoverable for COM error  -2147352567, "an exception has occurred."
-	- Fixed __IEIsObjType() not restoring _IEErrorNotify()
-	- Fixed $b_mustUnlock on Error in _IECreate()
-	- Fixed no timeout cheking if error in _IELoadWait()
-	- Fixed HTML5 support in _IEImgClick(), _IEFormImageClick()
-	- Fixed _IEHeadInsertEventScript() COM error return
-	- Updated _IEErrorNotify() default keyword support
-	- Updated rename __IENotify() to __IEConsoleWriteError() and restore calling  @error
-	- Removed __IEInternalErrorHandler() (not used any more)
-	- Updated Function Headers
-	- Updated doc and splitting and checking examples
-	T3.0-0 12/9/3
-	Fixes
-	- Removed _IEErrorHandlerRegister() and all internal calls to it.  Unneeded as COM errors are no longer fatal
-	- Removed code deprecated in V2
-	- Fixed _IELoadWait check for unrecoverable COM errors
-	- Removed Vcard support from _IEPropertyGet (IE removed support in IE7)
-	- Code cleanup with #AutoIt3Wrapper_Au3Check_Parameters=-d -w 1 -w 2 -w 3 -w- 4 -w 5 -w 6
-	New Features
-	- Added "scrollIntoView" to _IEAction
-	Enhancements
-	- Added check in __IEComErrorUnrecoverable for COM error -2147023179, "The interface is unknown."
-	- Added "Trap COM error, report and return" to functions that perform blind method calls (those without return values)
-	===================================================
-#ce
 #EndRegion Header
 #Region Global Variables
 Global $__g_iIELoadWaitTimeout = 300000 ; 5 Minutes
@@ -10552,8 +6918,6 @@ Func _IECreate($sUrl = "about:blank", $iTryAttach = 0, $iVisible = 1, $iWait = 1
 		If IsObj($oResult) Then
 			If $iTakeFocus Then WinActivate(HWnd($oResult.hWnd))
 			Return SetError($_IESTATUS_Success, 1, $oResult)
-		EndIf
-	EndIf
 	Local $iMustUnlock = 0
 	If Not $iVisible And __IELockSetForegroundWindow($LSFW_LOCK) Then $iMustUnlock = 1
 	Local $oObject = ObjCreate("InternetExplorer.Application")
@@ -10561,43 +6925,32 @@ Func _IECreate($sUrl = "about:blank", $iTryAttach = 0, $iVisible = 1, $iWait = 1
 		__IEConsoleWriteError("Error", "_IECreate", "", "Browser Object Creation Failed")
 		If $iMustUnlock Then __IELockSetForegroundWindow($LSFW_UNLOCK)
 		Return SetError($_IESTATUS_GeneralError, 0, 0)
-	EndIf
 	$oObject.visible = $iVisible
 	If $iMustUnlock And Not __IELockSetForegroundWindow($LSFW_UNLOCK) Then __IEConsoleWriteError("Warning", "_IECreate", "", "Foreground Window Unlock Failed!")
 	_IENavigate($oObject, $sUrl, $iWait)
-	Local $iError = @error
 	If Not $iError And StringLeft($sUrl, 6) = "about:" Then
 		Local $oDocument = $oObject.document
 		_IEAction($oDocument, "focus")
-	EndIf
 	Return SetError($iError, 0, $oObject)
 EndFunc   ;==>_IECreate
 Func _IECreateEmbedded()
 	Local $oObject = ObjCreate("Shell.Explorer.2")
-	If Not IsObj($oObject) Then
 		__IEConsoleWriteError("Error", "_IECreateEmbedded", "", "WebBrowser Object Creation Failed")
-		Return SetError($_IESTATUS_GeneralError, 0, 0)
-	EndIf
 	Return SetError($_IESTATUS_Success, 0, $oObject)
 EndFunc   ;==>_IECreateEmbedded
 Func _IENavigate(ByRef $oObject, $sUrl, $iWait = 1)
-	If Not IsObj($oObject) Then
 		__IEConsoleWriteError("Error", "_IENavigate", "$_IESTATUS_InvalidDataType")
 		Return SetError($_IESTATUS_InvalidDataType, 1, 0)
-	EndIf
 	If Not __IEIsObjType($oObject, "documentContainer") Then
 		__IEConsoleWriteError("Error", "_IENavigate", "$_IESTATUS_InvalidObjectType")
 		Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-	EndIf
 	$oObject.navigate($sUrl)
 	If @error Then ; Trap COM error, report and return
 		__IEConsoleWriteError("Error", "_IENavigate", "$_IESTATUS_COMError", @error)
 		Return SetError($_IESTATUS_ComError, @error, 0)
-	EndIf
 	If $iWait Then
 		_IELoadWait($oObject)
 		Return SetError(@error, 0, -1)
-	EndIf
 	Return SetError($_IESTATUS_Success, 0, -1)
 EndFunc   ;==>_IENavigate
 Func _IEAttach($sString, $sMode = "title", $iInstance = 1)
@@ -10606,35 +6959,25 @@ Func _IEAttach($sString, $sMode = "title", $iInstance = 1)
 	If $iInstance < 1 Then
 		__IEConsoleWriteError("Error", "_IEAttach", "$_IESTATUS_InvalidValue", "$iInstance < 1")
 		Return SetError($_IESTATUS_InvalidValue, 3, 0)
-	EndIf
 	If $sMode = "embedded" Or $sMode = "dialogbox" Then
 		Local $iWinTitleMatchMode = Opt("WinTitleMatchMode", $OPT_MATCHANY)
 		If $sMode = "dialogbox" And $iInstance > 1 Then
 			If IsHWnd($sString) Then
 				$iInstance = 1
 				__IEConsoleWriteError("Warning", "_IEAttach", "$_IESTATUS_GeneralError", "$iInstance > 1 invalid with HWnd and DialogBox.  Setting to 1.")
-			Else
 				Local $aWinlist = WinList($sString, "")
 				If $iInstance <= $aWinlist[0][0] Then
 					$sString = $aWinlist[$iInstance][1]
 					$iInstance = 1
-				Else
 					__IEConsoleWriteError("Warning", "_IEAttach", "$_IESTATUS_NoMatch")
 					Opt("WinTitleMatchMode", $iWinTitleMatchMode)
 					Return SetError($_IESTATUS_NoMatch, 1, 0)
-				EndIf
-			EndIf
-		EndIf
 		Local $hControl = ControlGetHandle($sString, "", "[CLASS:Internet Explorer_Server; INSTANCE:" & $iInstance & "]")
 		Local $oResult = __IEControlGetObjFromHWND($hControl)
 		Opt("WinTitleMatchMode", $iWinTitleMatchMode)
-		If IsObj($oResult) Then
 			Return SetError($_IESTATUS_Success, 0, $oResult)
-		Else
 			__IEConsoleWriteError("Warning", "_IEAttach", "$_IESTATUS_NoMatch")
 			Return SetError($_IESTATUS_NoMatch, 1, 0)
-		EndIf
-	EndIf
 	Local $oShell = ObjCreate("Shell.Application")
 	Local $oShellWindows = $oShell.Windows(); collection of all ShellWindows (IE and File Explorer)
 	Local $iTmp = 1
@@ -10651,14 +6994,9 @@ Func _IEAttach($sString, $sMode = "title", $iInstance = 1)
 		If $bIsBrowser Then
 			$sTmp = $oWindow.type ; Is .type a valid property?
 			If @error Then $bIsBrowser = False
-		EndIf
-		If $bIsBrowser Then
 			$sTmp = $oWindow.document.title ; Does object have a .document and .title property?
-			If @error Then $bIsBrowser = False
-		EndIf
 		_IEErrorNotify($iNotifyStatus) ; restore notification status
 		__IEInternalErrorHandlerDeRegister()
-		If $bIsBrowser Then
 			Switch $sMode
 				Case "title"
 					If StringInStr($oWindow.document.title, $sString) > 0 Then
@@ -10666,80 +7004,38 @@ Func _IEAttach($sString, $sMode = "title", $iInstance = 1)
 							Return SetError($_IESTATUS_Success, 0, $oWindow)
 						Else
 							$iTmp += 1
-						EndIf
-					EndIf
 				Case "instance"
 					If $iInstance = $iTmp Then
 						Return SetError($_IESTATUS_Success, 0, $oWindow)
 					Else
 						$iTmp += 1
-					EndIf
 				Case "windowtitle"
 					Local $bFound = False
 					$sTmp = RegRead("HKEY_CURRENT_USER\Software\Microsoft\Internet Explorer\Main\", "Window Title")
-					If Not @error Then
 						If StringInStr($oWindow.document.title & " - " & $sTmp, $sString) Then $bFound = True
-					Else
 						If StringInStr($oWindow.document.title & " - Microsoft Internet Explorer", $sString) Then $bFound = True
 						If StringInStr($oWindow.document.title & " - Windows Internet Explorer", $sString) Then $bFound = True
-					EndIf
 					If $bFound Then
-						If $iInstance = $iTmp Then
-							Return SetError($_IESTATUS_Success, 0, $oWindow)
-						Else
-							$iTmp += 1
-						EndIf
-					EndIf
 				Case "url"
 					If StringInStr($oWindow.LocationURL, $sString) > 0 Then
-						If $iInstance = $iTmp Then
-							Return SetError($_IESTATUS_Success, 0, $oWindow)
-						Else
-							$iTmp += 1
-						EndIf
-					EndIf
 				Case "text"
 					If StringInStr($oWindow.document.body.innerText, $sString) > 0 Then
-						If $iInstance = $iTmp Then
-							Return SetError($_IESTATUS_Success, 0, $oWindow)
-						Else
-							$iTmp += 1
-						EndIf
-					EndIf
 				Case "html"
 					If StringInStr($oWindow.document.body.innerHTML, $sString) > 0 Then
-						If $iInstance = $iTmp Then
-							Return SetError($_IESTATUS_Success, 0, $oWindow)
-						Else
-							$iTmp += 1
-						EndIf
-					EndIf
 				Case "hwnd"
 					If $iInstance > 1 Then
 						$iInstance = 1
 						__IEConsoleWriteError("Warning", "_IEAttach", "$_IESTATUS_GeneralError", "$iInstance > 1 invalid with HWnd.  Setting to 1.")
-					EndIf
 					If _IEPropertyGet($oWindow, "hwnd") = $sString Then
-						Return SetError($_IESTATUS_Success, 0, $oWindow)
-					EndIf
-				Case Else
 					__IEConsoleWriteError("Error", "_IEAttach", "$_IESTATUS_InvalidValue", "Invalid Mode Specified")
 					Return SetError($_IESTATUS_InvalidValue, 2, 0)
-			EndSwitch
-		EndIf
-	Next
 	__IEConsoleWriteError("Warning", "_IEAttach", "$_IESTATUS_NoMatch")
 	Return SetError($_IESTATUS_NoMatch, 1, 0)
 EndFunc   ;==>_IEAttach
 Func _IELoadWait(ByRef $oObject, $iDelay = 0, $iTimeout = -1)
-	If Not IsObj($oObject) Then
 		__IEConsoleWriteError("Error", "_IELoadWait", "$_IESTATUS_InvalidDataType")
-		Return SetError($_IESTATUS_InvalidDataType, 1, 0)
-	EndIf
 	If Not __IEIsObjType($oObject, "browserdom") Then
 		__IEConsoleWriteError("Error", "_IELoadWait", "$_IESTATUS_InvalidObjectType", ObjName($oObject))
-		Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-	EndIf
 	Local $oTemp, $bAbort = False, $iErrorStatusCode = $_IESTATUS_Success
 	Local $bStatus = __IEInternalErrorHandlerRegister()
 	If Not $bStatus Then __IEConsoleWriteError("Warning", "_IELoadWait", _
@@ -10747,121 +7043,31 @@ Func _IELoadWait(ByRef $oObject, $iDelay = 0, $iTimeout = -1)
 			"Use _IEErrorHandlerRegister() to register a user error handler")
 	Local $iNotifyStatus = _IEErrorNotify() ; save current error notify status
 	_IEErrorNotify(False)
-	Sleep($iDelay)
 	Local $iError
 	Local $hIELoadWaitTimer = TimerInit()
 	If $iTimeout = -1 Then $iTimeout = $__g_iIELoadWaitTimeout
 	Select
 		Case __IEIsObjType($oObject, "browser", False); Internet Explorer
 			While Not (String($oObject.readyState) = "complete" Or $oObject.readyState = 4 Or $bAbort)
-				If @error Then
 					$iError = @error
 					If __IEComErrorUnrecoverable($iError) Then
 						$iErrorStatusCode = __IEComErrorUnrecoverable($iError)
 						$bAbort = True
-					EndIf
 				ElseIf (TimerDiff($hIELoadWaitTimer) > $iTimeout) Then
 					$iErrorStatusCode = $_IESTATUS_LoadWaitTimeout
 					$bAbort = True
-				EndIf
 				Sleep(100)
 			WEnd
 			While Not (String($oObject.document.readyState) = "complete" Or $oObject.document.readyState = 4 Or $bAbort)
-				If @error Then
-					$iError = @error
-					If __IEComErrorUnrecoverable($iError) Then
-						$iErrorStatusCode = __IEComErrorUnrecoverable($iError)
-						$bAbort = True
-					EndIf
-				ElseIf (TimerDiff($hIELoadWaitTimer) > $iTimeout) Then
-					$iErrorStatusCode = $_IESTATUS_LoadWaitTimeout
-					$bAbort = True
-				EndIf
-				Sleep(100)
-			WEnd
 		Case __IEIsObjType($oObject, "window", False) ; Window, Frame, iFrame
-			While Not (String($oObject.document.readyState) = "complete" Or $oObject.document.readyState = 4 Or $bAbort)
-				If @error Then
-					$iError = @error
-					If __IEComErrorUnrecoverable($iError) Then
-						$iErrorStatusCode = __IEComErrorUnrecoverable($iError)
-						$bAbort = True
-					EndIf
-				ElseIf (TimerDiff($hIELoadWaitTimer) > $iTimeout) Then
-					$iErrorStatusCode = $_IESTATUS_LoadWaitTimeout
-					$bAbort = True
-				EndIf
-				Sleep(100)
-			WEnd
 			While Not (String($oObject.top.document.readyState) = "complete" Or $oObject.top.document.readyState = 4 Or $bAbort)
-				If @error Then
-					$iError = @error
-					If __IEComErrorUnrecoverable($iError) Then
-						$iErrorStatusCode = __IEComErrorUnrecoverable($iError)
-						$bAbort = True
-					EndIf
-				ElseIf (TimerDiff($hIELoadWaitTimer) > $iTimeout) Then
-					$iErrorStatusCode = $_IESTATUS_LoadWaitTimeout
-					$bAbort = True
-				EndIf
-				Sleep(100)
-			WEnd
 		Case __IEIsObjType($oObject, "document", False) ; Document
 			$oTemp = $oObject.parentWindow
 			While Not (String($oTemp.document.readyState) = "complete" Or $oTemp.document.readyState = 4 Or $bAbort)
-				If @error Then
-					$iError = @error
-					If __IEComErrorUnrecoverable($iError) Then
-						$iErrorStatusCode = __IEComErrorUnrecoverable($iError)
-						$bAbort = True
-					EndIf
-				ElseIf (TimerDiff($hIELoadWaitTimer) > $iTimeout) Then
-					$iErrorStatusCode = $_IESTATUS_LoadWaitTimeout
-					$bAbort = True
-				EndIf
-				Sleep(100)
-			WEnd
 			While Not (String($oTemp.top.document.readyState) = "complete" Or $oTemp.top.document.readyState = 4 Or $bAbort)
-				If @error Then
-					$iError = @error
-					If __IEComErrorUnrecoverable($iError) Then
-						$iErrorStatusCode = __IEComErrorUnrecoverable($iError)
-						$bAbort = True
-					EndIf
-				ElseIf (TimerDiff($hIELoadWaitTimer) > $iTimeout) Then
-					$iErrorStatusCode = $_IESTATUS_LoadWaitTimeout
-					$bAbort = True
-				EndIf
-				Sleep(100)
-			WEnd
 		Case Else ; this should work with any other DOM object
 			$oTemp = $oObject.document.parentWindow
-			While Not (String($oTemp.document.readyState) = "complete" Or $oTemp.document.readyState = 4 Or $bAbort)
-				If @error Then
-					$iError = @error
-					If __IEComErrorUnrecoverable($iError) Then
-						$iErrorStatusCode = __IEComErrorUnrecoverable($iError)
-						$bAbort = True
-					EndIf
-				ElseIf (TimerDiff($hIELoadWaitTimer) > $iTimeout) Then
-					$iErrorStatusCode = $_IESTATUS_LoadWaitTimeout
-					$bAbort = True
-				EndIf
-				Sleep(100)
-			WEnd
 			While Not (String($oTemp.top.document.readyState) = "complete" Or $oObject.top.document.readyState = 4 Or $bAbort)
-				If @error Then
-					$iError = @error
-					If __IEComErrorUnrecoverable($iError) Then
-						$iErrorStatusCode = __IEComErrorUnrecoverable($iError)
-						$bAbort = True
-					EndIf
-				ElseIf (TimerDiff($hIELoadWaitTimer) > $iTimeout) Then
-					$iErrorStatusCode = $_IESTATUS_LoadWaitTimeout
-					$bAbort = True
-				EndIf
-				Sleep(100)
-			WEnd
 	EndSelect
 	_IEErrorNotify($iNotifyStatus) ; restore notification status
 	__IEInternalErrorHandlerDeRegister()
@@ -10879,97 +7085,61 @@ Func _IELoadWait(ByRef $oObject, $iDelay = 0, $iTimeout = -1)
 			__IEConsoleWriteError("Error", "_IELoadWait", "$_IESTATUS_ClientDisconnected", _
 					$iError & ", Browser has been deleted prior to operation.")
 			Return SetError($_IESTATUS_ClientDisconnected, 0, 0)
-		Case Else
 			__IEConsoleWriteError("Error", "_IELoadWait", "$_IESTATUS_GeneralError", "Invalid Error Status - Notify IE.au3 developer")
 			Return SetError($_IESTATUS_GeneralError, 0, 0)
-	EndSwitch
 EndFunc   ;==>_IELoadWait
 Func _IELoadWaitTimeout($iTimeout = -1)
 	If $iTimeout = -1 Then
 		Return SetError($_IESTATUS_Success, 0, $__g_iIELoadWaitTimeout)
-	Else
 		$__g_iIELoadWaitTimeout = $iTimeout
 		Return SetError($_IESTATUS_Success, 0, 1)
-	EndIf
 EndFunc   ;==>_IELoadWaitTimeout
 #EndRegion Core functions
 #Region Frame Functions
 Func _IEIsFrameSet(ByRef $oObject)
-	If Not IsObj($oObject) Then
 		__IEConsoleWriteError("Error", "_IEIsFrameSet", "$_IESTATUS_InvalidDataType")
-		Return SetError($_IESTATUS_InvalidDataType, 1, 0)
-	EndIf
 	If String($oObject.document.body.tagName) = "frameset" Then
-		Return SetError($_IESTATUS_Success, 0, 1)
-	Else
 		If @error Then ; Trap COM error, report and return
 			__IEConsoleWriteError("Error", "_IEIsFrameSet", "$_IESTATUS_COMError", @error)
 			Return SetError($_IESTATUS_ComError, @error, 0)
-		EndIf
 		Return SetError($_IESTATUS_Success, 0, 0)
-	EndIf
 EndFunc   ;==>_IEIsFrameSet
 Func _IEFrameGetCollection(ByRef $oObject, $iIndex = -1)
-	If Not IsObj($oObject) Then
 		__IEConsoleWriteError("Error", "_IEFrameGetCollection", "$_IESTATUS_InvalidDataType")
-		Return SetError($_IESTATUS_InvalidDataType, 1, 0)
-	EndIf
 	$iIndex = Number($iIndex)
-	Select
 		Case $iIndex = -1
 			Return SetError($_IESTATUS_Success, $oObject.document.parentwindow.frames.length, _
 					$oObject.document.parentwindow.frames)
 		Case $iIndex > -1 And $iIndex < $oObject.document.parentwindow.frames.length
-			Return SetError($_IESTATUS_Success, $oObject.document.parentwindow.frames.length, _
 					$oObject.document.parentwindow.frames.item($iIndex))
 		Case $iIndex < -1
 			__IEConsoleWriteError("Error", "_IEFrameGetCollection", "$_IESTATUS_InvalidValue", "$iIndex < -1")
 			Return SetError($_IESTATUS_InvalidValue, 2, 0)
-		Case Else
 			__IEConsoleWriteError("Warning", "_IEFrameGetCollection", "$_IESTATUS_NoMatch")
 			Return SetError($_IESTATUS_NoMatch, 2, 0)
-	EndSelect
 EndFunc   ;==>_IEFrameGetCollection
 Func _IEFrameGetObjByName(ByRef $oObject, $sName)
-	If Not IsObj($oObject) Then
 		__IEConsoleWriteError("Error", "_IEFrameGetObjByName", "$_IESTATUS_InvalidDataType")
-		Return SetError($_IESTATUS_InvalidDataType, 1, 0)
-	EndIf
 	Local $oTemp, $oFrames
-	If Not __IEIsObjType($oObject, "browserdom") Then
 		__IEConsoleWriteError("Error", "_IEFrameGetObjByName", "$_IESTATUS_InvalidObjectType")
-		Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-	EndIf
 	If __IEIsObjType($oObject, "document") Then
 		$oTemp = $oObject.parentWindow
-	Else
 		$oTemp = $oObject.document.parentWindow
-	EndIf
 	If _IEIsFrameSet($oTemp) Then
 		$oFrames = _IETagNameGetCollection($oTemp, "frame")
-	Else
 		$oFrames = _IETagNameGetCollection($oTemp, "iframe")
-	EndIf
 	If $oFrames.length Then
 		For $oFrame In $oFrames
 			If String($oFrame.name) = $sName Then Return SetError($_IESTATUS_Success, 0, $oTemp.frames($sName))
-		Next
 		__IEConsoleWriteError("Warning", "_IEFrameGetObjByName", "$_IESTATUS_NoMatch", "No frames matching name")
 		Return SetError($_IESTATUS_NoMatch, 2, 0)
-	Else
 		__IEConsoleWriteError("Warning", "_IEFrameGetObjByName", "$_IESTATUS_NoMatch", "No Frames found")
-		Return SetError($_IESTATUS_NoMatch, 2, 0)
-	EndIf
 EndFunc   ;==>_IEFrameGetObjByName
 #EndRegion Frame Functions
 #Region Link functions
 Func _IELinkClickByText(ByRef $oObject, $sLinkText, $iIndex = 0, $iWait = 1)
-	If Not IsObj($oObject) Then
 		__IEConsoleWriteError("Error", "_IELinkClickByText", "$_IESTATUS_InvalidDataType")
-		Return SetError($_IESTATUS_InvalidDataType, 1, 0)
-	EndIf
 	Local $iFound = 0, $sModeLinktext, $oLinks = $oObject.document.links
-	$iIndex = Number($iIndex)
 	For $oLink In $oLinks
 		$sModeLinktext = String($oLink.outerText)
 		If $sModeLinktext = $sLinkText Then
@@ -10978,74 +7148,41 @@ Func _IELinkClickByText(ByRef $oObject, $sLinkText, $iIndex = 0, $iWait = 1)
 				If @error Then ; Trap COM error, report and return
 					__IEConsoleWriteError("Error", "_IELinkClickByText", "$_IESTATUS_COMError", @error)
 					Return SetError($_IESTATUS_ComError, @error, 0)
-				EndIf
 				If $iWait Then
 					_IELoadWait($oObject)
 					Return SetError(@error, 0, -1)
-				EndIf
 				Return SetError($_IESTATUS_Success, 0, -1)
-			EndIf
 			$iFound = $iFound + 1
-		EndIf
-	Next
 	__IEConsoleWriteError("Warning", "_IELinkClickByText", "$_IESTATUS_NoMatch")
 	Return SetError($_IESTATUS_NoMatch, 0, 0) ; Could be caused by parameter 2, 3 or both
 EndFunc   ;==>_IELinkClickByText
 Func _IELinkClickByIndex(ByRef $oObject, $iIndex, $iWait = 1)
-	If Not IsObj($oObject) Then
 		__IEConsoleWriteError("Error", "_IELinkClickByIndex", "$_IESTATUS_InvalidDataType")
-		Return SetError($_IESTATUS_InvalidDataType, 1, 0)
-	EndIf
 	Local $oLinks = $oObject.document.links, $oLink
-	$iIndex = Number($iIndex)
 	If ($iIndex >= 0) And ($iIndex <= $oLinks.length - 1) Then
 		$oLink = $oLinks($iIndex)
 		$oLink.click()
-		If @error Then ; Trap COM error, report and return
 			__IEConsoleWriteError("Error", "_IELinkClickByIndex", "$_IESTATUS_COMError", @error)
-			Return SetError($_IESTATUS_ComError, @error, 0)
-		EndIf
 		If $iWait Then
 			_IELoadWait($oObject)
 			Return SetError(@error, 0, -1)
-		EndIf
 		Return SetError($_IESTATUS_Success, 0, -1)
-	Else
 		__IEConsoleWriteError("Warning", "_IELinkClickByIndex", "$_IESTATUS_NoMatch")
-		Return SetError($_IESTATUS_NoMatch, 2, 0)
-	EndIf
 EndFunc   ;==>_IELinkClickByIndex
 Func _IELinkGetCollection(ByRef $oObject, $iIndex = -1)
-	If Not IsObj($oObject) Then
 		__IEConsoleWriteError("Error", "_IELinkGetCollection", "$_IESTATUS_InvalidDataType")
-		Return SetError($_IESTATUS_InvalidDataType, 1, 0)
-	EndIf
-	$iIndex = Number($iIndex)
-	Select
-		Case $iIndex = -1
 			Return SetError($_IESTATUS_Success, $oObject.document.links.length, _
 					$oObject.document.links)
 		Case $iIndex > -1 And $iIndex < $oObject.document.links.length
-			Return SetError($_IESTATUS_Success, $oObject.document.links.length, _
 					$oObject.document.links.item($iIndex))
-		Case $iIndex < -1
 			__IEConsoleWriteError("Error", "_IELinkGetCollection", "$_IESTATUS_InvalidValue")
-			Return SetError($_IESTATUS_InvalidValue, 2, 0)
-		Case Else
 			__IEConsoleWriteError("Warning", "_IELinkGetCollection", "$_IESTATUS_NoMatch")
-			Return SetError($_IESTATUS_NoMatch, 2, 0)
-	EndSelect
 EndFunc   ;==>_IELinkGetCollection
 #EndRegion Link functions
 #Region Image functions
 Func _IEImgClick(ByRef $oObject, $sLinkText, $sMode = "src", $iIndex = 0, $iWait = 1)
-	If Not IsObj($oObject) Then
 		__IEConsoleWriteError("Error", "_IEImgClick", "$_IESTATUS_InvalidDataType")
-		Return SetError($_IESTATUS_InvalidDataType, 1, 0)
-	EndIf
 	Local $sModeLinktext, $iFound = 0, $oImgs = $oObject.document.images
-	$sMode = StringLower($sMode)
-	$iIndex = Number($iIndex)
 	For $oImg In $oImgs
 		Select
 			Case $sMode = "alt"
@@ -11057,199 +7194,95 @@ Func _IEImgClick(ByRef $oObject, $sLinkText, $sMode = "src", $iIndex = 0, $iWait
 				$sModeLinktext = $oImg.id
 			Case $sMode = "src"
 				$sModeLinktext = $oImg.src
-			Case Else
 				__IEConsoleWriteError("Error", "_IEImgClick", "$_IESTATUS_InvalidValue", "Invalid mode: " & $sMode)
 				Return SetError($_IESTATUS_InvalidValue, 3, 0)
 		EndSelect
 		If StringInStr($sModeLinktext, $sLinkText) Then
-			If ($iFound = $iIndex) Then
 				$oImg.click()
-				If @error Then ; Trap COM error, report and return
 					__IEConsoleWriteError("Error", "_IEImgClick", "$_IESTATUS_COMError", @error)
-					Return SetError($_IESTATUS_ComError, @error, 0)
-				EndIf
-				If $iWait Then
-					_IELoadWait($oObject)
-					Return SetError(@error, 0, -1)
-				EndIf
-				Return SetError($_IESTATUS_Success, 0, -1)
-			EndIf
-			$iFound = $iFound + 1
-		EndIf
-	Next
 	__IEConsoleWriteError("Warning", "_IEImgClick", "$_IESTATUS_NoMatch")
 	Return SetError($_IESTATUS_NoMatch, 0, 0) ; Could be caused by parameter 2, 4 or both
 EndFunc   ;==>_IEImgClick
 Func _IEImgGetCollection(ByRef $oObject, $iIndex = -1)
-	If Not IsObj($oObject) Then
 		__IEConsoleWriteError("Error", "_IEImgGetCollection", "$_IESTATUS_InvalidDataType")
-		Return SetError($_IESTATUS_InvalidDataType, 1, 0)
-	EndIf
 	Local $oTemp = _IEDocGetObj($oObject)
-	$iIndex = Number($iIndex)
-	Select
-		Case $iIndex = -1
 			Return SetError($_IESTATUS_Success, $oTemp.images.length, $oTemp.images)
 		Case $iIndex > -1 And $iIndex < $oTemp.images.length
 			Return SetError($_IESTATUS_Success, $oTemp.images.length, $oTemp.images.item($iIndex))
-		Case $iIndex < -1
 			__IEConsoleWriteError("Error", "_IEImgGetCollection", "$_IESTATUS_InvalidValue", "$iIndex < -1")
-			Return SetError($_IESTATUS_InvalidValue, 2, 0)
-		Case Else
 			__IEConsoleWriteError("Warning", "_IEImgGetCollection", "$_IESTATUS_NoMatch")
-			Return SetError($_IESTATUS_NoMatch, 1, 0)
-	EndSelect
 EndFunc   ;==>_IEImgGetCollection
 #EndRegion Image functions
 #Region Form functions
 Func _IEFormGetCollection(ByRef $oObject, $iIndex = -1)
-	If Not IsObj($oObject) Then
 		__IEConsoleWriteError("Error", "_IEFormGetCollection", "$_IESTATUS_InvalidDataType")
-		Return SetError($_IESTATUS_InvalidDataType, 1, 0)
-	EndIf
-	Local $oTemp = _IEDocGetObj($oObject)
-	$iIndex = Number($iIndex)
-	Select
-		Case $iIndex = -1
 			Return SetError($_IESTATUS_Success, $oTemp.forms.length, $oTemp.forms)
 		Case $iIndex > -1 And $iIndex < $oTemp.forms.length
 			Return SetError($_IESTATUS_Success, $oTemp.forms.length, $oTemp.forms.item($iIndex))
-		Case $iIndex < -1
 			__IEConsoleWriteError("Error", "_IEFormGetCollection", "$_IESTATUS_InvalidValue", "$iIndex < -1")
-			Return SetError($_IESTATUS_InvalidValue, 2, 0)
-		Case Else
 			__IEConsoleWriteError("Warning", "_IEFormGetCollection", "$_IESTATUS_NoMatch")
-			Return SetError($_IESTATUS_NoMatch, 1, 0)
-	EndSelect
 EndFunc   ;==>_IEFormGetCollection
 Func _IEFormGetObjByName(ByRef $oObject, $sName, $iIndex = 0)
-	If Not IsObj($oObject) Then
 		__IEConsoleWriteError("Error", "_IEFormGetObjByName", "$_IESTATUS_InvalidDataType")
-		Return SetError($_IESTATUS_InvalidDataType, 1, 0)
-	EndIf
 	Local $iLength = 0
 	Local $oCol = $oObject.document.forms.item($sName)
 	If IsObj($oCol) Then
 		If __IEIsObjType($oCol, "elementcollection") Then
 			$iLength = $oCol.length
-		Else
 			$iLength = 1
-		EndIf
-	EndIf
-	$iIndex = Number($iIndex)
 	If $iIndex = -1 Then
 		Return SetError($_IESTATUS_Success, $iLength, $oObject.document.forms.item($sName))
-	Else
 		If IsObj($oObject.document.forms.item($sName, $iIndex)) Then
 			Return SetError($_IESTATUS_Success, $iLength, $oObject.document.forms.item($sName, $iIndex))
-		Else
 			__IEConsoleWriteError("Warning", "_IEFormGetObjByName", "$_IESTATUS_NoMatch")
 			Return SetError($_IESTATUS_NoMatch, 0, 0) ; Could be caused by parameter 2, 3 or both
-		EndIf
-	EndIf
 EndFunc   ;==>_IEFormGetObjByName
 Func _IEFormElementGetCollection(ByRef $oObject, $iIndex = -1)
-	If Not IsObj($oObject) Then
 		__IEConsoleWriteError("Error", "_IEFormElementGetCollection", "$_IESTATUS_InvalidDataType")
-		Return SetError($_IESTATUS_InvalidDataType, 1, 0)
-	EndIf
 	If Not __IEIsObjType($oObject, "form") Then
 		__IEConsoleWriteError("Error", "_IEFormElementGetCollection", "$_IESTATUS_InvalidObjectType")
-		Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-	EndIf
-	$iIndex = Number($iIndex)
-	Select
-		Case $iIndex = -1
 			Return SetError($_IESTATUS_Success, $oObject.elements.length, $oObject.elements)
 		Case $iIndex > -1 And $iIndex < $oObject.elements.length
 			Return SetError($_IESTATUS_Success, $oObject.elements.length, $oObject.elements.item($iIndex))
-		Case $iIndex < -1
 			__IEConsoleWriteError("Error", "_IEFormElementGetCollection", "$_IESTATUS_InvalidValue", "$iIndex < -1")
-			Return SetError($_IESTATUS_InvalidValue, 2, 0)
-		Case Else
-			Return SetError($_IESTATUS_NoMatch, 1, 0)
-	EndSelect
 EndFunc   ;==>_IEFormElementGetCollection
 Func _IEFormElementGetObjByName(ByRef $oObject, $sName, $iIndex = 0)
-	If Not IsObj($oObject) Then
 		__IEConsoleWriteError("Error", "_IEFormElementGetObjByName", "$_IESTATUS_InvalidDataType")
-		Return SetError($_IESTATUS_InvalidDataType, 1, 0)
-	EndIf
-	If Not __IEIsObjType($oObject, "form") Then
 		__IEConsoleWriteError("Error", "_IEFormElementGetObjByName", "$_IESTATUS_InvalidObjectType")
-		Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-	EndIf
-	Local $iLength = 0
 	Local $oCol = $oObject.elements.item($sName)
-	If IsObj($oCol) Then
-		If __IEIsObjType($oCol, "elementcollection") Then
-			$iLength = $oCol.length
-		Else
-			$iLength = 1
-		EndIf
-	EndIf
-	$iIndex = Number($iIndex)
-	If $iIndex = -1 Then
 		Return SetError($_IESTATUS_Success, $iLength, $oObject.elements.item($sName))
-	Else
 		If IsObj($oObject.elements.item($sName, $iIndex)) Then
 			Return SetError($_IESTATUS_Success, $iLength, $oObject.elements.item($sName, $iIndex))
-		Else
 			__IEConsoleWriteError("Warning", "_IEFormElementGetObjByName", "$_IESTATUS_NoMatch")
-			Return SetError($_IESTATUS_NoMatch, 0, 0) ; Could be caused by parameter 2, 3 or both
-		EndIf
-	EndIf
 EndFunc   ;==>_IEFormElementGetObjByName
 Func _IEFormElementGetValue(ByRef $oObject)
-	If Not IsObj($oObject) Then
 		__IEConsoleWriteError("Error", "_IEFormElementGetValue", "$_IESTATUS_InvalidDataType")
-		Return SetError($_IESTATUS_InvalidDataType, 1, 0)
-	EndIf
 	If Not __IEIsObjType($oObject, "forminputelement") Then
 		__IEConsoleWriteError("Error", "_IEFormElementGetValue", "$_IESTATUS_InvalidObjectType")
-		Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-	EndIf
 	Local $sReturn = String($oObject.value)
-	If @error Then ; Trap COM error, report and return
 		__IEConsoleWriteError("Error", "_IEFormElementGetValue", "$_IESTATUS_COMError", @error)
-		Return SetError($_IESTATUS_ComError, @error, 0)
-	EndIf
 	SetError($_IESTATUS_Success)
 	Return $sReturn
 EndFunc   ;==>_IEFormElementGetValue
 Func _IEFormElementSetValue(ByRef $oObject, $sNewValue, $iFireEvent = 1)
-	If Not IsObj($oObject) Then
 		__IEConsoleWriteError("Error", "_IEFormElementSetValue", "$_IESTATUS_InvalidDataType")
-		Return SetError($_IESTATUS_InvalidDataType, 1, 0)
-	EndIf
-	If Not __IEIsObjType($oObject, "forminputelement") Then
 		__IEConsoleWriteError("Error", "_IEFormElementSetValue", "$_IESTATUS_InvalidObjectType")
-		Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-	EndIf
 	If String($oObject.type) = "file" Then
 		__IEConsoleWriteError("Error", "_IEFormElementSetValue", "$_IESTATUS_InvalidObjectType", "Browser security prevents SetValue of TYPE=FILE")
-		Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-	EndIf
 	$oObject.value = $sNewValue
-	If @error Then ; Trap COM error, report and return
 		__IEConsoleWriteError("Error", "_IEFormElementSetValue", "$_IESTATUS_COMError", @error)
-		Return SetError($_IESTATUS_ComError, @error, 0)
-	EndIf
 	If $iFireEvent Then
 		$oObject.fireEvent("OnChange")
 		$oObject.fireEvent("OnClick")
-	EndIf
 	Return SetError($_IESTATUS_Success, 0, 1)
 EndFunc   ;==>_IEFormElementSetValue
 Func _IEFormElementOptionSelect(ByRef $oObject, $sString, $iSelect = 1, $sMode = "byValue", $iFireEvent = 1)
     If Not IsObj($oObject) Then
         __IEConsoleWriteError("Error", "_IEFormElementOptionSelect", "$_IESTATUS_InvalidDataType")
         Return SetError($_IESTATUS_InvalidDataType, 1, 0)
-    EndIf
     If Not __IEIsObjType($oObject, "formselectelement") Then
         __IEConsoleWriteError("Error", "_IEFormElementOptionSelect", "$_IESTATUS_InvalidObjectType")
         Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-    EndIf
     Local $oItem, $oItems = $oObject.options, $iNumItems = $oObject.options.length, $bIsMultiple = $oObject.multiple
     Switch $sMode
         Case "byValue"
@@ -11270,68 +7303,25 @@ Func _IEFormElementOptionSelect(ByRef $oObject, $sString, $iSelect = 1, $sMode =
                                     $oObject.fireEvent("onChange")
                                     $oObject.fireEvent("OnClick")
                                 EndIf
-                            EndIf
                             Return SetError($_IESTATUS_Success, 0, 1)
                         Case 1
                             If Not $oItem.selected Then
                                 $oItem.selected = True
-                                If $iFireEvent Then
-                                    $oObject.fireEvent("onChange")
-                                    $oObject.fireEvent("OnClick")
-                                EndIf
-                            EndIf
-                            Return SetError($_IESTATUS_Success, 0, 1)
                         Case Else
                             __IEConsoleWriteError("Error", "_IEFormElementOptionSelect", "$_IESTATUS_InvalidValue", "Invalid $iSelect value")
                             Return SetError($_IESTATUS_InvalidValue, 3, 0)
                     EndSwitch
-                EndIf
             Next
             __IEConsoleWriteError("Warning", "_IEFormElementOptionSelect", "$_IESTATUS_NoMatch", "Value not matched")
             Return SetError($_IESTATUS_NoMatch, 2, 0)
         Case "byText"
-            For $oItem In $oItems
                 If String($oItem.text) = $sString Then
-                    Switch $iSelect
-                        Case -1
-                            Return SetError($_IESTATUS_Success, 0, $oItem.selected)
-                        Case 0
-                            If Not $bIsMultiple Then
-                                __IEConsoleWriteError("Error", "_IEFormElementOptionSelect", "$_IESTATUS_InvalidValue", _
-                                        "$iSelect=0 only valid for type=select multiple")
-                                Return SetError($_IESTATUS_InvalidValue, 3)
-                            EndIf
-                            If $oItem.selected Then
-                                $oItem.selected = False
-                                If $iFireEvent Then
-                                    $oObject.fireEvent("onChange")
-                                    $oObject.fireEvent("OnClick")
-                                EndIf
-                            EndIf
-                            Return SetError($_IESTATUS_Success, 0, 1)
-                        Case 1
-                            If Not $oItem.selected Then
-                                $oItem.selected = True
-                                If $iFireEvent Then
-                                    $oObject.fireEvent("onChange")
-                                    $oObject.fireEvent("OnClick")
-                                EndIf
-                            EndIf
-                            Return SetError($_IESTATUS_Success, 0, 1)
-                        Case Else
-                            __IEConsoleWriteError("Error", "_IEFormElementOptionSelect", "$_IESTATUS_InvalidValue", "Invalid $iSelect value")
-                            Return SetError($_IESTATUS_InvalidValue, 3, 0)
-                    EndSwitch
-                EndIf
-            Next
             __IEConsoleWriteError("Warning", "_IEFormElementOptionSelect", "$_IESTATUS_NoMatch", "Text not matched")
-            Return SetError($_IESTATUS_NoMatch, 2, 0)
         Case "byIndex"
             Local $iIndex = Number($sString)
             If $iIndex < 0 Or $iIndex >= $iNumItems Then
                 __IEConsoleWriteError("Error", "_IEFormElementOptionSelect", "$_IESTATUS_InvalidValue", "Invalid index value, " & $iIndex)
                 Return SetError($_IESTATUS_InvalidValue, 2, 0)
-            EndIf
             $oItem = $oItems.item($iIndex)
             Switch $iSelect
                 Case -1
@@ -11348,17 +7338,10 @@ Func _IEFormElementOptionSelect(ByRef $oObject, $sString, $iSelect = 1, $sMode =
                             $oObject.fireEvent("onChange")
                             $oObject.fireEvent("OnClick")
                         EndIf
-                    EndIf
                     Return SetError($_IESTATUS_Success, 0, 1)
                 Case 1
                     If Not $oItem.selected Then
                         $oItems.item($iIndex).selected = True
-                        If $iFireEvent Then
-                            $oObject.fireEvent("onChange")
-                            $oObject.fireEvent("OnClick")
-                        EndIf
-                    EndIf
-                    Return SetError($_IESTATUS_Success, 0, 1)
                 Case Else
                     __IEConsoleWriteError("Error", "_IEFormElementOptionSelect", "$_IESTATUS_InvalidValue", "Invalid $iSelect value")
                     Return SetError($_IESTATUS_InvalidValue, 3, 0)
@@ -11369,179 +7352,63 @@ Func _IEFormElementOptionSelect(ByRef $oObject, $sString, $iSelect = 1, $sMode =
     EndSwitch
 EndFunc   ;==>_IEFormElementOptionSelect
 Func _IEFormElementCheckBoxSelect(ByRef $oObject, $sString, $sName = "", $iSelect = 1, $sMode = "byValue", $iFireEvent = 1)
-	If Not IsObj($oObject) Then
 		__IEConsoleWriteError("Error", "_IEFormElementCheckBoxSelect", "$_IESTATUS_InvalidDataType")
-		Return SetError($_IESTATUS_InvalidDataType, 1, 0)
-	EndIf
-	If Not __IEIsObjType($oObject, "form") Then
 		__IEConsoleWriteError("Error", "_IEFormElementCheckBoxSelect", "$_IESTATUS_InvalidObjectType")
-		Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-	EndIf
 	$sString = String($sString)
 	$sName = String($sName)
 	Local $oItems
-	If $sName = "" Then
 		$oItems = _IETagNameGetCollection($oObject, "input")
-	Else
 		$oItems = Execute("$oObject.elements('" & $sName & "')")
-	EndIf
 	If Not IsObj($oItems) Then
 		__IEConsoleWriteError("Warning", "_IEFormElementCheckBoxSelect", "$_IESTATUS_NoMatch")
 		Return SetError($_IESTATUS_NoMatch, 3, 0)
-	EndIf
 	Local $oItem, $bFound = False
 	Switch $sMode
 		Case "byValue"
 			If __IEIsObjType($oItems, "forminputelement") Then
 				$oItem = $oItems
 				If String($oItem.type) = "checkbox" And String($oItem.value) = $sString Then $bFound = True
-			Else
 				For $oItem In $oItems
 					If String($oItem.type) = "checkbox" And String($oItem.value) = $sString Then
 						$bFound = True
-						ExitLoop
-					EndIf
-				Next
-			EndIf
 		Case "byIndex"
-			If __IEIsObjType($oItems, "forminputelement") Then
-				$oItem = $oItems
 				If String($oItem.type) = "checkbox" And Number($sString) = 0 Then $bFound = True
-			Else
 				Local $iCount = 0
-				For $oItem In $oItems
 					If String($oItem.type) = "checkbox" And Number($sString) = $iCount Then
-						$bFound = True
-						ExitLoop
-					Else
 						If String($oItem.type) = "checkbox" Then $iCount += 1
-					EndIf
-				Next
-			EndIf
-		Case Else
 			__IEConsoleWriteError("Error", "_IEFormElementCheckBoxSelect", "$_IESTATUS_InvalidValue", "Invalid Mode")
 			Return SetError($_IESTATUS_InvalidValue, 5, 0)
-	EndSwitch
 	If Not $bFound Then
-		__IEConsoleWriteError("Warning", "_IEFormElementCheckBoxSelect", "$_IESTATUS_NoMatch")
-		Return SetError($_IESTATUS_NoMatch, 2, 0)
-	EndIf
 	Switch $iSelect
-		Case -1
 			Return SetError($_IESTATUS_Success, 0, $oItem.checked)
-		Case 0
 			If $oItem.checked Then
 				$oItem.checked = False
 				If $iFireEvent Then
 					$oItem.fireEvent("onChange")
 					$oItem.fireEvent("OnClick")
-				EndIf
-			EndIf
-			Return SetError($_IESTATUS_Success, 0, 1)
-		Case 1
 			If Not $oItem.checked Then
 				$oItem.checked = True
-				If $iFireEvent Then
-					$oItem.fireEvent("onChange")
-					$oItem.fireEvent("OnClick")
-				EndIf
-			EndIf
-			Return SetError($_IESTATUS_Success, 0, 1)
-		Case Else
 			__IEConsoleWriteError("Error", "_IEFormElementCheckBoxSelect", "$_IESTATUS_InvalidValue", "Invalid $iSelect value")
 			Return SetError($_IESTATUS_InvalidValue, 3, 0)
-	EndSwitch
 EndFunc   ;==>_IEFormElementCheckBoxSelect
 Func _IEFormElementRadioSelect(ByRef $oObject, $sString, $sName, $iSelect = 1, $sMode = "byValue", $iFireEvent = 1)
-	If Not IsObj($oObject) Then
 		__IEConsoleWriteError("Error", "_IEFormElementRadioSelect", "$_IESTATUS_InvalidDataType")
-		Return SetError($_IESTATUS_InvalidDataType, 1, 0)
-	EndIf
-	If Not __IEIsObjType($oObject, "form") Then
 		__IEConsoleWriteError("Error", "_IEFormElementRadioSelect", "$_IESTATUS_InvalidObjectType")
-		Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-	EndIf
-	$sString = String($sString)
-	$sName = String($sName)
 	Local $oItems = Execute("$oObject.elements('" & $sName & "')")
-	If Not IsObj($oItems) Then
 		__IEConsoleWriteError("Warning", "_IEFormElementRadioSelect", "$_IESTATUS_NoMatch")
-		Return SetError($_IESTATUS_NoMatch, 3, 0)
-	EndIf
-	Local $oItem, $bFound = False
-	Switch $sMode
-		Case "byValue"
-			If __IEIsObjType($oItems, "forminputelement") Then
-				$oItem = $oItems
 				If String($oItem.type) = "radio" And String($oItem.value) = $sString Then $bFound = True
-			Else
-				For $oItem In $oItems
 					If String($oItem.type) = "radio" And String($oItem.value) = $sString Then
-						$bFound = True
-						ExitLoop
-					EndIf
-				Next
-			EndIf
-		Case "byIndex"
-			If __IEIsObjType($oItems, "forminputelement") Then
-				$oItem = $oItems
 				If String($oItem.type) = "radio" And Number($sString) = 0 Then $bFound = True
-			Else
-				Local $iCount = 0
-				For $oItem In $oItems
 					If String($oItem.type) = "radio" And Number($sString) = $iCount Then
-						$bFound = True
-						ExitLoop
-					Else
 						$iCount += 1
-					EndIf
-				Next
-			EndIf
-		Case Else
 			__IEConsoleWriteError("Error", "_IEFormElementRadioSelect", "$_IESTATUS_InvalidValue", "Invalid Mode")
-			Return SetError($_IESTATUS_InvalidValue, 5, 0)
-	EndSwitch
-	If Not $bFound Then
-		__IEConsoleWriteError("Warning", "_IEFormElementRadioSelect", "$_IESTATUS_NoMatch")
-		Return SetError($_IESTATUS_NoMatch, 2, 0)
-	EndIf
-	Switch $iSelect
-		Case -1
-			Return SetError($_IESTATUS_Success, 0, $oItem.checked)
-		Case 0
-			If $oItem.checked Then
-				$oItem.checked = False
-				If $iFireEvent Then
-					$oItem.fireEvent("onChange")
-					$oItem.fireEvent("OnClick")
-				EndIf
-			EndIf
-			Return SetError($_IESTATUS_Success, 0, 1)
-		Case 1
-			If Not $oItem.checked Then
-				$oItem.checked = True
-				If $iFireEvent Then
-					$oItem.fireEvent("onChange")
-					$oItem.fireEvent("OnClick")
-				EndIf
-			EndIf
-			Return SetError($_IESTATUS_Success, 0, 1)
-		Case Else
 			__IEConsoleWriteError("Error", "_IEFormElementRadioSelect", "$_IESTATUS_InvalidValue", "$iSelect value invalid")
 			Return SetError($_IESTATUS_InvalidValue, 4, 0)
-	EndSwitch
 EndFunc   ;==>_IEFormElementRadioSelect
 Func _IEFormImageClick(ByRef $oObject, $sLinkText, $sMode = "src", $iIndex = 0, $iWait = 1)
-	If Not IsObj($oObject) Then
 		__IEConsoleWriteError("Error", "_IEFormImageClick", "$_IESTATUS_InvalidDataType")
-		Return SetError($_IESTATUS_InvalidDataType, 1, 0)
-	EndIf
 	Local $sModeLinktext, $iFound = 0
-	Local $oTemp = _IEDocGetObj($oObject)
 	Local $oImgs = _IETagNameGetCollection($oTemp, "input")
-	$sMode = StringLower($sMode)
-	$iIndex = Number($iIndex)
-	For $oImg In $oImgs
 		If String($oImg.type) = "image" Then
 			Select
 				Case $sMode = "alt"
@@ -11553,7 +7420,6 @@ Func _IEFormImageClick(ByRef $oObject, $sLinkText, $sMode = "src", $iIndex = 0, 
 					$sModeLinktext = $oImg.id
 				Case $sMode = "src"
 					$sModeLinktext = $oImg.src
-				Case Else
 					__IEConsoleWriteError("Error", "_IEFormImageClick", "$_IESTATUS_InvalidValue", "Invalid mode: " & $sMode)
 					Return SetError($_IESTATUS_InvalidValue, 3, 0)
 			EndSelect
@@ -11563,89 +7429,43 @@ Func _IEFormImageClick(ByRef $oObject, $sLinkText, $sMode = "src", $iIndex = 0, 
 					If @error Then ; Trap COM error, report and return
 						__IEConsoleWriteError("Error", "_IEFormImageClick", "$_IESTATUS_COMError", @error)
 						Return SetError($_IESTATUS_ComError, @error, 0)
-					EndIf
 					If $iWait Then
 						_IELoadWait($oObject)
 						Return SetError(@error, 0, -1)
-					EndIf
 					Return SetError($_IESTATUS_Success, 0, -1)
-				EndIf
 				$iFound = $iFound + 1
-			EndIf
-		EndIf
-	Next
 	__IEConsoleWriteError("Warning", "_IEFormImageClick", "$_IESTATUS_NoMatch")
 	Return SetError($_IESTATUS_NoMatch, 2, 0)
 EndFunc   ;==>_IEFormImageClick
 Func _IEFormSubmit(ByRef $oObject, $iWait = 1)
-	If Not IsObj($oObject) Then
 		__IEConsoleWriteError("Error", "_IEFormSubmit", "$_IESTATUS_InvalidDataType")
-		Return SetError($_IESTATUS_InvalidDataType, 1, 0)
-	EndIf
-	If Not __IEIsObjType($oObject, "form") Then
 		__IEConsoleWriteError("Error", "_IEFormSubmit", "$_IESTATUS_InvalidObjectType")
-		Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-	EndIf
 	Local $oWindow = $oObject.document.parentWindow
 	$oObject.submit()
-	If @error Then ; Trap COM error, report and return
 		__IEConsoleWriteError("Error", "_IEFormSubmit", "$_IESTATUS_COMError", @error)
-		Return SetError($_IESTATUS_ComError, @error, 0)
-	EndIf
-	If $iWait Then
 		_IELoadWait($oWindow)
-		Return SetError(@error, 0, -1)
-	EndIf
-	Return SetError($_IESTATUS_Success, 0, -1)
 EndFunc   ;==>_IEFormSubmit
 Func _IEFormReset(ByRef $oObject)
-	If Not IsObj($oObject) Then
 		__IEConsoleWriteError("Error", "_IEFormReset", "$_IESTATUS_InvalidDataType")
-		Return SetError($_IESTATUS_InvalidDataType, 1, 0)
-	EndIf
-	If Not __IEIsObjType($oObject, "form") Then
 		__IEConsoleWriteError("Error", "_IEFormReset", "$_IESTATUS_InvalidObjectType")
-		Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-	EndIf
 	$oObject.reset()
-	If @error Then ; Trap COM error, report and return
 		__IEConsoleWriteError("Error", "_IEFormReset", "$_IESTATUS_COMError", @error)
-		Return SetError($_IESTATUS_ComError, @error, 0)
-	EndIf
-	Return SetError($_IESTATUS_Success, 0, 1)
 EndFunc   ;==>_IEFormReset
 #EndRegion Form functions
 #Region Table functions
 Func _IETableGetCollection(ByRef $oObject, $iIndex = -1)
-	If Not IsObj($oObject) Then
 		__IEConsoleWriteError("Error", "_IETableGetCollection", "$_IESTATUS_InvalidDataType")
-		Return SetError($_IESTATUS_InvalidDataType, 1, 0)
-	EndIf
-	$iIndex = Number($iIndex)
-	Select
-		Case $iIndex = -1
 			Return SetError($_IESTATUS_Success, $oObject.document.GetElementsByTagName("table").length, _
 					$oObject.document.GetElementsByTagName("table"))
 		Case $iIndex > -1 And $iIndex < $oObject.document.GetElementsByTagName("table").length
-			Return SetError($_IESTATUS_Success, $oObject.document.GetElementsByTagName("table").length, _
 					$oObject.document.GetElementsByTagName("table").item($iIndex))
-		Case $iIndex < -1
 			__IEConsoleWriteError("Error", "_IETableGetCollection", "$_IESTATUS_InvalidValue", "$iIndex < -1")
-			Return SetError($_IESTATUS_InvalidValue, 2, 0)
-		Case Else
 			__IEConsoleWriteError("Warning", "_IETableGetCollection", "$_IESTATUS_NoMatch")
-			Return SetError($_IESTATUS_NoMatch, 1, 0)
-	EndSelect
 EndFunc   ;==>_IETableGetCollection
 Func _IETableWriteToArray(ByRef $oObject, $bTranspose = False)
-	If Not IsObj($oObject) Then
 		__IEConsoleWriteError("Error", "_IETableWriteToArray", "$_IESTATUS_InvalidDataType")
-		Return SetError($_IESTATUS_InvalidDataType, 1, 0)
-	EndIf
 	If Not __IEIsObjType($oObject, "table") Then
 		__IEConsoleWriteError("Error", "_IETableWriteToArray", "$_IESTATUS_InvalidObjectType")
-		Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-	EndIf
 	Local $iCols = 0, $oTds, $iCol
 	Local $oTrs = $oObject.rows
 	For $oTr In $oTrs
@@ -11653,173 +7473,80 @@ Func _IETableWriteToArray(ByRef $oObject, $bTranspose = False)
 		$iCol = 0
 		For $oTd In $oTds
 			$iCol = $iCol + $oTd.colSpan
-		Next
 		If $iCol > $iCols Then $iCols = $iCol
-	Next
 	Local $iRows = $oTrs.length
 	Local $aTableCells[$iCols][$iRows]
 	Local $iRow = 0
-	For $oTr In $oTrs
-		$oTds = $oTr.cells
-		$iCol = 0
-		For $oTd In $oTds
 			$aTableCells[$iCol][$iRow] = String($oTd.innerText)
 			If @error Then ; Trap COM error, report and return
 				__IEConsoleWriteError("Error", "_IETableWriteToArray", "$_IESTATUS_COMError", @error)
 				Return SetError($_IESTATUS_ComError, @error, 0)
-			EndIf
-			$iCol = $iCol + $oTd.colSpan
-		Next
 		$iRow = $iRow + 1
-	Next
 	If $bTranspose Then
 		Local $iD1 = UBound($aTableCells, $UBOUND_ROWS), $iD2 = UBound($aTableCells, $UBOUND_COLUMNS), $aTmp[$iD2][$iD1]
 		For $i = 0 To $iD2 - 1
 			For $j = 0 To $iD1 - 1
 				$aTmp[$i][$j] = $aTableCells[$j][$i]
-			Next
-		Next
 		$aTableCells = $aTmp
-	EndIf
 	Return SetError($_IESTATUS_Success, 0, $aTableCells)
 EndFunc   ;==>_IETableWriteToArray
 #EndRegion Table functions
 #Region Read/Write functions
 Func _IEBodyReadHTML(ByRef $oObject)
-	If Not IsObj($oObject) Then
 		__IEConsoleWriteError("Error", "_IEBodyReadHTML", "$_IESTATUS_InvalidDataType")
-		Return SetError($_IESTATUS_InvalidDataType, 1, 0)
-	EndIf
 	Return SetError($_IESTATUS_Success, 0, $oObject.document.body.innerHTML)
 EndFunc   ;==>_IEBodyReadHTML
 Func _IEBodyReadText(ByRef $oObject)
-	If Not IsObj($oObject) Then
 		__IEConsoleWriteError("Error", "_IEBodyReadText", "$_IESTATUS_InvalidDataType")
-		Return SetError($_IESTATUS_InvalidDataType, 1, 0)
-	EndIf
-	If Not __IEIsObjType($oObject, "browserdom") Then
 		__IEConsoleWriteError("Error", "_IEBodyReadText", "$_IESTATUS_InvalidObjectType", "Expected document element")
-		Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-	EndIf
 	Return SetError($_IESTATUS_Success, 0, $oObject.document.body.innerText)
 EndFunc   ;==>_IEBodyReadText
 Func _IEBodyWriteHTML(ByRef $oObject, $sHTML)
-	If Not IsObj($oObject) Then
 		__IEConsoleWriteError("Error", "_IEBodyWriteHTML", "$_IESTATUS_InvalidDataType")
-		Return SetError($_IESTATUS_InvalidDataType, 1, 0)
-	EndIf
-	If Not __IEIsObjType($oObject, "browserdom") Then
 		__IEConsoleWriteError("Error", "_IEBodyWriteHTML", "$_IESTATUS_InvalidObjectType", "Expected document element")
-		Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-	EndIf
 	$oObject.document.body.innerHTML = $sHTML
-	If @error Then ; Trap COM error, report and return
 		__IEConsoleWriteError("Error", "_IEBodyWriteHTML", "$_IESTATUS_COMError", @error)
-		Return SetError($_IESTATUS_ComError, @error, 0)
-	EndIf
 	Local $oTemp = $oObject.document
 	_IELoadWait($oTemp)
 	Return SetError(@error, 0, -1)
 EndFunc   ;==>_IEBodyWriteHTML
 Func _IEDocReadHTML(ByRef $oObject)
-	If Not IsObj($oObject) Then
 		__IEConsoleWriteError("Error", "_IEDocReadHTML", "$_IESTATUS_InvalidDataType")
-		Return SetError($_IESTATUS_InvalidDataType, 1, 0)
-	EndIf
-	If Not __IEIsObjType($oObject, "browserdom") Then
 		__IEConsoleWriteError("Error", "_IEDocReadHTML", "$_IESTATUS_InvalidObjectType", "Expected document element")
-		Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-	EndIf
 	Return SetError($_IESTATUS_Success, 0, $oObject.document.documentElement.outerHTML)
 EndFunc   ;==>_IEDocReadHTML
 Func _IEDocWriteHTML(ByRef $oObject, $sHTML)
-	If Not IsObj($oObject) Then
 		__IEConsoleWriteError("Error", "_IEDocWriteHTML", "$_IESTATUS_InvalidDataType")
-		Return SetError($_IESTATUS_InvalidDataType, 1, 0)
-	EndIf
-	If Not __IEIsObjType($oObject, "browserdom") Then
 		__IEConsoleWriteError("Error", "_IEDocWriteHTML", "$_IESTATUS_InvalidObjectType", "Expected document element")
-		Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-	EndIf
 	$oObject.document.Write($sHTML)
 	$oObject.document.close()
-	Local $oTemp = $oObject.document
-	If @error Then ; Trap COM error, report and return
 		__IEConsoleWriteError("Error", "_IEDocWriteHTML", "$_IESTATUS_COMError", @error)
-		Return SetError($_IESTATUS_ComError, @error, 0)
-	EndIf
-	_IELoadWait($oTemp)
-	Return SetError(@error, 0, -1)
 EndFunc   ;==>_IEDocWriteHTML
 Func _IEDocInsertText(ByRef $oObject, $sString, $sWhere = "beforeend")
-	If Not IsObj($oObject) Then
 		__IEConsoleWriteError("Error", "_IEDocInsertText", "$_IESTATUS_InvalidDataType")
-		Return SetError($_IESTATUS_InvalidDataType, 1, 0)
-	EndIf
 	If Not __IEIsObjType($oObject, "browserdom") Or __IEIsObjType($oObject, "documentcontainer") Or __IEIsObjType($oObject, "document") Then
 		__IEConsoleWriteError("Error", "_IEDocInsertText", "$_IESTATUS_InvalidObjectType", "Expected document element")
-		Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-	EndIf
 	$sWhere = StringLower($sWhere)
-	Select
 		Case $sWhere = "beforebegin"
 			$oObject.insertAdjacentText($sWhere, $sString)
 		Case $sWhere = "afterbegin"
-			$oObject.insertAdjacentText($sWhere, $sString)
 		Case $sWhere = "beforeend"
-			$oObject.insertAdjacentText($sWhere, $sString)
 		Case $sWhere = "afterend"
-			$oObject.insertAdjacentText($sWhere, $sString)
-		Case Else
 			__IEConsoleWriteError("Error", "_IEDocInsertText", "$_IESTATUS_InvalidValue", "Invalid where value")
-			Return SetError($_IESTATUS_InvalidValue, 3, 0)
-	EndSelect
-	If @error Then ; Trap COM error, report and return
 		__IEConsoleWriteError("Error", "_IEDocInsertText", "$_IESTATUS_COMError", @error)
-		Return SetError($_IESTATUS_ComError, @error, 0)
-	EndIf
-	Return SetError($_IESTATUS_Success, 0, 1)
 EndFunc   ;==>_IEDocInsertText
 Func _IEDocInsertHTML(ByRef $oObject, $sString, $sWhere = "beforeend")
-	If Not IsObj($oObject) Then
 		__IEConsoleWriteError("Error", "_IEDocInsertHTML", "$_IESTATUS_InvalidDataType")
-		Return SetError($_IESTATUS_InvalidDataType, 1, 0)
-	EndIf
-	If Not __IEIsObjType($oObject, "browserdom") Or __IEIsObjType($oObject, "documentcontainer") Or __IEIsObjType($oObject, "document") Then
 		__IEConsoleWriteError("Error", "_IEDocInsertHTML", "$_IESTATUS_InvalidObjectType", "Expected document element")
-		Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-	EndIf
-	$sWhere = StringLower($sWhere)
-	Select
-		Case $sWhere = "beforebegin"
 			$oObject.insertAdjacentHTML($sWhere, $sString)
-		Case $sWhere = "afterbegin"
-			$oObject.insertAdjacentHTML($sWhere, $sString)
-		Case $sWhere = "beforeend"
-			$oObject.insertAdjacentHTML($sWhere, $sString)
-		Case $sWhere = "afterend"
-			$oObject.insertAdjacentHTML($sWhere, $sString)
-		Case Else
 			__IEConsoleWriteError("Error", "_IEDocInsertHTML", "$_IESTATUS_InvalidValue", "Invalid where value")
-			Return SetError($_IESTATUS_InvalidValue, 3, 0)
-	EndSelect
-	If @error Then ; Trap COM error, report and return
 		__IEConsoleWriteError("Error", "_IEDocInsertHTML", "$_IESTATUS_COMError", @error)
-		Return SetError($_IESTATUS_ComError, @error, 0)
-	EndIf
-	Return SetError($_IESTATUS_Success, 0, 1)
 EndFunc   ;==>_IEDocInsertHTML
 Func _IEHeadInsertEventScript(ByRef $oObject, $sHTMLFor, $sEvent, $sScript)
-	If Not IsObj($oObject) Then
 		__IEConsoleWriteError("Error", "_IEHeadInsertEventScript", "$_IESTATUS_InvalidDataType")
-		Return SetError($_IESTATUS_InvalidDataType, 1, 0)
-	EndIf
 	Local $oHead = $oObject.document.all.tags("HEAD").Item(0)
 	Local $oScript = $oObject.document.createElement("script")
-	If @error Then ; Trap COM error, report and return
 		__IEConsoleWriteError("Error", "_IEHeadInsertEventScript(script)", "$_IESTATUS_COMError", @error)
-		Return SetError($_IESTATUS_ComError, @error, 0)
-	EndIf
 	With $oScript
 		.defer = True
 		.language = "jscript"
@@ -11827,157 +7554,74 @@ Func _IEHeadInsertEventScript(ByRef $oObject, $sHTMLFor, $sEvent, $sScript)
 		.htmlFor = $sHTMLFor
 		.event = $sEvent
 		.text = $sScript
-	EndWith
 	$oHead.appendChild($oScript)
-	If @error Then ; Trap COM error, report and return
 		__IEConsoleWriteError("Error", "_IEHeadInsertEventScript", "$_IESTATUS_COMError", @error)
-		Return SetError($_IESTATUS_ComError, @error, 0)
-	EndIf
-	Return SetError($_IESTATUS_Success, 0, 1)
 EndFunc   ;==>_IEHeadInsertEventScript
 #EndRegion Read/Write functions
 #Region Utility functions
 Func _IEDocGetObj(ByRef $oObject)
-	If Not IsObj($oObject) Then
 		__IEConsoleWriteError("Error", "_IEDocGetObj", "$_IESTATUS_InvalidDataType")
-		Return SetError($_IESTATUS_InvalidDataType, 1, 0)
-	EndIf
-	If __IEIsObjType($oObject, "document") Then
 		Return SetError($_IESTATUS_Success, 0, $oObject)
-	EndIf
 	Return SetError($_IESTATUS_Success, 0, $oObject.document)
 EndFunc   ;==>_IEDocGetObj
 Func _IETagNameGetCollection(ByRef $oObject, $sTagName, $iIndex = -1)
-	If Not IsObj($oObject) Then
 		__IEConsoleWriteError("Error", "_IETagNameGetCollection", "$_IESTATUS_InvalidDataType")
-		Return SetError($_IESTATUS_InvalidDataType, 1, 0)
-	EndIf
-	If Not __IEIsObjType($oObject, "browserdom") Then
 		__IEConsoleWriteError("Error", "_IETagNameGetCollection", "$_IESTATUS_InvalidObjectType")
-		Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-	EndIf
 	Local $oTemp
 	If __IEIsObjType($oObject, "documentcontainer") Then
 		$oTemp = _IEDocGetObj($oObject)
-	Else
 		$oTemp = $oObject
-	EndIf
-	$iIndex = Number($iIndex)
-	Select
-		Case $iIndex = -1
 			Return SetError($_IESTATUS_Success, $oTemp.GetElementsByTagName($sTagName).length, _
 					$oTemp.GetElementsByTagName($sTagName))
 		Case $iIndex > -1 And $iIndex < $oTemp.GetElementsByTagName($sTagName).length
-			Return SetError($_IESTATUS_Success, $oTemp.GetElementsByTagName($sTagName).length, _
 					$oTemp.GetElementsByTagName($sTagName).item($iIndex))
-		Case $iIndex < -1
 			__IEConsoleWriteError("Error", "_IETagNameGetCollection", "$_IESTATUS_InvalidValue", "$iIndex < -1")
-			Return SetError($_IESTATUS_InvalidValue, 3, 0)
-		Case Else
 			__IEConsoleWriteError("Error", "_IETagNameGetCollection", "$_IESTATUS_NoMatch")
-			Return SetError($_IESTATUS_NoMatch, 0, 0) ; Could be caused by parameter 2, 3 or both
-	EndSelect
 EndFunc   ;==>_IETagNameGetCollection
 Func _IETagNameAllGetCollection(ByRef $oObject, $iIndex = -1)
-	If Not IsObj($oObject) Then
 		__IEConsoleWriteError("Error", "_IETagNameAllGetCollection", "$_IESTATUS_InvalidDataType")
-		Return SetError($_IESTATUS_InvalidDataType, 1, 0)
-	EndIf
-	If Not __IEIsObjType($oObject, "browserdom") Then
 		__IEConsoleWriteError("Error", "_IETagNameAllGetCollection", "$_IESTATUS_InvalidObjectType")
-		Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-	EndIf
-	Local $oTemp
-	If __IEIsObjType($oObject, "documentcontainer") Then
-		$oTemp = _IEDocGetObj($oObject)
-	Else
-		$oTemp = $oObject
-	EndIf
-	$iIndex = Number($iIndex)
-	Select
-		Case $iIndex = -1
 			Return SetError($_IESTATUS_Success, $oTemp.all.length, $oTemp.all)
 		Case $iIndex > -1 And $iIndex < $oTemp.all.length
 			Return SetError($_IESTATUS_Success, $oTemp.all.length, $oTemp.all.item($iIndex))
-		Case $iIndex < -1
 			__IEConsoleWriteError("Error", "_IETagNameAllGetCollection", "$_IESTATUS_InvalidValue", "$iIndex < -1")
-			Return SetError($_IESTATUS_InvalidValue, 2, 0)
-		Case Else
 			__IEConsoleWriteError("Error", "_IETagNameAllGetCollection", "$_IESTATUS_NoMatch")
-			Return SetError($_IESTATUS_NoMatch, 1, 0)
-	EndSelect
 EndFunc   ;==>_IETagNameAllGetCollection
 Func _IEGetObjByName(ByRef $oObject, $sName, $iIndex = 0)
-	If Not IsObj($oObject) Then
 		__IEConsoleWriteError("Error", "_IEGetObjByName", "$_IESTATUS_InvalidDataType")
-		Return SetError($_IESTATUS_InvalidDataType, 1, 0)
-	EndIf
-	$iIndex = Number($iIndex)
-	If $iIndex = -1 Then
 		Return SetError($_IESTATUS_Success, $oObject.document.GetElementsByName($sName).length, _
 				$oObject.document.GetElementsByName($sName))
-	Else
 		If IsObj($oObject.document.GetElementsByName($sName).item($iIndex)) Then
 			Return SetError($_IESTATUS_Success, $oObject.document.GetElementsByName($sName).length, _
 					$oObject.document.GetElementsByName($sName).item($iIndex))
-		Else
 			__IEConsoleWriteError("Warning", "_IEGetObjByName", "$_IESTATUS_NoMatch", "Name: " & $sName & ", Index: " & $iIndex)
-			Return SetError($_IESTATUS_NoMatch, 0, 0) ; Could be caused by parameter 2, 3 or both
-		EndIf
-	EndIf
 EndFunc   ;==>_IEGetObjByName
 Func _IEGetObjById(ByRef $oObject, $sID)
-	If Not IsObj($oObject) Then
 		__IEConsoleWriteError("Error", "_IEGetObjById", "$_IESTATUS_InvalidDataType")
-		Return SetError($_IESTATUS_InvalidDataType, 1, 0)
-	EndIf
-	If Not __IEIsObjType($oObject, "browserdom") Then
 		__IEConsoleWriteError("Error", "_IEGetObById", "$_IESTATUS_InvalidObjectType")
-		Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-	EndIf
 	If IsObj($oObject.document.getElementById($sID)) Then
 		Return SetError($_IESTATUS_Success, 0, $oObject.document.getElementById($sID))
-	Else
 		__IEConsoleWriteError("Warning", "_IEGetObjById", "$_IESTATUS_NoMatch", $sID)
-		Return SetError($_IESTATUS_NoMatch, 2, 0)
-	EndIf
 EndFunc   ;==>_IEGetObjById
 Func _IEAction(ByRef $oObject, $sAction)
-	If Not IsObj($oObject) Then
 		__IEConsoleWriteError("Error", "_IEAction(" & $sAction & ")", "$_IESTATUS_InvalidDataType")
-		Return SetError($_IESTATUS_InvalidDataType, 1, 0)
-	EndIf
 	$sAction = StringLower($sAction)
-	Select
 		Case $sAction = "click"
 			If __IEIsObjType($oObject, "documentContainer") Then
 				__IEConsoleWriteError("Error", "_IEAction(click)", " $_IESTATUS_InvalidObjectType")
 				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
 			$oObject.Click()
 		Case $sAction = "disable"
-			If __IEIsObjType($oObject, "documentContainer") Then
 				__IEConsoleWriteError("Error", "_IEAction(disable)", " $_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
 			$oObject.disabled = True
 		Case $sAction = "enable"
-			If __IEIsObjType($oObject, "documentContainer") Then
 				__IEConsoleWriteError("Error", "_IEAction(enable)", " $_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
 			$oObject.disabled = False
 		Case $sAction = "focus"
-			If __IEIsObjType($oObject, "documentContainer") Then
 				__IEConsoleWriteError("Error", "_IEAction(focus)", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
 			$oObject.Focus()
 		Case $sAction = "scrollintoview"
-			If __IEIsObjType($oObject, "documentContainer") Then
 				__IEConsoleWriteError("Error", "_IEAction(scrollintoview)", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
 			$oObject.scrollIntoView()
 		Case $sAction = "copy"
 			$oObject.document.execCommand("Copy")
@@ -11991,11 +7635,7 @@ Func _IEAction(ByRef $oObject, $sAction)
 			$oObject.document.execCommand("SaveAs")
 		Case $sAction = "refresh"
 			$oObject.document.execCommand("Refresh")
-			If @error Then ; Trap COM error, report and return
 				__IEConsoleWriteError("Error", "_IEAction(refresh)", "$_IESTATUS_COMError", @error)
-				Return SetError($_IESTATUS_ComError, @error, 0)
-			EndIf
-			_IELoadWait($oObject)
 		Case $sAction = "selectall"
 			$oObject.document.execCommand("SelectAll")
 		Case $sAction = "unselect"
@@ -12005,267 +7645,115 @@ Func _IEAction(ByRef $oObject, $sAction)
 		Case $sAction = "printdefault"
 			If Not __IEIsObjType($oObject, "browser") Then
 				__IEConsoleWriteError("Error", "_IEAction(printdefault)", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
 			$oObject.execWB(6, 2)
 		Case $sAction = "back"
 			If Not __IEIsObjType($oObject, "documentContainer") Then
 				__IEConsoleWriteError("Error", "_IEAction(back)", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
 			$oObject.GoBack()
 		Case $sAction = "blur"
 			$oObject.Blur()
 		Case $sAction = "forward"
-			If Not __IEIsObjType($oObject, "documentContainer") Then
 				__IEConsoleWriteError("Error", "_IEAction(forward)", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
 			$oObject.GoForward()
 		Case $sAction = "home"
-			If Not __IEIsObjType($oObject, "documentContainer") Then
 				__IEConsoleWriteError("Error", "_IEAction(home)", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
 			$oObject.GoHome()
 		Case $sAction = "invisible"
-			If Not __IEIsObjType($oObject, "browser") Then
 				__IEConsoleWriteError("Error", "_IEAction(invisible)", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
 			$oObject.visible = 0
 		Case $sAction = "visible"
-			If Not __IEIsObjType($oObject, "browser") Then
 				__IEConsoleWriteError("Error", "_IEAction(visible)", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
 			$oObject.visible = 1
 		Case $sAction = "search"
-			If Not __IEIsObjType($oObject, "browser") Then
 				__IEConsoleWriteError("Error", "_IEAction(search)", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
 			$oObject.GoSearch()
 		Case $sAction = "stop"
-			If Not __IEIsObjType($oObject, "documentContainer") Then
 				__IEConsoleWriteError("Error", "_IEAction(stop)", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
 			$oObject.Stop()
 		Case $sAction = "quit"
-			If Not __IEIsObjType($oObject, "browser") Then
 				__IEConsoleWriteError("Error", "_IEAction(quit)", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
 			$oObject.Quit()
-			If @error Then ; Trap COM error, report and return
 				__IEConsoleWriteError("Error", "_IEAction(" & $sAction & ")", "$_IESTATUS_COMError", @error)
-				Return SetError($_IESTATUS_ComError, @error, 0)
-			EndIf
 			$oObject = 0
-			Return SetError($_IESTATUS_Success, 0, 1)
-		Case Else
 			__IEConsoleWriteError("Error", "_IEAction(" & $sAction & ")", "$_IESTATUS_InvalidValue", "Invalid Action")
-			Return SetError($_IESTATUS_InvalidValue, 2, 0)
-	EndSelect
-	If @error Then ; Trap COM error, report and return
 		__IEConsoleWriteError("Error", "_IEAction(" & $sAction & ")", "$_IESTATUS_COMError", @error)
-		Return SetError($_IESTATUS_ComError, @error, 0)
-	EndIf
-	Return SetError($_IESTATUS_Success, 0, 1)
 EndFunc   ;==>_IEAction
 Func _IEPropertyGet(ByRef $oObject, $sProperty)
-	If Not IsObj($oObject) Then
 		__IEConsoleWriteError("Error", "_IEPropertyGet", "$_IESTATUS_InvalidDataType")
-		Return SetError($_IESTATUS_InvalidDataType, 1, 0)
-	EndIf
-	If Not __IEIsObjType($oObject, "browserdom") Then
 		__IEConsoleWriteError("Error", "_IEPropertyGet", "$_IESTATUS_InvalidObjectType")
-		Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-	EndIf
 	Local $oTemp, $iTemp
 	$sProperty = StringLower($sProperty)
-	Select
 		Case $sProperty = "browserx"
 			If __IEIsObjType($oObject, "browsercontainer") Or __IEIsObjType($oObject, "document") Then
 				__IEConsoleWriteError("Error", "_IEPropertyGet", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
 			$oTemp = $oObject
 			$iTemp = 0
 			While IsObj($oTemp)
 				$iTemp += $oTemp.offsetLeft
 				$oTemp = $oTemp.offsetParent
-			WEnd
 			Return SetError($_IESTATUS_Success, 0, $iTemp)
 		Case $sProperty = "browsery"
-			If __IEIsObjType($oObject, "browsercontainer") Or __IEIsObjType($oObject, "document") Then
-				__IEConsoleWriteError("Error", "_IEPropertyGet", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
-			$oTemp = $oObject
-			$iTemp = 0
-			While IsObj($oTemp)
 				$iTemp += $oTemp.offsetTop
-				$oTemp = $oTemp.offsetParent
-			WEnd
-			Return SetError($_IESTATUS_Success, 0, $iTemp)
 		Case $sProperty = "screenx"
 			If __IEIsObjType($oObject, "window") Or __IEIsObjType($oObject, "document") Then
-				__IEConsoleWriteError("Error", "_IEPropertyGet", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
 			If __IEIsObjType($oObject, "browser") Then
 				Return SetError($_IESTATUS_Success, 0, $oObject.left())
-			Else
 				$oTemp = $oObject
 				$iTemp = 0
 				While IsObj($oTemp)
 					$iTemp += $oTemp.offsetLeft
 					$oTemp = $oTemp.offsetParent
 				WEnd
-			EndIf
 			Return SetError($_IESTATUS_Success, 0, _
 					$iTemp + $oObject.document.parentWindow.screenLeft)
 		Case $sProperty = "screeny"
-			If __IEIsObjType($oObject, "window") Or __IEIsObjType($oObject, "document") Then
-				__IEConsoleWriteError("Error", "_IEPropertyGet", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
-			If __IEIsObjType($oObject, "browser") Then
 				Return SetError($_IESTATUS_Success, 0, $oObject.top())
-			Else
-				$oTemp = $oObject
-				$iTemp = 0
-				While IsObj($oTemp)
 					$iTemp += $oTemp.offsetTop
-					$oTemp = $oTemp.offsetParent
-				WEnd
-			EndIf
-			Return SetError($_IESTATUS_Success, 0, _
 					$iTemp + $oObject.document.parentWindow.screenTop)
 		Case $sProperty = "height"
-			If __IEIsObjType($oObject, "window") Or __IEIsObjType($oObject, "document") Then
-				__IEConsoleWriteError("Error", "_IEPropertyGet", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
-			If __IEIsObjType($oObject, "browser") Then
 				Return SetError($_IESTATUS_Success, 0, $oObject.Height())
-			Else
 				Return SetError($_IESTATUS_Success, 0, $oObject.offsetHeight)
-			EndIf
 		Case $sProperty = "width"
-			If __IEIsObjType($oObject, "window") Or __IEIsObjType($oObject, "document") Then
-				__IEConsoleWriteError("Error", "_IEPropertyGet", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
-			If __IEIsObjType($oObject, "browser") Then
 				Return SetError($_IESTATUS_Success, 0, $oObject.Width())
-			Else
 				Return SetError($_IESTATUS_Success, 0, $oObject.offsetWidth)
-			EndIf
 		Case $sProperty = "isdisabled"
 			Return SetError($_IESTATUS_Success, 0, $oObject.isDisabled())
 		Case $sProperty = "addressbar"
-			If Not __IEIsObjType($oObject, "browser") Then
-				__IEConsoleWriteError("Error", "_IEPropertyGet", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
 			Return SetError($_IESTATUS_Success, 0, $oObject.AddressBar())
 		Case $sProperty = "busy"
-			If Not __IEIsObjType($oObject, "browser") Then
-				__IEConsoleWriteError("Error", "_IEPropertyGet", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
 			Return SetError($_IESTATUS_Success, 0, $oObject.Busy())
 		Case $sProperty = "fullscreen"
-			If Not __IEIsObjType($oObject, "browser") Then
-				__IEConsoleWriteError("Error", "_IEPropertyGet", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
 			Return SetError($_IESTATUS_Success, 0, $oObject.fullScreen())
 		Case $sProperty = "hwnd"
-			If Not __IEIsObjType($oObject, "browser") Then
-				__IEConsoleWriteError("Error", "_IEPropertyGet", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
 			Return SetError($_IESTATUS_Success, 0, HWnd($oObject.HWnd()))
 		Case $sProperty = "left"
-			If Not __IEIsObjType($oObject, "browser") Then
-				__IEConsoleWriteError("Error", "_IEPropertyGet", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
 			Return SetError($_IESTATUS_Success, 0, $oObject.Left())
 		Case $sProperty = "locationname"
-			If Not __IEIsObjType($oObject, "browser") Then
-				__IEConsoleWriteError("Error", "_IEPropertyGet", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
 			Return SetError($_IESTATUS_Success, 0, $oObject.LocationName())
 		Case $sProperty = "locationurl"
-			If __IEIsObjType($oObject, "browser") Then
 				Return SetError($_IESTATUS_Success, 0, $oObject.locationURL())
-			EndIf
 			If __IEIsObjType($oObject, "window") Then
 				Return SetError($_IESTATUS_Success, 0, $oObject.location.href())
-			EndIf
 			If __IEIsObjType($oObject, "document") Then
 				Return SetError($_IESTATUS_Success, 0, $oObject.parentwindow.location.href())
-			EndIf
 			Return SetError($_IESTATUS_Success, 0, $oObject.document.parentwindow.location.href())
 		Case $sProperty = "menubar"
-			If Not __IEIsObjType($oObject, "browser") Then
-				__IEConsoleWriteError("Error", "_IEPropertyGet", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
 			Return SetError($_IESTATUS_Success, 0, $oObject.MenuBar())
 		Case $sProperty = "offline"
-			If Not __IEIsObjType($oObject, "browser") Then
-				__IEConsoleWriteError("Error", "_IEPropertyGet", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
 			Return SetError($_IESTATUS_Success, 0, $oObject.OffLine())
 		Case $sProperty = "readystate"
-			If Not __IEIsObjType($oObject, "browser") Then
-				__IEConsoleWriteError("Error", "_IEPropertyGet", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
 			Return SetError($_IESTATUS_Success, 0, $oObject.ReadyState())
 		Case $sProperty = "resizable"
-			If Not __IEIsObjType($oObject, "browser") Then
-				__IEConsoleWriteError("Error", "_IEPropertyGet", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
 			Return SetError($_IESTATUS_Success, 0, $oObject.Resizable())
 		Case $sProperty = "silent"
-			If Not __IEIsObjType($oObject, "browser") Then
-				__IEConsoleWriteError("Error", "_IEPropertyGet", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
 			Return SetError($_IESTATUS_Success, 0, $oObject.Silent())
 		Case $sProperty = "statusbar"
-			If Not __IEIsObjType($oObject, "browser") Then
-				__IEConsoleWriteError("Error", "_IEPropertyGet", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
 			Return SetError($_IESTATUS_Success, 0, $oObject.StatusBar())
 		Case $sProperty = "statustext"
-			If Not __IEIsObjType($oObject, "browser") Then
-				__IEConsoleWriteError("Error", "_IEPropertyGet", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
 			Return SetError($_IESTATUS_Success, 0, $oObject.StatusText())
 		Case $sProperty = "top"
-			If Not __IEIsObjType($oObject, "browser") Then
-				__IEConsoleWriteError("Error", "_IEPropertyGet", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
 			Return SetError($_IESTATUS_Success, 0, $oObject.Top())
 		Case $sProperty = "visible"
-			If Not __IEIsObjType($oObject, "browser") Then
-				__IEConsoleWriteError("Error", "_IEPropertyGet", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
 			Return SetError($_IESTATUS_Success, 0, $oObject.Visible())
 		Case $sProperty = "appcodename"
 			Return SetError($_IESTATUS_Success, 0, $oObject.document.parentWindow.top.navigator.appCodeName())
@@ -12296,261 +7784,88 @@ Func _IEPropertyGet(ByRef $oObject, $sProperty)
 		Case $sProperty = "referrer"
 			Return SetError($_IESTATUS_Success, 0, $oObject.document.referrer)
 		Case $sProperty = "theatermode"
-			If Not __IEIsObjType($oObject, "browser") Then
-				__IEConsoleWriteError("Error", "_IEPropertyGet", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
 			Return SetError($_IESTATUS_Success, 0, $oObject.TheaterMode)
 		Case $sProperty = "toolbar"
-			If Not __IEIsObjType($oObject, "browser") Then
-				__IEConsoleWriteError("Error", "_IEPropertyGet", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
 			Return SetError($_IESTATUS_Success, 0, $oObject.ToolBar)
 		Case $sProperty = "contenteditable"
 			If __IEIsObjType($oObject, "browser") Or __IEIsObjType($oObject, "document") Then
 				$oTemp = $oObject.document.body
-			Else
-				$oTemp = $oObject
-			EndIf
 			Return SetError($_IESTATUS_Success, 0, $oTemp.isContentEditable)
 		Case $sProperty = "innertext"
 			If __IEIsObjType($oObject, "documentcontainer") Or __IEIsObjType($oObject, "document") Then
-				$oTemp = $oObject.document.body
-			Else
-				$oTemp = $oObject
-			EndIf
 			Return SetError($_IESTATUS_Success, 0, $oTemp.innerText)
 		Case $sProperty = "outertext"
-			If __IEIsObjType($oObject, "documentcontainer") Or __IEIsObjType($oObject, "document") Then
-				$oTemp = $oObject.document.body
-			Else
-				$oTemp = $oObject
-			EndIf
 			Return SetError($_IESTATUS_Success, 0, $oTemp.outerText)
 		Case $sProperty = "innerhtml"
-			If __IEIsObjType($oObject, "documentcontainer") Or __IEIsObjType($oObject, "document") Then
-				$oTemp = $oObject.document.body
-			Else
-				$oTemp = $oObject
-			EndIf
 			Return SetError($_IESTATUS_Success, 0, $oTemp.innerHTML)
 		Case $sProperty = "outerhtml"
-			If __IEIsObjType($oObject, "documentcontainer") Or __IEIsObjType($oObject, "document") Then
-				$oTemp = $oObject.document.body
-			Else
-				$oTemp = $oObject
-			EndIf
 			Return SetError($_IESTATUS_Success, 0, $oTemp.outerHTML)
 		Case $sProperty = "title"
 			Return SetError($_IESTATUS_Success, 0, $oObject.document.title)
 		Case $sProperty = "uniqueid"
-			If __IEIsObjType($oObject, "window") Then
-				__IEConsoleWriteError("Error", "_IEPropertyGet", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			Else
 				Return SetError($_IESTATUS_Success, 0, $oObject.uniqueID)
-			EndIf
-		Case Else
 			__IEConsoleWriteError("Error", "_IEPropertyGet", "$_IESTATUS_InvalidValue", "Invalid Property")
-			Return SetError($_IESTATUS_InvalidValue, 2, 0)
-	EndSelect
 EndFunc   ;==>_IEPropertyGet
 Func _IEPropertySet(ByRef $oObject, $sProperty, $vValue)
-	If Not IsObj($oObject) Then
 		__IEConsoleWriteError("Error", "_IEPropertySet", "$_IESTATUS_InvalidDataType")
-		Return SetError($_IESTATUS_InvalidDataType, 1, 0)
-	EndIf
-	Local $oTemp
 	#forceref $oTemp
-	$sProperty = StringLower($sProperty)
-	Select
-		Case $sProperty = "addressbar"
-			If Not __IEIsObjType($oObject, "browser") Then
 				__IEConsoleWriteError("Error", "_IEPropertySet", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
 			$oObject.AddressBar = $vValue
-		Case $sProperty = "height"
-			If Not __IEIsObjType($oObject, "browser") Then
-				__IEConsoleWriteError("Error", "_IEPropertySet", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
 			$oObject.Height = $vValue
-		Case $sProperty = "left"
-			If Not __IEIsObjType($oObject, "browser") Then
-				__IEConsoleWriteError("Error", "_IEPropertySet", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
 			$oObject.Left = $vValue
-		Case $sProperty = "menubar"
-			If Not __IEIsObjType($oObject, "browser") Then
-				__IEConsoleWriteError("Error", "_IEPropertySet", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
 			$oObject.MenuBar = $vValue
-		Case $sProperty = "offline"
-			If Not __IEIsObjType($oObject, "browser") Then
-				__IEConsoleWriteError("Error", "_IEPropertySet", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
 			$oObject.OffLine = $vValue
-		Case $sProperty = "resizable"
-			If Not __IEIsObjType($oObject, "browser") Then
-				__IEConsoleWriteError("Error", "_IEPropertySet", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
 			$oObject.Resizable = $vValue
-		Case $sProperty = "statusbar"
-			If Not __IEIsObjType($oObject, "browser") Then
-				__IEConsoleWriteError("Error", "_IEPropertySet", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
 			$oObject.StatusBar = $vValue
-		Case $sProperty = "statustext"
-			If Not __IEIsObjType($oObject, "browser") Then
-				__IEConsoleWriteError("Error", "_IEPropertySet", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
 			$oObject.StatusText = $vValue
-		Case $sProperty = "top"
-			If Not __IEIsObjType($oObject, "browser") Then
-				__IEConsoleWriteError("Error", "_IEPropertySet", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
 			$oObject.Top = $vValue
-		Case $sProperty = "width"
-			If Not __IEIsObjType($oObject, "browser") Then
-				__IEConsoleWriteError("Error", "_IEPropertySet", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
 			$oObject.Width = $vValue
-		Case $sProperty = "theatermode"
-			If Not __IEIsObjType($oObject, "browser") Then
-				__IEConsoleWriteError("Error", "_IEPropertySet", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
 			If $vValue Then
 				$oObject.TheaterMode = True
-			Else
 				$oObject.TheaterMode = False
-			EndIf
-		Case $sProperty = "toolbar"
-			If Not __IEIsObjType($oObject, "browser") Then
-				__IEConsoleWriteError("Error", "_IEPropertySet", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
-			If $vValue Then
 				$oObject.ToolBar = True
-			Else
 				$oObject.ToolBar = False
-			EndIf
-		Case $sProperty = "contenteditable"
-			If __IEIsObjType($oObject, "browser") Or __IEIsObjType($oObject, "document") Then
-				$oTemp = $oObject.document.body
-			Else
-				$oTemp = $oObject
-			EndIf
-			If $vValue Then
 				$oTemp.contentEditable = "true"
-			Else
 				$oTemp.contentEditable = "false"
-			EndIf
-		Case $sProperty = "innertext"
-			If __IEIsObjType($oObject, "documentcontainer") Or __IEIsObjType($oObject, "document") Then
-				$oTemp = $oObject.document.body
-			Else
-				$oTemp = $oObject
-			EndIf
 			$oTemp.innerText = $vValue
-		Case $sProperty = "outertext"
-			If __IEIsObjType($oObject, "documentcontainer") Or __IEIsObjType($oObject, "document") Then
-				$oTemp = $oObject.document.body
-			Else
-				$oTemp = $oObject
-			EndIf
 			$oTemp.outerText = $vValue
-		Case $sProperty = "innerhtml"
-			If __IEIsObjType($oObject, "documentcontainer") Or __IEIsObjType($oObject, "document") Then
-				$oTemp = $oObject.document.body
-			Else
-				$oTemp = $oObject
-			EndIf
 			$oTemp.innerHTML = $vValue
-		Case $sProperty = "outerhtml"
-			If __IEIsObjType($oObject, "documentcontainer") Or __IEIsObjType($oObject, "document") Then
-				$oTemp = $oObject.document.body
-			Else
-				$oTemp = $oObject
-			EndIf
 			$oTemp.outerHTML = $vValue
-		Case $sProperty = "title"
 			$oObject.document.title = $vValue
-		Case $sProperty = "silent"
-			If Not __IEIsObjType($oObject, "browser") Then
-				__IEConsoleWriteError("Error", "_IEPropertySet", "$_IESTATUS_InvalidObjectType")
-				Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-			EndIf
-			If $vValue Then
 				$oObject.silent = True
-			Else
 				$oObject.silent = False
-			EndIf
-		Case Else
 			__IEConsoleWriteError("Error", "_IEPropertySet", "$_IESTATUS_InvalidValue", "Invalid Property")
-			Return SetError($_IESTATUS_InvalidValue, 2, 0)
-	EndSelect
-	If @error Then ; Trap COM error, report and return
 		__IEConsoleWriteError("Error", "_IEPropertySet", "$_IESTATUS_COMError", @error)
-		Return SetError($_IESTATUS_ComError, @error, 0)
-	EndIf
-	Return SetError($_IESTATUS_Success, 0, 1)
 EndFunc   ;==>_IEPropertySet
 Func _IEErrorNotify($vNotify = Default)
 	If $vNotify = Default Then Return $__g_bIEErrorNotify
 	If $vNotify Then
 		$__g_bIEErrorNotify = True
-	Else
 		$__g_bIEErrorNotify = False
-	EndIf
-	Return 1
 EndFunc   ;==>_IEErrorNotify
 Func _IEErrorHandlerRegister($sFunctionName = "__IEInternalErrorHandler")
 	$__g_oIEErrorHandler = ObjEvent("AutoIt.Error", $sFunctionName)
 	If IsObj($__g_oIEErrorHandler) Then
 		$__g_sIEUserErrorHandler = $sFunctionName
-		Return SetError($_IESTATUS_Success, 0, 1)
-	Else
 		$__g_oIEErrorHandler = ""
 		__IEConsoleWriteError("Error", "_IEErrorHandlerRegister", "$_IEStatus_GeneralError", _
 				"Error Handler Not Registered - Check existance of error function")
 		Return SetError($_IEStatus_GeneralError, 1, 0)
-	EndIf
 EndFunc   ;==>_IEErrorHandlerRegister
 Func _IEErrorHandlerDeRegister()
 	$__g_sIEUserErrorHandler = ""
 	$__g_oIEErrorHandler = ""
-	Return SetError($_IESTATUS_Success, 0, 1)
 EndFunc   ;==>_IEErrorHandlerDeRegister
 Func __IEInternalErrorHandlerRegister()
 	Local $sCurrentErrorHandler = ObjEvent("AutoIt.Error")
 	If $sCurrentErrorHandler <> "" And Not IsObj($__g_oIEErrorHandler) Then
 		Return SetError($_IEStatus_GeneralError, 0, False)
-	EndIf
 	$__g_oIEErrorHandler = ObjEvent("AutoIt.Error", "__IEInternalErrorHandler")
-	If IsObj($__g_oIEErrorHandler) Then
 		Return SetError($_IESTATUS_Success, 0, True)
-	Else
-		$__g_oIEErrorHandler = ""
-		Return SetError($_IEStatus_GeneralError, 0, False)
-	EndIf
 EndFunc   ;==>__IEInternalErrorHandlerRegister
 Func __IEInternalErrorHandlerDeRegister()
-	$__g_oIEErrorHandler = ""
 	If $__g_sIEUserErrorHandler <> "" Then
 		$__g_oIEErrorHandler = ObjEvent("AutoIt.Error", $__g_sIEUserErrorHandler)
-	EndIf
-	Return SetError($_IESTATUS_Success, 0, 1)
 EndFunc   ;==>__IEInternalErrorHandlerDeRegister
 Func __IEInternalErrorHandler($oCOMError)
 	If $__g_bIEErrorNotify Or $__g_bIEAU3Debug Then ConsoleWrite("--> " & __COMErrorFormating($oCOMError, "----> $IEComError") & @CRLF)
@@ -12558,21 +7873,12 @@ Func __IEInternalErrorHandler($oCOMError)
 	Return
 EndFunc   ;==>__IEInternalErrorHandler
 Func _IEQuit(ByRef $oObject)
-	If Not IsObj($oObject) Then
 		__IEConsoleWriteError("Error", "_IEQuit", "$_IESTATUS_InvalidDataType")
-		Return SetError($_IESTATUS_InvalidDataType, 1, 0)
-	EndIf
 	If Not __IEIsObjType($oObject, "browser") Then
 		__IEConsoleWriteError("Error", "_IEQuit", "$_IESTATUS_InvalidObjectType")
-		Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-	EndIf
 	$oObject.quit()
-	If @error Then ; Trap COM error, report and return
 		__IEConsoleWriteError("Error", "_IEQuit", "$_IESTATUS_COMError", @error)
-		Return SetError($_IESTATUS_ComError, @error, 0)
-	EndIf
 	$oObject = 0
-	Return SetError($_IESTATUS_Success, 0, 1)
 EndFunc   ;==>_IEQuit
 #EndRegion Utility functions
 #Region General
@@ -12606,7 +7912,6 @@ Func _IE_Introduction($sModule = "basic")
 			$sHTML &= 'upon browser "events".<br>' & @CR
 			$sHTML &= 'IE.au3 uses the COM interface in AutoIt to interact with the Internet Explorer ' & @CR
 			$sHTML &= 'object model and the DOM (Document Object Model) supported by the browser.' & @CR
-			$sHTML &= '<br>' & @CR
 			$sHTML &= 'Here are some links for more information and helpful tools:<br>' & @CR
 			$sHTML &= 'Reference Material: ' & @CR
 			$sHTML &= '<ul>' & @CR
@@ -12618,7 +7923,6 @@ Func _IE_Introduction($sModule = "basic")
 			$sHTML &= '<li><a href="http://msdn2.microsoft.com/en-us/library/ms533051.aspx" target="_blank">DHTML Events</a></li>' & @CR
 			$sHTML &= '</ul><br>' & @CR
 			$sHTML &= 'Helpful Tools: ' & @CR
-			$sHTML &= '<ul>' & @CR
 			$sHTML &= '<li><a href="http://www.autoitscript.com/forum/index.php?showtopic=19368" target="_blank">AutoIt IE Builder</a> (build IE scripts interactively)</li>' & @CR
 			$sHTML &= '<li><a href="http://www.debugbar.com/" target="_blank">DebugBar</a> (DOM inspector, HTTP inspector, HTML validator and more - free for personal use) Recommended</li>' & @CR
 			$sHTML &= '<li><a href="http://www.microsoft.com/downloads/details.aspx?FamilyID=e59c3964-672d-4511-bb3e-2d5e1db91038&amp;displaylang=en" target="_blank">IE Developer Toolbar</a> (comprehensive DOM analysis tool)</li>' & @CR
@@ -12631,48 +7935,25 @@ Func _IE_Introduction($sModule = "basic")
 			$sHTML &= '</table>' & @CR
 			$sHTML &= '</body>' & @CR
 			$sHTML &= '</html>'
-		Case Else
 			__IEConsoleWriteError("Error", "_IE_Introduction", "$_IESTATUS_InvalidValue")
 			Return SetError($_IESTATUS_InvalidValue, 1, 0)
-	EndSwitch
 	Local $oObject = _IECreate()
 	_IEDocWriteHTML($oObject, $sHTML)
-	Return SetError($_IESTATUS_Success, 0, $oObject)
 EndFunc   ;==>_IE_Introduction
 Func _IE_Example($sModule = "basic")
 	Local $sHTML = "", $oObject
-	Switch $sModule
-		Case "basic"
-			$sHTML &= '<!DOCTYPE html>' & @CR
-			$sHTML &= '<html>' & @CR
-			$sHTML &= '<head>' & @CR
-			$sHTML &= '<meta content="text/html; charset=UTF-8" http-equiv="content-type">' & @CR
 			$sHTML &= '<title>_IE_Example("basic")</title>' & @CR
 			$sHTML &= '<style>body {font-family: Arial}</style>' & @CR
-			$sHTML &= '</head>' & @CR
-			$sHTML &= '<body>' & @CR
 			$sHTML &= '<a href="http://www.autoitscript.com"><img src="http://www.autoitscript.com/images/logo_autoit_210x72.png" id="AutoItImage" alt="AutoIt Homepage Image" style="background: #204080;"></a>' & @CR
 			$sHTML &= '<p></p>' & @CR
 			$sHTML &= '<div id="line1">This is a simple HTML page with text, links and images.</div>' & @CR
-			$sHTML &= '<br>' & @CR
 			$sHTML &= '<div id="line2"><a href="http://www.autoitscript.com">AutoIt</a> is a wonderful automation scripting language.</div>' & @CR
-			$sHTML &= '<br>' & @CR
 			$sHTML &= '<div id="line3">It is supported by a very active and supporting <a href="http://www.autoitscript.com/forum/">user forum</a>.</div>' & @CR
-			$sHTML &= '<br>' & @CR
 			$sHTML &= '<div id="IEAu3Data"></div>' & @CR
-			$sHTML &= '</body>' & @CR
-			$sHTML &= '</html>'
 			$oObject = _IECreate()
 			_IEDocWriteHTML($oObject, $sHTML)
 		Case "table"
-			$sHTML &= '<!DOCTYPE html>' & @CR
-			$sHTML &= '<html>' & @CR
-			$sHTML &= '<head>' & @CR
-			$sHTML &= '<meta content="text/html; charset=utf-8" http-equiv="content-type">' & @CR
 			$sHTML &= '<title>_IE_Example("table")</title>' & @CR
-			$sHTML &= '<style>body {font-family: Arial}</style>' & @CR
-			$sHTML &= '</head>' & @CR
-			$sHTML &= '<body>' & @CR
 			$sHTML &= '$oTableOne = _IETableGetObjByName($oIE, "tableOne")<br>' & @CR
 			$sHTML &= '&lt;table border=1 id="tableOne"&gt;<br>' & @CR
 			$sHTML &= '<table border=1 id="tableOne">' & @CR
@@ -12684,142 +7965,72 @@ Func _IE_Example($sModule = "basic")
 			$sHTML &= '		<td>with</td>' & @CR
 			$sHTML &= '		<td>IE.au3</td>' & @CR
 			$sHTML &= '	</tr>' & @CR
-			$sHTML &= '	<tr>' & @CR
 			$sHTML &= '		<td>1</td>' & @CR
 			$sHTML &= '		<td>2</td>' & @CR
 			$sHTML &= '		<td>3</td>' & @CR
 			$sHTML &= '		<td>4</td>' & @CR
 			$sHTML &= '		<td>5</td>' & @CR
 			$sHTML &= '		<td>6</td>' & @CR
-			$sHTML &= '	</tr>' & @CR
-			$sHTML &= '	<tr>' & @CR
 			$sHTML &= '		<td>the</td>' & @CR
 			$sHTML &= '		<td>quick</td>' & @CR
 			$sHTML &= '		<td>red</td>' & @CR
 			$sHTML &= '		<td>fox</td>' & @CR
 			$sHTML &= '		<td>jumped</td>' & @CR
 			$sHTML &= '		<td>over</td>' & @CR
-			$sHTML &= '	</tr>' & @CR
-			$sHTML &= '	<tr>' & @CR
-			$sHTML &= '		<td>the</td>' & @CR
 			$sHTML &= '		<td>lazy</td>' & @CR
 			$sHTML &= '		<td>brown</td>' & @CR
 			$sHTML &= '		<td>dog</td>' & @CR
-			$sHTML &= '		<td>the</td>' & @CR
 			$sHTML &= '		<td>time</td>' & @CR
-			$sHTML &= '	</tr>' & @CR
-			$sHTML &= '	<tr>' & @CR
 			$sHTML &= '		<td>has</td>' & @CR
 			$sHTML &= '		<td>come</td>' & @CR
 			$sHTML &= '		<td>for</td>' & @CR
 			$sHTML &= '		<td>all</td>' & @CR
 			$sHTML &= '		<td>good</td>' & @CR
 			$sHTML &= '		<td>men</td>' & @CR
-			$sHTML &= '	</tr>' & @CR
-			$sHTML &= '	<tr>' & @CR
 			$sHTML &= '		<td>to</td>' & @CR
-			$sHTML &= '		<td>come</td>' & @CR
-			$sHTML &= '		<td>to</td>' & @CR
-			$sHTML &= '		<td>the</td>' & @CR
 			$sHTML &= '		<td>aid</td>' & @CR
 			$sHTML &= '		<td>of</td>' & @CR
-			$sHTML &= '	</tr>' & @CR
-			$sHTML &= '</table>' & @CR
-			$sHTML &= '<br>' & @CR
 			$sHTML &= '$oTableTwo = _IETableGetObjByName($oIE, "tableTwo")<br>' & @CR
 			$sHTML &= '&lt;table border="1" id="tableTwo"&gt;<br>' & @CR
 			$sHTML &= '<table border=1 id="tableTwo">' & @CR
-			$sHTML &= '	<tr>' & @CR
 			$sHTML &= '		<td colspan="4">Table Top</td>' & @CR
-			$sHTML &= '	</tr>' & @CR
-			$sHTML &= '	<tr>' & @CR
 			$sHTML &= '		<td>One</td>' & @CR
 			$sHTML &= '		<td colspan="3">Two</td>' & @CR
-			$sHTML &= '	</tr>' & @CR
-			$sHTML &= '	<tr>' & @CR
 			$sHTML &= '		<td>Three</td>' & @CR
 			$sHTML &= '		<td>Four</td>' & @CR
 			$sHTML &= '		<td colspan="2">Five</td>' & @CR
-			$sHTML &= '	</tr>' & @CR
-			$sHTML &= '	<tr>' & @CR
 			$sHTML &= '		<td>Six</td>' & @CR
 			$sHTML &= '		<td colspan="3">Seven</td>' & @CR
-			$sHTML &= '	</tr>' & @CR
-			$sHTML &= '	<tr>' & @CR
 			$sHTML &= '		<td>Eight</td>' & @CR
 			$sHTML &= '		<td>Nine</td>' & @CR
 			$sHTML &= '		<td>Ten</td>' & @CR
 			$sHTML &= '		<td>Eleven</td>' & @CR
-			$sHTML &= '	</tr>' & @CR
-			$sHTML &= '</table>' & @CR
-			$sHTML &= '</body>' & @CR
-			$sHTML &= '</html>'
-			$oObject = _IECreate()
-			_IEDocWriteHTML($oObject, $sHTML)
 		Case "form"
-			$sHTML &= '<!DOCTYPE html>' & @CR
-			$sHTML &= '<html>' & @CR
-			$sHTML &= '<head>' & @CR
-			$sHTML &= '<meta content="text/html; charset=UTF-8" http-equiv="content-type">' & @CR
 			$sHTML &= '<title>_IE_Example("form")</title>' & @CR
-			$sHTML &= '<style>body {font-family: Arial}' & @CR
-			$sHTML &= 'td {padding:6px}</style>' & @CR
-			$sHTML &= '</head>' & @CR
-			$sHTML &= '<body>' & @CR
 			$sHTML &= '<form name="ExampleForm" onSubmit="javascript:alert(''ExampleFormSubmitted'');" method="post">' & @CR
 			$sHTML &= '<table style="border-spacing:6px 6px;" border=1>' & @CR
-			$sHTML &= '<tr>' & @CR
 			$sHTML &= '<td>ExampleForm</td>' & @CR
 			$sHTML &= '<td>&lt;form name="ExampleForm" onSubmit="javascript:alert(''ExampleFormSubmitted'');" method="post"&gt;</td>' & @CR
-			$sHTML &= '</tr>' & @CR
-			$sHTML &= '<tr>' & @CR
 			$sHTML &= '<td>Hidden Input Element<input type="hidden" name="hiddenExample" value="secret value"></td>' & @CR
 			$sHTML &= '<td>&lt;input type="hidden" name="hiddenExample" value="secret value"&gt;</td>' & @CR
-			$sHTML &= '</tr>' & @CR
-			$sHTML &= '<tr>' & @CR
-			$sHTML &= '<td>' & @CR
 			$sHTML &= '<input type="text" name="textExample" value="http://" size="20" maxlength="30">' & @CR
-			$sHTML &= '</td>' & @CR
 			$sHTML &= '<td>&lt;input type="text" name="textExample" value="http://" size="20" maxlength="30"&gt;</td>' & @CR
-			$sHTML &= '</tr>' & @CR
-			$sHTML &= '<tr>' & @CR
-			$sHTML &= '<td>' & @CR
 			$sHTML &= '<input type="password" name="passwordExample" size="10">' & @CR
-			$sHTML &= '</td>' & @CR
 			$sHTML &= '<td>&lt;input type="password" name="passwordExample" size="10"&gt;</td>' & @CR
-			$sHTML &= '</tr>' & @CR
-			$sHTML &= '<tr>' & @CR
-			$sHTML &= '<td>' & @CR
 			$sHTML &= '<input type="file" name="fileExample">' & @CR
-			$sHTML &= '</td>' & @CR
 			$sHTML &= '<td>&lt;input type="file" name="fileExample"&gt;</td>' & @CR
-			$sHTML &= '</tr>' & @CR
-			$sHTML &= '<tr>' & @CR
-			$sHTML &= '<td>' & @CR
 			$sHTML &= '<input type="image" name="imageExample" alt="AutoIt Homepage" src="http://www.autoitscript.com/images/logo_autoit_210x72.png" style="background: #204080;>' & @CR
-			$sHTML &= '</td>' & @CR
 			$sHTML &= '<td>&lt;input type="image" name="imageExample" alt="AutoIt Homepage" src="http://www.autoitscript.com/images/logo_autoit_210x72.png"&gt;</td>' & @CR
-			$sHTML &= '</tr>' & @CR
-			$sHTML &= '<tr>' & @CR
-			$sHTML &= '<td>' & @CR
 			$sHTML &= '<textarea name="textareaExample" rows="5" cols="15">Hello!</textarea>' & @CR
-			$sHTML &= '</td>' & @CR
 			$sHTML &= '<td>&lt;textarea name="textareaExample" rows="5" cols="15"&gt;Hello!&lt;/textarea&gt;</td>' & @CR
-			$sHTML &= '</tr>' & @CR
-			$sHTML &= '<tr>' & @CR
-			$sHTML &= '<td>' & @CR
 			$sHTML &= '<input type="checkbox" name="checkboxG1Example" value="gameBasketball">Basketball<br>' & @CR
 			$sHTML &= '<input type="checkbox" name="checkboxG1Example" value="gameFootball">Football<br>' & @CR
 			$sHTML &= '<input type="checkbox" name="checkboxG2Example" value="gameTennis" checked>Tennis<br>' & @CR
 			$sHTML &= '<input type="checkbox" name="checkboxG2Example" value="gameBaseball">Baseball' & @CR
-			$sHTML &= '</td>' & @CR
 			$sHTML &= '<td>&lt;input type="checkbox" name="checkboxG1Example" value="gameBasketball"&gt;Basketball&lt;br&gt;<br>' & @CR
 			$sHTML &= '&lt;input type="checkbox" name="checkboxG1Example" value="gameFootball"&gt;Football&lt;br&gt;<br>' & @CR
 			$sHTML &= '&lt;input type="checkbox" name="checkboxG2Example" value="gameTennis" checked&gt;Tennis&lt;br&gt;<br>' & @CR
 			$sHTML &= '&lt;input type="checkbox" name="checkboxG2Example" value="gameBaseball"&gt;Baseball</td>' & @CR
-			$sHTML &= '</tr>' & @CR
-			$sHTML &= '<tr>' & @CR
-			$sHTML &= '<td>' & @CR
 			$sHTML &= '<input type="radio" name="radioExample" value="vehicleAirplane">Airplane<br>' & @CR
 			$sHTML &= '<input type="radio" name="radioExample" value="vehicleTrain" checked>Train<br>' & @CR
 			$sHTML &= '<input type="radio" name="radioExample" value="vehicleBoat">Boat<br>' & @CR
@@ -12828,23 +8039,16 @@ Func _IE_Example($sModule = "basic")
 			$sHTML &= '&lt;input type="radio" name="radioExample" value="vehicleTrain" checked&gt;Train&lt;br&gt;<br>' & @CR
 			$sHTML &= '&lt;input type="radio" name="radioExample" value="vehicleBoat"&gt;Boat&lt;br&gt;<br>' & @CR
 			$sHTML &= '&lt;input type="radio" name="radioExample" value="vehicleCar"&gt;Car&lt;br&gt;</td>' & @CR
-			$sHTML &= '</tr>' & @CR
-			$sHTML &= '<tr>' & @CR
-			$sHTML &= '<td>' & @CR
 			$sHTML &= '<select name="selectExample">' & @CR
 			$sHTML &= '<option value="homepage.html">Homepage' & @CR
 			$sHTML &= '<option value="midipage.html">Midipage' & @CR
 			$sHTML &= '<option value="freepage.html">Freepage' & @CR
 			$sHTML &= '</select>' & @CR
-			$sHTML &= '</td>' & @CR
 			$sHTML &= '<td>&lt;select name="selectExample"&gt;<br>' & @CR
 			$sHTML &= '&lt;option value="homepage.html"&gt;Homepage<br>' & @CR
 			$sHTML &= '&lt;option value="midipage.html"&gt;Midipage<br>' & @CR
 			$sHTML &= '&lt;option value="freepage.html"&gt;Freepage<br>' & @CR
 			$sHTML &= '&lt;/select&gt;</td>' & @CR
-			$sHTML &= '</tr>' & @CR
-			$sHTML &= '<tr>' & @CR
-			$sHTML &= '<td>' & @CR
 			$sHTML &= '<select name="multipleSelectExample" size="6" multiple>' & @CR
 			$sHTML &= '<option value="Name1">Aaron' & @CR
 			$sHTML &= '<option value="Name2">Bruce' & @CR
@@ -12852,8 +8056,6 @@ Func _IE_Example($sModule = "basic")
 			$sHTML &= '<option value="Name4">Denis' & @CR
 			$sHTML &= '<option value="Name5">Ed' & @CR
 			$sHTML &= '<option value="Name6">Freddy' & @CR
-			$sHTML &= '</select>' & @CR
-			$sHTML &= '</td>' & @CR
 			$sHTML &= '<td>&lt;select name="multipleSelectExample" size="6" multiple&gt;<br>' & @CR
 			$sHTML &= '&lt;option value="Name1"&gt;Aaron<br>' & @CR
 			$sHTML &= '&lt;option value="Name2"&gt;Bruce<br>' & @CR
@@ -12861,30 +8063,14 @@ Func _IE_Example($sModule = "basic")
 			$sHTML &= '&lt;option value="Name4"&gt;Denis<br>' & @CR
 			$sHTML &= '&lt;option value="Name5"&gt;Ed<br>' & @CR
 			$sHTML &= '&lt;option value="Name6"&gt;Freddy<br>' & @CR
-			$sHTML &= '&lt;/select&gt;</td>' & @CR
-			$sHTML &= '</tr>' & @CR
-			$sHTML &= '<tr>' & @CR
-			$sHTML &= '<td>' & @CR
 			$sHTML &= '<input name="submitExample" type="submit" value="Submit">' & @CR
 			$sHTML &= '<input name="resetExample" type="reset" value="Reset">' & @CR
-			$sHTML &= '</td>' & @CR
 			$sHTML &= '<td>&lt;input name="submitExample" type="submit" value="Submit"&gt;<br>' & @CR
 			$sHTML &= '&lt;input name="resetExample" type="reset" value="Reset"&gt;</td>' & @CR
-			$sHTML &= '</tr>' & @CR
-			$sHTML &= '</table>' & @CR
 			$sHTML &= '<input type="hidden" name="hiddenExample" value="secret value">' & @CR
 			$sHTML &= '</form>' & @CR
-			$sHTML &= '</body>' & @CR
-			$sHTML &= '</html>'
-			$oObject = _IECreate()
-			_IEDocWriteHTML($oObject, $sHTML)
 		Case "frameset"
-			$sHTML &= '<!DOCTYPE html>' & @CR
-			$sHTML &= '<html>' & @CR
-			$sHTML &= '<head>' & @CR
-			$sHTML &= '<meta content="text/html; charset=UTF-8" http-equiv="content-type">' & @CR
 			$sHTML &= '<title>_IE_Example("frameset")</title>' & @CR
-			$sHTML &= '</head>' & @CR
 			$sHTML &= '<frameset rows="25,200">' & @CR
 			$sHTML &= '	<frame name=Top SRC=about:blank>' & @CR
 			$sHTML &= '	<frameset cols="100,500">' & @CR
@@ -12892,9 +8078,6 @@ Func _IE_Example($sModule = "basic")
 			$sHTML &= '		<frame name=Main SRC=about:blank>' & @CR
 			$sHTML &= '	</frameset>' & @CR
 			$sHTML &= '</frameset>' & @CR
-			$sHTML &= '</html>'
-			$oObject = _IECreate()
-			_IEDocWriteHTML($oObject, $sHTML)
 			_IEAction($oObject, "refresh")
 			Local $oFrameTop = _IEFrameGetObjByName($oObject, "Top")
 			Local $oFrameMenu = _IEFrameGetObjByName($oObject, "Menu")
@@ -12903,39 +8086,19 @@ Func _IE_Example($sModule = "basic")
 			_IEBodyWriteHTML($oFrameMenu, '$oFrameMenu = _IEFrameGetObjByName($oIE, "Menu")')
 			_IEBodyWriteHTML($oFrameMain, '$oFrameMain = _IEFrameGetObjByName($oIE, "Main")')
 		Case "iframe"
-			$sHTML &= '<!DOCTYPE html>' & @CR
-			$sHTML &= '<html>' & @CR
-			$sHTML &= '<head>' & @CR
-			$sHTML &= '<meta content="text/html; charset=UTF-8" http-equiv="content-type">' & @CR
 			$sHTML &= '<title>_IE_Example("iframe")</title>' & @CR
 			$sHTML &= '<style>td {padding:6px}</style>' & @CR
-			$sHTML &= '</head>' & @CR
-			$sHTML &= '<body>' & @CR
 			$sHTML &= '<table style="border-spacing:6px" border=1>' & @CR
-			$sHTML &= '<tr>' & @CR
 			$sHTML &= '<td><iframe name="iFrameOne" src="about:blank" title="iFrameOne"></iframe></td>' & @CR
 			$sHTML &= '<td>&lt;iframe name="iFrameOne" src="about:blank" title="iFrameOne"&gt;</td>' & @CR
-			$sHTML &= '</tr>' & @CR
-			$sHTML &= '<tr>' & @CR
 			$sHTML &= '<td><iframe name="iFrameTwo" src="about:blank" title="iFrameTwo"></iframe></td>' & @CR
 			$sHTML &= '<td>&lt;iframe name="iFrameTwo" src="about:blank" title="iFrameTwo"&gt;</td>' & @CR
-			$sHTML &= '</tr>' & @CR
-			$sHTML &= '</table>' & @CR
-			$sHTML &= '</body>' & @CR
-			$sHTML &= '</html>'
-			$oObject = _IECreate()
-			_IEDocWriteHTML($oObject, $sHTML)
-			_IEAction($oObject, "refresh")
 			Local $oIFrameOne = _IEFrameGetObjByName($oObject, "iFrameOne")
 			Local $oIFrameTwo = _IEFrameGetObjByName($oObject, "iFrameTwo")
 			_IEBodyWriteHTML($oIFrameOne, '$oIFrameOne = _IEFrameGetObjByName($oIE, "iFrameOne")')
 			_IEBodyWriteHTML($oIFrameTwo, '$oIFrameTwo = _IEFrameGetObjByName($oIE, "iFrameTwo")')
-		Case Else
 			__IEConsoleWriteError("Error", "_IE_Example", "$_IESTATUS_InvalidValue")
-			Return SetError($_IESTATUS_InvalidValue, 1, 0)
-	EndSwitch
 	Sleep(500)
-	Return SetError($_IESTATUS_Success, 0, $oObject)
 EndFunc   ;==>_IE_Example
 Func _IE_VersionInfo()
 	__IEConsoleWriteError("Information", "_IE_VersionInfo", "version " & _
@@ -12946,18 +8109,15 @@ Func _IE_VersionInfo()
 	Return SetError($_IESTATUS_Success, 0, $__gaIEAU3VersionInfo)
 EndFunc   ;==>_IE_VersionInfo
 #EndRegion General
-#Region Internal functions
 Func __IELockSetForegroundWindow($iLockCode)
 	Local $aRet = DllCall("user32.dll", "bool", "LockSetForegroundWindow", "uint", $iLockCode)
 	If @error Or Not $aRet[0] Then Return SetError(1, _WinAPI_GetLastError(), 0)
-	Return $aRet[0]
 EndFunc   ;==>__IELockSetForegroundWindow
 Func __IEControlGetObjFromHWND(ByRef $hWin)
 	DllCall("ole32.dll", "long", "CoInitialize", "ptr", 0)
 	If @error Then Return SetError(2, @error, 0)
 	Local Const $WM_HTML_GETOBJECT = __IERegisterWindowMessage("WM_HTML_GETOBJECT")
 	Local Const $SMTO_ABORTIFHUNG = 0x0002
-	Local $iResult
 	__IESendMessageTimeout($hWin, $WM_HTML_GETOBJECT, 0, 0, $SMTO_ABORTIFHUNG, 1000, $iResult)
 	Local $tUUID = DllStructCreate("int;short;short;byte[8]")
 	DllStructSetData($tUUID, 1, 0x626FC520)
@@ -12977,15 +8137,11 @@ Func __IEControlGetObjFromHWND(ByRef $hWin)
 	If IsObj($aRet[4]) Then
 		Local $oIE = $aRet[4].Script()
 		Return $oIE.Document.parentwindow
-	Else
 		Return SetError(1, $aRet[0], 0)
-	EndIf
 EndFunc   ;==>__IEControlGetObjFromHWND
 Func __IERegisterWindowMessage($sMsg)
 	Local $aRet = DllCall("user32.dll", "uint", "RegisterWindowMessageW", "wstr", $sMsg)
-	If @error Then Return SetError(@error, @extended, 0)
 	If $aRet[0] = 0 Then Return SetError(10, _WinAPI_GetLastError(), 0)
-	Return $aRet[0]
 EndFunc   ;==>__IERegisterWindowMessage
 Func __IESendMessageTimeout($hWnd, $iMsg, $wParam, $lParam, $iFlags, $iTimeout, ByRef $vOut, $r = 0, $sT1 = "int", $sT2 = "int")
 	Local $aRet = DllCall("user32.dll", "lresult", "SendMessageTimeout", "hwnd", $hWnd, "uint", $iMsg, $sT1, $wParam, _
@@ -12993,37 +8149,21 @@ Func __IESendMessageTimeout($hWnd, $iMsg, $wParam, $lParam, $iFlags, $iTimeout, 
 	If @error Or $aRet[0] = 0 Then
 		$vOut = 0
 		Return SetError(1, _WinAPI_GetLastError(), 0)
-	EndIf
 	$vOut = $aRet[7]
 	If $r >= 0 And $r <= 4 Then Return $aRet[$r]
-	Return $aRet
 EndFunc   ;==>__IESendMessageTimeout
 Func __IEIsObjType(ByRef $oObject, $sType, $bRegister = True)
-	If Not IsObj($oObject) Then
-		Return SetError($_IESTATUS_InvalidDataType, 1, 0)
-	EndIf
 	Local $bStatus = $bRegister
 	If $bRegister Then
-		$bStatus = __IEInternalErrorHandlerRegister()
 		If Not $bStatus Then __IEConsoleWriteError("Warning", "internal function __IEIsObjType", _
-				"Cannot register internal error handler, cannot trap COM errors", _
-				"Use _IEErrorHandlerRegister() to register a user error handler")
-	EndIf
-	Local $iNotifyStatus = _IEErrorNotify() ; save current error notify status
-	_IEErrorNotify(False)
 	Local $sName = String(ObjName($oObject)), $iErrorStatus = $_IESTATUS_InvalidObjectType
-	Switch $sType
 		Case "browserdom"
 			If __IEIsObjType($oObject, "documentcontainer", False) Then
 				$iErrorStatus = $_IESTATUS_Success
 			ElseIf __IEIsObjType($oObject, "document", False) Then
-				$iErrorStatus = $_IESTATUS_Success
-			Else
 				Local $oTemp = $oObject.document
 				If __IEIsObjType($oTemp, "document", False) Then
 					$iErrorStatus = $_IESTATUS_Success
-				EndIf
-			EndIf
 		Case "browser"
 			If ($sName = "IWebBrowser2") Or ($sName = "IWebBrowser") Or ($sName = "WebBrowser") Then $iErrorStatus = $_IESTATUS_Success
 		Case "window"
@@ -13032,9 +8172,7 @@ Func __IEIsObjType(ByRef $oObject, $sType, $bRegister = True)
 			If __IEIsObjType($oObject, "window", False) Or __IEIsObjType($oObject, "browser", False) Then $iErrorStatus = $_IESTATUS_Success
 		Case "document"
 			If $sName = "HTMLDocument" Then $iErrorStatus = $_IESTATUS_Success
-		Case "table"
 			If $sName = "HTMLTable" Then $iErrorStatus = $_IESTATUS_Success
-		Case "form"
 			If $sName = "HTMLFormElement" Then $iErrorStatus = $_IESTATUS_Success
 		Case "forminputelement"
 			If ($sName = "HTMLInputElement") Or ($sName = "HTMLSelectElement") Or ($sName = "HTMLTextAreaElement") Then $iErrorStatus = $_IESTATUS_Success
@@ -13042,18 +8180,9 @@ Func __IEIsObjType(ByRef $oObject, $sType, $bRegister = True)
 			If ($sName = "HTMLElementCollection") Then $iErrorStatus = $_IESTATUS_Success
 		Case "formselectelement"
 			If $sName = "HTMLSelectElement" Then $iErrorStatus = $_IESTATUS_Success
-		Case Else
 			$iErrorStatus = $_IESTATUS_InvalidValue
-	EndSwitch
-	_IEErrorNotify($iNotifyStatus) ; restore notification status
-	If $bRegister Then
-		__IEInternalErrorHandlerDeRegister()
-	EndIf
 	If $iErrorStatus = $_IESTATUS_Success Then
-		Return SetError($_IESTATUS_Success, 0, 1)
-	Else
 		Return SetError($iErrorStatus, 1, 0)
-	EndIf
 EndFunc   ;==>__IEIsObjType
 Func __IEConsoleWriteError($sSeverity, $sFunc, $sMessage = Default, $sStatus = Default)
 	If $__g_bIEErrorNotify Or $__g_bIEAU3Debug Then
@@ -13061,7 +8190,6 @@ Func __IEConsoleWriteError($sSeverity, $sFunc, $sMessage = Default, $sStatus = D
 		If Not ($sMessage = Default) Then $sStr &= ", " & $sMessage
 		If Not ($sStatus = Default) Then $sStr &= " (" & $sStatus & ")"
 		ConsoleWrite($sStr & @CRLF)
-	EndIf
 	Return SetError($sStatus, 0, 1) ; restore calling @error
 EndFunc   ;==>__IEConsoleWriteError
 Func __IEComErrorUnrecoverable($iError)
@@ -13069,45 +8197,20 @@ Func __IEComErrorUnrecoverable($iError)
 		Case -2147352567 ; "an exception has occurred."
 			Return $_IESTATUS_AccessIsDenied
 		Case -2147024891 ; "Access is denied."
-			Return $_IESTATUS_AccessIsDenied
 		Case -2147417848 ; "The object invoked has disconnected from its clients."
 			Return $_IESTATUS_ClientDisconnected
 		Case -2147023174 ; "RPC server not accessible."
-			Return $_IESTATUS_ClientDisconnected
 		Case -2147023179 ; "The interface is unknown."
-			Return $_IESTATUS_ClientDisconnected
-		Case Else
 			Return $_IESTATUS_Success
-	EndSwitch
 EndFunc   ;==>__IEComErrorUnrecoverable
-#EndRegion Internal functions
 #Region ProtoType Functions
 Func __IENavigate(ByRef $oObject, $sUrl, $iWait = 1, $iFags = 0, $sTarget = "", $sPostdata = "", $sHeaders = "")
 	__IEConsoleWriteError("Warning", "__IENavigate", "Unsupported function called. Not fully tested.")
-	If Not IsObj($oObject) Then
 		__IEConsoleWriteError("Error", "__IENavigate", "$_IESTATUS_InvalidDataType")
-		Return SetError($_IESTATUS_InvalidDataType, 1, 0)
-	EndIf
-	If Not __IEIsObjType($oObject, "documentContainer") Then
 		__IEConsoleWriteError("Error", "__IENavigate", "$_IESTATUS_InvalidObjectType")
-		Return SetError($_IESTATUS_InvalidObjectType, 1, 0)
-	EndIf
 	$oObject.navigate($sUrl, $iFags, $sTarget, $sPostdata, $sHeaders)
-	If $iWait Then
-		_IELoadWait($oObject)
 		Return SetError(@error, 0, $oObject)
-	EndIf
-	Return SetError($_IESTATUS_Success, 0, $oObject)
 EndFunc   ;==>__IENavigate
-#cs
-	$sFormAction = "http://www.autoitscript.com/forum/index.php?act=Search&CODE=01"
-	$sHeader = "Content-Type: application/x-www-form-urlencoded"
-	$sDataToPost = "keywords=safearray&namesearch=&forums%5B%5D=all&searchsubs=1&prune=0&prune_type=newer&sort_key=last_post&sort_order=desc&search_in=posts&result_type=posts"
-	$oDataToPostBstr = __IEStringToBstr($sDataToPost) ; convert string to BSTR
-	ConsoleWrite(__IEBstrToString($oDataToPostBstr) & @CRLF) ; prove we can convert it back to a string
-	$oIE = _IECreate()
-	$oIE.Navigate( $sFormAction, Default, Default, $oDataToPostBstr, $sHeader)
-#ce
 Func __IEStringToBstr($sString, $sCharSet = "us-ascii")
 	Local Const $iTypeBinary = 1, $iTypeText = 2
 	Local $oStream = ObjCreate("ADODB.Stream")
@@ -13117,27 +8220,15 @@ Func __IEStringToBstr($sString, $sCharSet = "us-ascii")
 	$oStream.WriteText($sString)
 	$oStream.Position = 0
 	$oStream.type = $iTypeBinary
-	$oStream.Position = 0
 	Return $oStream.Read()
 EndFunc   ;==>__IEStringToBstr
 Func __IEBstrToString($oBstr, $sCharSet = "us-ascii")
-	Local Const $iTypeBinary = 1, $iTypeText = 2
-	Local $oStream = ObjCreate("ADODB.Stream")
-	$oStream.type = $iTypeBinary
-	$oStream.Open
 	$oStream.Write($oBstr)
-	$oStream.Position = 0
-	$oStream.type = $iTypeText
-	$oStream.CharSet = $sCharSet
-	$oStream.Position = 0
 	Return $oStream.ReadText()
 EndFunc   ;==>__IEBstrToString
 Func __IECreateNewIE($sTitle, $sHead = "", $sBody = "")
 	Local $sTemp = __IETempFile("", "~IE~", ".htm")
-	If @error Then
 		__IEConsoleWriteError("Error", "_IECreateHTA", "", "Error creating temporary file in @TempDir or @ScriptDir")
-		Return SetError($_IESTATUS_GeneralError, 1, 0)
-	EndIf
 	Local $sHTML = ''
 	$sHTML &= '<!DOCTYPE html>' & @CR
 	$sHTML &= '<html>' & @CR
@@ -13151,21 +8242,16 @@ Func __IECreateNewIE($sTitle, $sHead = "", $sBody = "")
 	Local $hFile = FileOpen($sTemp, $FO_OVERWRITE)
 	FileWrite($hFile, $sHTML)
 	FileClose($hFile)
-	If @error Then
 		__IEConsoleWriteError("Error", "_IECreateNewIE", "", "Error creating temporary file in @TempDir or @ScriptDir")
 		Return SetError($_IESTATUS_GeneralError, 2, 0)
-	EndIf
 	Run(@ProgramFilesDir & "\Internet Explorer\iexplore.exe " & $sTemp)
 	Local $iPID
 	If WinWait($sTemp, "", 60) Then
 		$iPID = WinGetProcess($sTemp)
-	Else
 		__IEConsoleWriteError("Error", "_IECreateNewIE", "", "Timeout waiting for new IE window creation")
 		Return SetError($_IESTATUS_GeneralError, 3, 0)
-	EndIf
 	If Not FileDelete($sTemp) Then
 		__IEConsoleWriteError("Warning", "_IECreateNewIE", "", "Could not delete temporary file " & FileGetLongName($sTemp))
-	EndIf
 	Local $oObject = _IEAttach($sTemp)
 	_IELoadWait($oObject)
 	_IEPropertySet($oObject, "title", $sTitle)
@@ -13176,7 +8262,6 @@ Func __IETempFile($sDirectoryName = @TempDir, $sFilePrefix = "~", $sFileExtensio
 	If Not FileExists($sDirectoryName) Then $sDirectoryName = @TempDir ; First reset to default temp dir
 	If Not FileExists($sDirectoryName) Then $sDirectoryName = @ScriptDir ; Still wrong then set to Scriptdir
 	If StringRight($sDirectoryName, 1) <> "\" Then $sDirectoryName = $sDirectoryName & "\"
-	Do
 		$sTempName = ""
 		While StringLen($sTempName) < $iRandomLength
 			$sTempName = $sTempName & Chr(Random(97, 122, 1))
@@ -13185,11 +8270,12 @@ Func __IETempFile($sDirectoryName = @TempDir, $sFilePrefix = "~", $sFileExtensio
 		$iTmp += 1
 		If $iTmp > 200 Then ; If we fail over 200 times, there is something wrong
 			Return SetError($_IESTATUS_GeneralError, 1, 0)
-		EndIf
 	Until Not FileExists($sTempName)
 	Return $sTempName
 EndFunc   ;==>__IETempFile
 #EndRegion ProtoType Functions
+#include "ArrayDisplayInternals.au3"
+#include "MsgBoxConstants.au3"
 Global Enum $ARRAYFILL_FORCE_DEFAULT, $ARRAYFILL_FORCE_SINGLEITEM, $ARRAYFILL_FORCE_INT, $ARRAYFILL_FORCE_NUMBER, _
 		$ARRAYFILL_FORCE_PTR, $ARRAYFILL_FORCE_HWND, $ARRAYFILL_FORCE_STRING, $ARRAYFILL_FORCE_BOOLEAN
 Global Enum $ARRAYUNIQUE_NOCOUNT, $ARRAYUNIQUE_COUNT
@@ -13215,24 +8301,18 @@ Func _ArrayAdd(ByRef $aArray, $vValue, $iStart = 0, $sDelim_Item = "|", $sDelim_
 			$hDataType = String
 		Case $ARRAYFILL_FORCE_BOOLEAN
 			$hDataType = "Boolean"
-	EndSwitch
 	Switch UBound($aArray, $UBOUND_DIMENSIONS)
-		Case 1
 			If $iForce = $ARRAYFILL_FORCE_SINGLEITEM Then
 				ReDim $aArray[$iDim_1 + 1]
 				$aArray[$iDim_1] = $vValue
 				Return $iDim_1
-			EndIf
 			If IsArray($vValue) Then
 				If UBound($vValue, $UBOUND_DIMENSIONS) <> 1 Then Return SetError(5, 0, -1)
 				$hDataType = 0
-			Else
 				Local $aTmp = StringSplit($vValue, $sDelim_Item, $STR_NOCOUNT + $STR_ENTIRESPLIT)
 				If UBound($aTmp, $UBOUND_ROWS) = 1 Then
 					$aTmp[0] = $vValue
-				EndIf
 				$vValue = $aTmp
-			EndIf
 			Local $iAdd = UBound($vValue, $UBOUND_ROWS)
 			ReDim $aArray[$iDim_1 + $iAdd]
 			For $i = 0 To $iAdd - 1
@@ -13242,24 +8322,16 @@ Func _ArrayAdd(ByRef $aArray, $vValue, $iStart = 0, $sDelim_Item = "|", $sDelim_
 							$aArray[$iDim_1 + $i] = True
 						Case "False", "0", ""
 							$aArray[$iDim_1 + $i] = False
-					EndSwitch
 				ElseIf IsFunc($hDataType) Then
 					$aArray[$iDim_1 + $i] = $hDataType($vValue[$i])
-				Else
 					$aArray[$iDim_1 + $i] = $vValue[$i]
-				EndIf
-			Next
 			Return $iDim_1 + $iAdd - 1
-		Case 2
 			Local $iDim_2 = UBound($aArray, $UBOUND_COLUMNS)
 			If $iStart < 0 Or $iStart > $iDim_2 - 1 Then Return SetError(4, 0, -1)
 			Local $iValDim_1, $iValDim_2 = 0, $iColCount
-			If IsArray($vValue) Then
 				If UBound($vValue, $UBOUND_DIMENSIONS) <> 2 Then Return SetError(5, 0, -1)
 				$iValDim_1 = UBound($vValue, $UBOUND_ROWS)
 				$iValDim_2 = UBound($vValue, $UBOUND_COLUMNS)
-				$hDataType = 0
-			Else
 				Local $aSplit_1 = StringSplit($vValue, $sDelim_Row, $STR_NOCOUNT + $STR_ENTIRESPLIT)
 				$iValDim_1 = UBound($aSplit_1, $UBOUND_ROWS)
 				Local $aTmp[$iValDim_1][0], $aSplit_2
@@ -13269,13 +8341,8 @@ Func _ArrayAdd(ByRef $aArray, $vValue, $iStart = 0, $sDelim_Item = "|", $sDelim_
 					If $iColCount > $iValDim_2 Then
 						$iValDim_2 = $iColCount
 						ReDim $aTmp[$iValDim_1][$iValDim_2]
-					EndIf
 					For $j = 0 To $iColCount - 1
 						$aTmp[$i][$j] = $aSplit_2[$j]
-					Next
-				Next
-				$vValue = $aTmp
-			EndIf
 			If UBound($vValue, $UBOUND_COLUMNS) + $iStart > UBound($aArray, $UBOUND_COLUMNS) Then Return SetError(3, 0, -1)
 			ReDim $aArray[$iDim_1 + $iValDim_1][$iDim_2]
 			For $iWriteTo_Index = 0 To $iValDim_1 - 1
@@ -13283,8 +8350,6 @@ Func _ArrayAdd(ByRef $aArray, $vValue, $iStart = 0, $sDelim_Item = "|", $sDelim_
 					If $j < $iStart Then
 						$aArray[$iWriteTo_Index + $iDim_1][$j] = ""
 					ElseIf $j - $iStart > $iValDim_2 - 1 Then
-						$aArray[$iWriteTo_Index + $iDim_1][$j] = ""
-					Else
 						If String($hDataType) = "Boolean" Then
 							Switch $vValue[$iWriteTo_Index][$j - $iStart]
 								Case "True", "1"
@@ -13294,116 +8359,65 @@ Func _ArrayAdd(ByRef $aArray, $vValue, $iStart = 0, $sDelim_Item = "|", $sDelim_
 							EndSwitch
 						ElseIf IsFunc($hDataType) Then
 							$aArray[$iWriteTo_Index + $iDim_1][$j] = $hDataType($vValue[$iWriteTo_Index][$j - $iStart])
-						Else
 							$aArray[$iWriteTo_Index + $iDim_1][$j] = $vValue[$iWriteTo_Index][$j - $iStart]
-						EndIf
-					EndIf
-				Next
-			Next
-		Case Else
 			Return SetError(2, 0, -1)
-	EndSwitch
 	Return UBound($aArray, $UBOUND_ROWS) - 1
 EndFunc   ;==>_ArrayAdd
 Func _ArrayBinarySearch(Const ByRef $aArray, $vValue, $iStart = 0, $iEnd = 0, $iColumn = 0)
-	If $iStart = Default Then $iStart = 0
 	If $iEnd = Default Then $iEnd = 0
 	If $iColumn = Default Then $iColumn = 0
-	If Not IsArray($aArray) Then Return SetError(1, 0, -1)
-	Local $iDim_1 = UBound($aArray, $UBOUND_ROWS)
 	If $iDim_1 = 0 Then Return SetError(6, 0, -1)
 	If $iEnd < 1 Or $iEnd > $iDim_1 - 1 Then $iEnd = $iDim_1 - 1
 	If $iStart < 0 Then $iStart = 0
 	If $iStart > $iEnd Then Return SetError(4, 0, -1)
 	Local $iMid = Int(($iEnd + $iStart) / 2)
-	Switch UBound($aArray, $UBOUND_DIMENSIONS)
-		Case 1
 			If $aArray[$iStart] > $vValue Or $aArray[$iEnd] < $vValue Then Return SetError(2, 0, -1)
 			While $iStart <= $iMid And $vValue <> $aArray[$iMid]
 				If $vValue < $aArray[$iMid] Then
 					$iEnd = $iMid - 1
-				Else
 					$iStart = $iMid + 1
-				EndIf
 				$iMid = Int(($iEnd + $iStart) / 2)
-			WEnd
 			If $iStart > $iEnd Then Return SetError(3, 0, -1) ; Entry not found
-		Case 2
 			Local $iDim_2 = UBound($aArray, $UBOUND_COLUMNS) - 1
 			If $iColumn < 0 Or $iColumn > $iDim_2 Then Return SetError(7, 0, -1)
 			If $aArray[$iStart][$iColumn] > $vValue Or $aArray[$iEnd][$iColumn] < $vValue Then Return SetError(2, 0, -1)
 			While $iStart <= $iMid And $vValue <> $aArray[$iMid][$iColumn]
 				If $vValue < $aArray[$iMid][$iColumn] Then
-					$iEnd = $iMid - 1
-				Else
-					$iStart = $iMid + 1
-				EndIf
-				$iMid = Int(($iEnd + $iStart) / 2)
-			WEnd
-			If $iStart > $iEnd Then Return SetError(3, 0, -1) ; Entry not found
-		Case Else
 			Return SetError(5, 0, -1)
-	EndSwitch
 	Return $iMid
 EndFunc   ;==>_ArrayBinarySearch
 Func _ArrayColDelete(ByRef $aArray, $iColumn, $bConvert = False)
 	If $bConvert = Default Then $bConvert = False
-	If Not IsArray($aArray) Then Return SetError(1, 0, -1)
-	Local $iDim_1 = UBound($aArray, $UBOUND_ROWS)
 	If UBound($aArray, $UBOUND_DIMENSIONS) <> 2 Then Return SetError(2, 0, -1)
 	Local $iDim_2 = UBound($aArray, $UBOUND_COLUMNS)
 	Switch $iDim_2
-		Case 2
 			If $iColumn < 0 Or $iColumn > 1 Then Return SetError(3, 0, -1)
 			If $bConvert Then
 				Local $aTempArray[$iDim_1]
 				For $i = 0 To $iDim_1 - 1
 					$aTempArray[$i] = $aArray[$i][(Not $iColumn)]
-				Next
 				$aArray = $aTempArray
-			Else
 				ContinueCase
-			EndIf
-		Case Else
 			If $iColumn < 0 Or $iColumn > $iDim_2 - 1 Then Return SetError(3, 0, -1)
 			For $i = 0 To $iDim_1 - 1
 				For $j = $iColumn To $iDim_2 - 2
 					$aArray[$i][$j] = $aArray[$i][$j + 1]
-				Next
-			Next
 			ReDim $aArray[$iDim_1][$iDim_2 - 1]
-	EndSwitch
 	Return UBound($aArray, $UBOUND_COLUMNS)
 EndFunc   ;==>_ArrayColDelete
 Func _ArrayColInsert(ByRef $aArray, $iColumn)
-	If Not IsArray($aArray) Then Return SetError(1, 0, -1)
-	Local $iDim_1 = UBound($aArray, $UBOUND_ROWS)
-	Switch UBound($aArray, $UBOUND_DIMENSIONS)
-		Case 1
 			Local $aTempArray[$iDim_1][2]
 			Switch $iColumn
 				Case 0, 1
 					For $i = 0 To $iDim_1 - 1
 						$aTempArray[$i][(Not $iColumn)] = $aArray[$i]
-					Next
-				Case Else
 					Return SetError(3, 0, -1)
-			EndSwitch
 			$aArray = $aTempArray
-		Case 2
-			Local $iDim_2 = UBound($aArray, $UBOUND_COLUMNS)
 			If $iColumn < 0 Or $iColumn > $iDim_2 Then Return SetError(3, 0, -1)
 			ReDim $aArray[$iDim_1][$iDim_2 + 1]
-			For $i = 0 To $iDim_1 - 1
 				For $j = $iDim_2 To $iColumn + 1 Step -1
 					$aArray[$i][$j] = $aArray[$i][$j - 1]
-				Next
 				$aArray[$i][$iColumn] = ""
-			Next
-		Case Else
-			Return SetError(2, 0, -1)
-	EndSwitch
-	Return UBound($aArray, $UBOUND_COLUMNS)
 EndFunc   ;==>_ArrayColInsert
 Func _ArrayCombinations(Const ByRef $aArray, $iSet, $sDelimiter = "")
 	If $sDelimiter = Default Then $sDelimiter = ""
@@ -13414,24 +8428,17 @@ Func _ArrayCombinations(Const ByRef $aArray, $iSet, $sDelimiter = "")
 	Local $aIdx[$iR]
 	For $i = 0 To $iR - 1
 		$aIdx[$i] = $i
-	Next
 	Local $iTotal = __Array_Combinations($iN, $iR)
 	Local $iLeft = $iTotal
 	Local $aResult[$iTotal + 1]
 	$aResult[0] = $iTotal
-	Local $iCount = 1
 	While $iLeft > 0
 		__Array_GetNext($iN, $iR, $iLeft, $iTotal, $aIdx)
 		For $i = 0 To $iSet - 1
 			$aResult[$iCount] &= $aArray[$aIdx[$i]] & $sDelimiter
-		Next
 		If $sDelimiter <> "" Then $aResult[$iCount] = StringTrimRight($aResult[$iCount], 1)
-		$iCount += 1
-	WEnd
-	Return $aResult
 EndFunc   ;==>_ArrayCombinations
 Func _ArrayConcatenate(ByRef $aArrayTarget, Const ByRef $aArraySource, $iStart = 0)
-	If $iStart = Default Then $iStart = 0
 	If Not IsArray($aArrayTarget) Then Return SetError(1, 0, -1)
 	If Not IsArray($aArraySource) Then Return SetError(2, 0, -1)
 	Local $iDim_Total_Tgt = UBound($aArrayTarget, $UBOUND_DIMENSIONS)
@@ -13440,33 +8447,23 @@ Func _ArrayConcatenate(ByRef $aArrayTarget, Const ByRef $aArraySource, $iStart =
 	Local $iDim_1_Src = UBound($aArraySource, $UBOUND_ROWS)
 	If $iStart < 0 Or $iStart > $iDim_1_Src - 1 Then Return SetError(6, 0, -1)
 	Switch $iDim_Total_Tgt
-		Case 1
 			If $iDim_Total_Src <> 1 Then Return SetError(4, 0, -1)
 			ReDim $aArrayTarget[$iDim_1_Tgt + $iDim_1_Src - $iStart]
 			For $i = $iStart To $iDim_1_Src - 1
 				$aArrayTarget[$iDim_1_Tgt + $i - $iStart] = $aArraySource[$i]
-			Next
-		Case 2
 			If $iDim_Total_Src <> 2 Then Return SetError(4, 0, -1)
 			Local $iDim_2_Tgt = UBound($aArrayTarget, $UBOUND_COLUMNS)
 			If UBound($aArraySource, $UBOUND_COLUMNS) <> $iDim_2_Tgt Then Return SetError(5, 0, -1)
 			ReDim $aArrayTarget[$iDim_1_Tgt + $iDim_1_Src - $iStart][$iDim_2_Tgt]
-			For $i = $iStart To $iDim_1_Src - 1
 				For $j = 0 To $iDim_2_Tgt - 1
 					$aArrayTarget[$iDim_1_Tgt + $i - $iStart][$j] = $aArraySource[$i][$j]
-				Next
-			Next
-		Case Else
 			Return SetError(3, 0, -1)
-	EndSwitch
 	Return UBound($aArrayTarget, $UBOUND_ROWS)
 EndFunc   ;==>_ArrayConcatenate
 Func _ArrayDelete(ByRef $aArray, $vRange)
-	If Not IsArray($aArray) Then Return SetError(1, 0, -1)
 	Local $iDim_1 = UBound($aArray, $UBOUND_ROWS) - 1
 	If IsArray($vRange) Then
 		If UBound($vRange, $UBOUND_DIMENSIONS) <> 1 Or UBound($vRange, $UBOUND_ROWS) < 2 Then Return SetError(4, 0, -1)
-	Else
 		Local $iNumber, $aSplit_1, $aSplit_2
 		$vRange = StringStripWS($vRange, 8)
 		$aSplit_1 = StringSplit($vRange, ";")
@@ -13484,50 +8481,24 @@ Func _ArrayDelete(ByRef $aArray, $vRange)
 							$iNumber += 1
 							$vRange &= $iNumber & ";"
 						Until $iNumber = $aSplit_2[2]
-					EndIf
-			EndSwitch
-		Next
 		$vRange = StringSplit(StringTrimRight($vRange, 1), ";")
-	EndIf
 	If $vRange[1] < 0 Or $vRange[$vRange[0]] > $iDim_1 Then Return SetError(5, 0, -1)
 	Local $iCopyTo_Index = 0
-	Switch UBound($aArray, $UBOUND_DIMENSIONS)
-		Case 1
 			For $i = 1 To $vRange[0]
 				$aArray[$vRange[$i]] = ChrW(0xFAB1)
-			Next
 			For $iReadFrom_Index = 0 To $iDim_1
 				If $aArray[$iReadFrom_Index] == ChrW(0xFAB1) Then
 					ContinueLoop
-				Else
 					If $iReadFrom_Index <> $iCopyTo_Index Then
 						$aArray[$iCopyTo_Index] = $aArray[$iReadFrom_Index]
-					EndIf
 					$iCopyTo_Index += 1
-				EndIf
-			Next
 			ReDim $aArray[$iDim_1 - $vRange[0] + 1]
-		Case 2
-			Local $iDim_2 = UBound($aArray, $UBOUND_COLUMNS) - 1
-			For $i = 1 To $vRange[0]
 				$aArray[$vRange[$i]][0] = ChrW(0xFAB1)
-			Next
-			For $iReadFrom_Index = 0 To $iDim_1
 				If $aArray[$iReadFrom_Index][0] == ChrW(0xFAB1) Then
-					ContinueLoop
-				Else
-					If $iReadFrom_Index <> $iCopyTo_Index Then
 						For $j = 0 To $iDim_2
 							$aArray[$iCopyTo_Index][$j] = $aArray[$iReadFrom_Index][$j]
-						Next
-					EndIf
-					$iCopyTo_Index += 1
-				EndIf
-			Next
 			ReDim $aArray[$iDim_1 - $vRange[0] + 1][$iDim_2 + 1]
-		Case Else
 			Return SetError(2, 0, False)
-	EndSwitch
 	Return UBound($aArray, $UBOUND_ROWS)
 EndFunc   ;==>_ArrayDelete
 Func _ArrayDisplay(Const ByRef $aArray, $sTitle = Default, $sArrayRange = Default, $iFlags = Default, $vUser_Separator = Default, $sHeader = Default, $iMax_ColWidth = Default)
@@ -13540,22 +8511,15 @@ Func _ArrayExtract(Const ByRef $aArray, $iStart_Row = -1, $iEnd_Row = -1, $iStar
 	If $iEnd_Row = Default Then $iEnd_Row = -1
 	If $iStart_Col = Default Then $iStart_Col = -1
 	If $iEnd_Col = Default Then $iEnd_Col = -1
-	If Not IsArray($aArray) Then Return SetError(1, 0, -1)
-	Local $iDim_1 = UBound($aArray, $UBOUND_ROWS) - 1
 	If $iEnd_Row = -1 Then $iEnd_Row = $iDim_1
 	If $iStart_Row = -1 Then $iStart_Row = 0
 	If $iStart_Row < -1 Or $iEnd_Row < -1 Then Return SetError(3, 0, -1)
 	If $iStart_Row > $iDim_1 Or $iEnd_Row > $iDim_1 Then Return SetError(3, 0, -1)
 	If $iStart_Row > $iEnd_Row Then Return SetError(4, 0, -1)
-	Switch UBound($aArray, $UBOUND_DIMENSIONS)
-		Case 1
 			Local $aRetArray[$iEnd_Row - $iStart_Row + 1]
 			For $i = 0 To $iEnd_Row - $iStart_Row
 				$aRetArray[$i] = $aArray[$i + $iStart_Row]
-			Next
 			Return $aRetArray
-		Case 2
-			Local $iDim_2 = UBound($aArray, $UBOUND_COLUMNS) - 1
 			If $iEnd_Col = -1 Then $iEnd_Col = $iDim_2
 			If $iStart_Col = -1 Then $iStart_Col = 0
 			If $iStart_Col < -1 Or $iEnd_Col < -1 Then Return SetError(5, 0, -1)
@@ -13563,27 +8527,13 @@ Func _ArrayExtract(Const ByRef $aArray, $iStart_Row = -1, $iEnd_Row = -1, $iStar
 			If $iStart_Col > $iEnd_Col Then Return SetError(6, 0, -1)
 			If $iStart_Col = $iEnd_Col Then
 				Local $aRetArray[$iEnd_Row - $iStart_Row + 1]
-			Else
 				Local $aRetArray[$iEnd_Row - $iStart_Row + 1][$iEnd_Col - $iStart_Col + 1]
-			EndIf
-			For $i = 0 To $iEnd_Row - $iStart_Row
 				For $j = 0 To $iEnd_Col - $iStart_Col
 					If $iStart_Col = $iEnd_Col Then
 						$aRetArray[$i] = $aArray[$i + $iStart_Row][$j + $iStart_Col]
-					Else
 						$aRetArray[$i][$j] = $aArray[$i + $iStart_Row][$j + $iStart_Col]
-					EndIf
-				Next
-			Next
-			Return $aRetArray
-		Case Else
-			Return SetError(2, 0, -1)
-	EndSwitch
-	Return 1
 EndFunc   ;==>_ArrayExtract
 Func _ArrayFindAll(Const ByRef $aArray, $vValue, $iStart = 0, $iEnd = 0, $iCase = 0, $iCompare = 0, $iSubItem = 0, $bRow = False)
-	If $iStart = Default Then $iStart = 0
-	If $iEnd = Default Then $iEnd = 0
 	If $iCase = Default Then $iCase = 0
 	If $iCompare = Default Then $iCompare = 0
 	If $iSubItem = Default Then $iSubItem = 0
@@ -13591,7 +8541,6 @@ Func _ArrayFindAll(Const ByRef $aArray, $vValue, $iStart = 0, $iEnd = 0, $iCase 
 	$iStart = _ArraySearch($aArray, $vValue, $iStart, $iEnd, $iCase, $iCompare, 1, $iSubItem, $bRow)
 	If @error Then Return SetError(@error, 0, -1)
 	Local $iIndex = 0, $avResult[UBound($aArray, ($bRow ? $UBOUND_COLUMNS : $UBOUND_ROWS))] ; Set dimension for Column/Row
-	Do
 		$avResult[$iIndex] = $iStart
 		$iIndex += 1
 		$iStart = _ArraySearch($aArray, $vValue, $iStart + 1, $iEnd, $iCase, $iCompare, 1, $iSubItem, $bRow)
@@ -13601,61 +8550,13 @@ Func _ArrayFindAll(Const ByRef $aArray, $vValue, $iStart = 0, $iEnd = 0, $iCase 
 EndFunc   ;==>_ArrayFindAll
 Func _ArrayInsert(ByRef $aArray, $vRange, $vValue = "", $iStart = 0, $sDelim_Item = "|", $sDelim_Row = @CRLF, $iForce = $ARRAYFILL_FORCE_DEFAULT)
 	If $vValue = Default Then $vValue = ""
-	If $iStart = Default Then $iStart = 0
-	If $sDelim_Item = Default Then $sDelim_Item = "|"
-	If $sDelim_Row = Default Then $sDelim_Row = @CRLF
-	If $iForce = Default Then $iForce = $ARRAYFILL_FORCE_DEFAULT
-	If Not IsArray($aArray) Then Return SetError(1, 0, -1)
-	Local $iDim_1 = UBound($aArray, $UBOUND_ROWS) - 1
-	Local $hDataType = 0
-	Switch $iForce
-		Case $ARRAYFILL_FORCE_INT
-			$hDataType = Int
-		Case $ARRAYFILL_FORCE_NUMBER
-			$hDataType = Number
-		Case $ARRAYFILL_FORCE_PTR
-			$hDataType = Ptr
-		Case $ARRAYFILL_FORCE_HWND
-			$hDataType = Hwnd
-		Case $ARRAYFILL_FORCE_STRING
-			$hDataType = String
-	EndSwitch
 	Local $aSplit_1, $aSplit_2
-	If IsArray($vRange) Then
-		If UBound($vRange, $UBOUND_DIMENSIONS) <> 1 Or UBound($vRange, $UBOUND_ROWS) < 2 Then Return SetError(4, 0, -1)
-	Else
 		Local $iNumber
-		$vRange = StringStripWS($vRange, 8)
-		$aSplit_1 = StringSplit($vRange, ";")
-		$vRange = ""
-		For $i = 1 To $aSplit_1[0]
-			If Not StringRegExp($aSplit_1[$i], "^\d+(-\d+)?$") Then Return SetError(3, 0, -1)
-			$aSplit_2 = StringSplit($aSplit_1[$i], "-")
-			Switch $aSplit_2[0]
-				Case 1
-					$vRange &= $aSplit_2[1] & ";"
-				Case 2
-					If Number($aSplit_2[2]) >= Number($aSplit_2[1]) Then
-						$iNumber = $aSplit_2[1] - 1
-						Do
-							$iNumber += 1
-							$vRange &= $iNumber & ";"
-						Until $iNumber = $aSplit_2[2]
-					EndIf
-			EndSwitch
-		Next
-		$vRange = StringSplit(StringTrimRight($vRange, 1), ";")
-	EndIf
-	If $vRange[1] < 0 Or $vRange[$vRange[0]] > $iDim_1 Then Return SetError(5, 0, -1)
 	For $i = 2 To $vRange[0]
 		If $vRange[$i] < $vRange[$i - 1] Then Return SetError(3, 0, -1)
-	Next
 	Local $iCopyTo_Index = $iDim_1 + $vRange[0]
 	Local $iInsertPoint_Index = $vRange[0]
 	Local $iInsert_Index = $vRange[$iInsertPoint_Index]
-	Switch UBound($aArray, $UBOUND_DIMENSIONS)
-		Case 1
-			If $iForce = $ARRAYFILL_FORCE_SINGLEITEM Then
 				ReDim $aArray[$iDim_1 + $vRange[0] + 1]
 				For $iReadFromIndex = $iDim_1 To 0 Step -1
 					$aArray[$iCopyTo_Index] = $aArray[$iReadFromIndex]
@@ -13668,21 +8569,9 @@ Func _ArrayInsert(ByRef $aArray, $vRange, $vValue = "", $iStart = 0, $sDelim_Ite
 						If $iInsertPoint_Index < 1 Then ExitLoop 2
 						$iInsert_Index = $vRange[$iInsertPoint_Index]
 					WEnd
-				Next
 				Return $iDim_1 + $vRange[0] + 1
-			EndIf
 			ReDim $aArray[$iDim_1 + $vRange[0] + 1]
-			If IsArray($vValue) Then
-				If UBound($vValue, $UBOUND_DIMENSIONS) <> 1 Then Return SetError(5, 0, -1)
-				$hDataType = 0
-			Else
-				Local $aTmp = StringSplit($vValue, $sDelim_Item, $STR_NOCOUNT + $STR_ENTIRESPLIT)
-				If UBound($aTmp, $UBOUND_ROWS) = 1 Then
-					$aTmp[0] = $vValue
 					$hDataType = 0
-				EndIf
-				$vValue = $aTmp
-			EndIf
 			For $iReadFromIndex = $iDim_1 To 0 Step -1
 				$aArray[$iCopyTo_Index] = $aArray[$iReadFromIndex]
 				$iCopyTo_Index -= 1
@@ -13691,131 +8580,61 @@ Func _ArrayInsert(ByRef $aArray, $vRange, $vValue = "", $iStart = 0, $sDelim_Ite
 					If $iInsertPoint_Index <= UBound($vValue, $UBOUND_ROWS) Then
 						If IsFunc($hDataType) Then
 							$aArray[$iCopyTo_Index] = $hDataType($vValue[$iInsertPoint_Index - 1])
-						Else
 							$aArray[$iCopyTo_Index] = $vValue[$iInsertPoint_Index - 1]
-						EndIf
-					Else
 						$aArray[$iCopyTo_Index] = ""
-					EndIf
-					$iCopyTo_Index -= 1
 					$iInsertPoint_Index -= 1
 					If $iInsertPoint_Index = 0 Then ExitLoop 2
-					$iInsert_Index = $vRange[$iInsertPoint_Index]
-				WEnd
-			Next
-		Case 2
-			Local $iDim_2 = UBound($aArray, $UBOUND_COLUMNS)
 			If $iStart < 0 Or $iStart > $iDim_2 - 1 Then Return SetError(6, 0, -1)
 			Local $iValDim_1, $iValDim_2
-			If IsArray($vValue) Then
 				If UBound($vValue, $UBOUND_DIMENSIONS) <> 2 Then Return SetError(7, 0, -1)
-				$iValDim_1 = UBound($vValue, $UBOUND_ROWS)
-				$iValDim_2 = UBound($vValue, $UBOUND_COLUMNS)
-				$hDataType = 0
-			Else
 				$aSplit_1 = StringSplit($vValue, $sDelim_Row, $STR_NOCOUNT + $STR_ENTIRESPLIT)
-				$iValDim_1 = UBound($aSplit_1, $UBOUND_ROWS)
 				StringReplace($aSplit_1[0], $sDelim_Item, "")
 				$iValDim_2 = @extended + 1
 				Local $aTmp[$iValDim_1][$iValDim_2]
-				For $i = 0 To $iValDim_1 - 1
-					$aSplit_2 = StringSplit($aSplit_1[$i], $sDelim_Item, $STR_NOCOUNT + $STR_ENTIRESPLIT)
 					For $j = 0 To $iValDim_2 - 1
-						$aTmp[$i][$j] = $aSplit_2[$j]
-					Next
-				Next
-				$vValue = $aTmp
-			EndIf
 			If UBound($vValue, $UBOUND_COLUMNS) + $iStart > UBound($aArray, $UBOUND_COLUMNS) Then Return SetError(8, 0, -1)
 			ReDim $aArray[$iDim_1 + $vRange[0] + 1][$iDim_2]
-			For $iReadFromIndex = $iDim_1 To 0 Step -1
-				For $j = 0 To $iDim_2 - 1
 					$aArray[$iCopyTo_Index][$j] = $aArray[$iReadFromIndex][$j]
-				Next
-				$iCopyTo_Index -= 1
-				$iInsert_Index = $vRange[$iInsertPoint_Index]
-				While $iReadFromIndex = $iInsert_Index
 					For $j = 0 To $iDim_2 - 1
 						If $j < $iStart Then
 							$aArray[$iCopyTo_Index][$j] = ""
 						ElseIf $j - $iStart > $iValDim_2 - 1 Then
-							$aArray[$iCopyTo_Index][$j] = ""
-						Else
 							If $iInsertPoint_Index - 1 < $iValDim_1 Then
 								If IsFunc($hDataType) Then
 									$aArray[$iCopyTo_Index][$j] = $hDataType($vValue[$iInsertPoint_Index - 1][$j - $iStart])
-								Else
 									$aArray[$iCopyTo_Index][$j] = $vValue[$iInsertPoint_Index - 1][$j - $iStart]
-								EndIf
-							Else
 								$aArray[$iCopyTo_Index][$j] = ""
-							EndIf
-						EndIf
-					Next
-					$iCopyTo_Index -= 1
-					$iInsertPoint_Index -= 1
-					If $iInsertPoint_Index = 0 Then ExitLoop 2
-					$iInsert_Index = $vRange[$iInsertPoint_Index]
-				WEnd
-			Next
-		Case Else
-			Return SetError(2, 0, -1)
-	EndSwitch
-	Return UBound($aArray, $UBOUND_ROWS)
 EndFunc   ;==>_ArrayInsert
 Func _ArrayMax(Const ByRef $aArray, $iCompNumeric = 0, $iStart = -1, $iEnd = -1, $iSubItem = 0)
 	Local $iResult = _ArrayMaxIndex($aArray, $iCompNumeric, $iStart, $iEnd, $iSubItem)
-	If @error Then Return SetError(@error, 0, "")
 	If UBound($aArray, $UBOUND_DIMENSIONS) = 1 Then
 		Return $aArray[$iResult]
-	Else
 		Return $aArray[$iResult][$iSubItem]
-	EndIf
 EndFunc   ;==>_ArrayMax
 Func _ArrayMaxIndex(Const ByRef $aArray, $iCompNumeric = 0, $iStart = -1, $iEnd = -1, $iSubItem = 0)
 	If $iCompNumeric = Default Then $iCompNumeric = 0
 	If $iStart = Default Then $iStart = -1
 	If $iEnd = Default Then $iEnd = -1
-	If $iSubItem = Default Then $iSubItem = 0
 	Local $iRet = __Array_MinMaxIndex($aArray, $iCompNumeric, $iStart, $iEnd, $iSubItem, __Array_GreaterThan) ; Pass a delegate function to check if value1 > value2.
 	Return SetError(@error, 0, $iRet)
 EndFunc   ;==>_ArrayMaxIndex
 Func _ArrayMin(Const ByRef $aArray, $iCompNumeric = 0, $iStart = -1, $iEnd = -1, $iSubItem = 0)
 	Local $iResult = _ArrayMinIndex($aArray, $iCompNumeric, $iStart, $iEnd, $iSubItem)
-	If @error Then Return SetError(@error, 0, "")
-	If UBound($aArray, $UBOUND_DIMENSIONS) = 1 Then
-		Return $aArray[$iResult]
-	Else
-		Return $aArray[$iResult][$iSubItem]
-	EndIf
 EndFunc   ;==>_ArrayMin
 Func _ArrayMinIndex(Const ByRef $aArray, $iCompNumeric = 0, $iStart = -1, $iEnd = -1, $iSubItem = 0)
-	If $iCompNumeric = Default Then $iCompNumeric = 0
-	If $iStart = Default Then $iStart = -1
-	If $iEnd = Default Then $iEnd = -1
-	If $iSubItem = Default Then $iSubItem = 0
 	Local $iRet = __Array_MinMaxIndex($aArray, $iCompNumeric, $iStart, $iEnd, $iSubItem, __Array_LessThan) ; Pass a delegate function to check if value1 < value2.
-	Return SetError(@error, 0, $iRet)
 EndFunc   ;==>_ArrayMinIndex
 Func _ArrayPermute(ByRef $aArray, $sDelimiter = "")
-	If $sDelimiter = Default Then $sDelimiter = ""
-	If Not IsArray($aArray) Then Return SetError(1, 0, 0)
-	If UBound($aArray, $UBOUND_DIMENSIONS) <> 1 Then Return SetError(2, 0, 0)
 	Local $iSize = UBound($aArray), $iFactorial = 1, $aIdx[$iSize], $aResult[1], $iCount = 1
 	If UBound($aArray) Then
 		For $i = 0 To $iSize - 1
 			$aIdx[$i] = $i
-		Next
 		For $i = $iSize To 1 Step -1
 			$iFactorial *= $i
-		Next
 		ReDim $aResult[$iFactorial + 1]
 		$aResult[0] = $iFactorial
 		__Array_ExeterInternal($aArray, 0, $iSize, $sDelimiter, $aIdx, $aResult, $iCount)
-	Else
 		$aResult[0] = 0
-	EndIf
-	Return $aResult
 EndFunc   ;==>_ArrayPermute
 Func _ArrayPop(ByRef $aArray)
 	If (Not IsArray($aArray)) Then Return SetError(1, 0, "")
@@ -13825,76 +8644,48 @@ Func _ArrayPop(ByRef $aArray)
 	Local $sLastVal = $aArray[$iUBound]
 	If $iUBound > -1 Then
 		ReDim $aArray[$iUBound]
-	EndIf
 	Return $sLastVal
 EndFunc   ;==>_ArrayPop
 Func _ArrayPush(ByRef $aArray, $vValue, $iDirection = 0)
 	If $iDirection = Default Then $iDirection = 0
 	If (Not IsArray($aArray)) Then Return SetError(1, 0, 0)
 	If UBound($aArray, $UBOUND_DIMENSIONS) <> 1 Then Return SetError(3, 0, 0)
-	Local $iUBound = UBound($aArray) - 1
 	If IsArray($vValue) Then ; $vValue is an array
 		Local $iUBoundS = UBound($vValue)
 		If ($iUBoundS - 1) > $iUBound Then Return SetError(2, 0, 0)
 		If $iDirection Then ; slide right, add to front
 			For $i = $iUBound To $iUBoundS Step -1
 				$aArray[$i] = $aArray[$i - $iUBoundS]
-			Next
 			For $i = 0 To $iUBoundS - 1
 				$aArray[$i] = $vValue[$i]
-			Next
 		Else ; slide left, add to end
 			For $i = 0 To $iUBound - $iUBoundS
 				$aArray[$i] = $aArray[$i + $iUBoundS]
-			Next
-			For $i = 0 To $iUBoundS - 1
 				$aArray[$i + $iUBound - $iUBoundS + 1] = $vValue[$i]
-			Next
-		EndIf
-	Else
 		If $iUBound > -1 Then
 			If $iDirection Then ; slide right, add to front
 				For $i = $iUBound To 1 Step -1
 					$aArray[$i] = $aArray[$i - 1]
-				Next
 				$aArray[0] = $vValue
 			Else ; slide left, add to end
 				For $i = 0 To $iUBound - 1
 					$aArray[$i] = $aArray[$i + 1]
-				Next
 				$aArray[$iUBound] = $vValue
-			EndIf
-		EndIf
-	EndIf
-	Return 1
 EndFunc   ;==>_ArrayPush
 Func _ArrayReverse(ByRef $aArray, $iStart = 0, $iEnd = 0)
-	If $iStart = Default Then $iStart = 0
-	If $iEnd = Default Then $iEnd = 0
-	If Not IsArray($aArray) Then Return SetError(1, 0, 0)
-	If UBound($aArray, $UBOUND_DIMENSIONS) <> 1 Then Return SetError(3, 0, 0)
 	If Not UBound($aArray) Then Return SetError(4, 0, 0)
 	Local $vTmp, $iUBound = UBound($aArray) - 1
 	If $iEnd < 1 Or $iEnd > $iUBound Then $iEnd = $iUBound
-	If $iStart < 0 Then $iStart = 0
 	If $iStart > $iEnd Then Return SetError(2, 0, 0)
 	For $i = $iStart To Int(($iStart + $iEnd - 1) / 2)
 		$vTmp = $aArray[$i]
 		$aArray[$i] = $aArray[$iEnd]
 		$aArray[$iEnd] = $vTmp
 		$iEnd -= 1
-	Next
-	Return 1
 EndFunc   ;==>_ArrayReverse
 Func _ArraySearch(Const ByRef $aArray, $vValue, $iStart = 0, $iEnd = 0, $iCase = 0, $iCompare = 0, $iForward = 1, $iSubItem = -1, $bRow = False)
-	If $iStart = Default Then $iStart = 0
-	If $iEnd = Default Then $iEnd = 0
-	If $iCase = Default Then $iCase = 0
-	If $iCompare = Default Then $iCompare = 0
 	If $iForward = Default Then $iForward = 1
 	If $iSubItem = Default Then $iSubItem = -1
-	If $bRow = Default Then $bRow = False
-	If Not IsArray($aArray) Then Return SetError(1, 0, -1)
 	Local $iDim_1 = UBound($aArray) - 1
 	If $iDim_1 = -1 Then Return SetError(3, 0, -1)
 	Local $iDim_2 = UBound($aArray, $UBOUND_COLUMNS) - 1
@@ -13902,47 +8693,29 @@ Func _ArraySearch(Const ByRef $aArray, $vValue, $iStart = 0, $iEnd = 0, $iCase =
 	If $iCompare = 2 Then
 		$iCompare = 0
 		$bCompType = True
-	EndIf
 	If $bRow Then
 		If UBound($aArray, $UBOUND_DIMENSIONS) = 1 Then Return SetError(5, 0, -1)
 		If $iEnd < 1 Or $iEnd > $iDim_2 Then $iEnd = $iDim_2
 		If $iStart < 0 Then $iStart = 0
 		If $iStart > $iEnd Then Return SetError(4, 0, -1)
-	Else
 		If $iEnd < 1 Or $iEnd > $iDim_1 Then $iEnd = $iDim_1
-		If $iStart < 0 Then $iStart = 0
-		If $iStart > $iEnd Then Return SetError(4, 0, -1)
-	EndIf
 	Local $iStep = 1
 	If Not $iForward Then
 		Local $iTmp = $iStart
 		$iStart = $iEnd
 		$iEnd = $iTmp
 		$iStep = -1
-	EndIf
-	Switch UBound($aArray, $UBOUND_DIMENSIONS)
 		Case 1 ; 1D array search
 			If Not $iCompare Then
 				If Not $iCase Then
 					For $i = $iStart To $iEnd Step $iStep
 						If $bCompType And VarGetType($aArray[$i]) <> VarGetType($vValue) Then ContinueLoop
 						If $aArray[$i] = $vValue Then Return $i
-					Next
-				Else
-					For $i = $iStart To $iEnd Step $iStep
-						If $bCompType And VarGetType($aArray[$i]) <> VarGetType($vValue) Then ContinueLoop
 						If $aArray[$i] == $vValue Then Return $i
-					Next
-				EndIf
-			Else
 				For $i = $iStart To $iEnd Step $iStep
 					If $iCompare = 3 Then
 						If StringRegExp($aArray[$i], $vValue) Then Return $i
-					Else
 						If StringInStr($aArray[$i], $vValue, $iCase) > 0 Then Return $i
-					EndIf
-				Next
-			EndIf
 		Case 2 ; 2D array search
 			Local $iDim_Sub
 			If $bRow Then
@@ -13950,18 +8723,8 @@ Func _ArraySearch(Const ByRef $aArray, $vValue, $iStart = 0, $iEnd = 0, $iCase =
 				If $iSubItem > $iDim_Sub Then $iSubItem = $iDim_Sub
 				If $iSubItem < 0 Then
 					$iSubItem = 0
-				Else
 					$iDim_Sub = $iSubItem
-				EndIf
-			Else
 				$iDim_Sub = $iDim_2
-				If $iSubItem > $iDim_Sub Then $iSubItem = $iDim_Sub
-				If $iSubItem < 0 Then
-					$iSubItem = 0
-				Else
-					$iDim_Sub = $iSubItem
-				EndIf
-			EndIf
 			For $j = $iSubItem To $iDim_Sub
 				If Not $iCompare Then
 					If Not $iCase Then
@@ -13969,124 +8732,60 @@ Func _ArraySearch(Const ByRef $aArray, $vValue, $iStart = 0, $iEnd = 0, $iCase =
 							If $bRow Then
 								If $bCompType And VarGetType($aArray[$j][$i]) <> VarGetType($vValue) Then ContinueLoop
 								If $aArray[$j][$i] = $vValue Then Return $i
-							Else
 								If $bCompType And VarGetType($aArray[$i][$j]) <> VarGetType($vValue) Then ContinueLoop
 								If $aArray[$i][$j] = $vValue Then Return $i
-							EndIf
-						Next
-					Else
-						For $i = $iStart To $iEnd Step $iStep
-							If $bRow Then
-								If $bCompType And VarGetType($aArray[$j][$i]) <> VarGetType($vValue) Then ContinueLoop
 								If $aArray[$j][$i] == $vValue Then Return $i
-							Else
-								If $bCompType And VarGetType($aArray[$i][$j]) <> VarGetType($vValue) Then ContinueLoop
 								If $aArray[$i][$j] == $vValue Then Return $i
-							EndIf
-						Next
-					EndIf
-				Else
-					For $i = $iStart To $iEnd Step $iStep
 						If $iCompare = 3 Then
-							If $bRow Then
 								If StringRegExp($aArray[$j][$i], $vValue) Then Return $i
-							Else
 								If StringRegExp($aArray[$i][$j], $vValue) Then Return $i
-							EndIf
-						Else
-							If $bRow Then
 								If StringInStr($aArray[$j][$i], $vValue, $iCase) > 0 Then Return $i
-							Else
 								If StringInStr($aArray[$i][$j], $vValue, $iCase) > 0 Then Return $i
-							EndIf
-						EndIf
-					Next
-				EndIf
-			Next
-		Case Else
-			Return SetError(2, 0, -1)
-	EndSwitch
 	Return SetError(6, 0, -1)
 EndFunc   ;==>_ArraySearch
 Func _ArrayShuffle(ByRef $aArray, $iStart_Row = 0, $iEnd_Row = 0, $iCol = -1)
 	If $iStart_Row = Default Then $iStart_Row = 0
 	If $iEnd_Row = Default Then $iEnd_Row = 0
 	If $iCol = Default Then $iCol = -1
-	If Not IsArray($aArray) Then Return SetError(1, 0, -1)
-	Local $iDim_1 = UBound($aArray, $UBOUND_ROWS)
 	If $iEnd_Row = 0 Then $iEnd_Row = $iDim_1 - 1
 	If $iStart_Row < 0 Or $iStart_Row > $iDim_1 - 1 Then Return SetError(3, 0, -1)
 	If $iEnd_Row < 1 Or $iEnd_Row > $iDim_1 - 1 Then Return SetError(3, 0, -1)
-	If $iStart_Row > $iEnd_Row Then Return SetError(4, 0, -1)
 	Local $vTmp, $iRand
-	Switch UBound($aArray, $UBOUND_DIMENSIONS)
-		Case 1
 			For $i = $iEnd_Row To $iStart_Row + 1 Step -1
 				$iRand = Random($iStart_Row, $i, 1)
 				$vTmp = $aArray[$i]
 				$aArray[$i] = $aArray[$iRand]
 				$aArray[$iRand] = $vTmp
-			Next
-			Return 1
-		Case 2
-			Local $iDim_2 = UBound($aArray, $UBOUND_COLUMNS)
 			If $iCol < -1 Or $iCol > $iDim_2 - 1 Then Return SetError(5, 0, -1)
 			Local $iCol_Start, $iCol_End
 			If $iCol = -1 Then
 				$iCol_Start = 0
 				$iCol_End = $iDim_2 - 1
-			Else
 				$iCol_Start = $iCol
 				$iCol_End = $iCol
-			EndIf
-			For $i = $iEnd_Row To $iStart_Row + 1 Step -1
-				$iRand = Random($iStart_Row, $i, 1)
 				For $j = $iCol_Start To $iCol_End
 					$vTmp = $aArray[$i][$j]
 					$aArray[$i][$j] = $aArray[$iRand][$j]
 					$aArray[$iRand][$j] = $vTmp
-				Next
-			Next
-			Return 1
-		Case Else
-			Return SetError(2, 0, -1)
-	EndSwitch
 EndFunc   ;==>_ArrayShuffle
 Func _ArraySort(ByRef $aArray, $iDescending = 0, $iStart = 0, $iEnd = 0, $iSubItem = 0, $iPivot = 0)
 	If $iDescending = Default Then $iDescending = 0
-	If $iStart = Default Then $iStart = 0
-	If $iEnd = Default Then $iEnd = 0
-	If $iSubItem = Default Then $iSubItem = 0
 	If $iPivot = Default Then $iPivot = 0
-	If Not IsArray($aArray) Then Return SetError(1, 0, 0)
-	Local $iUBound = UBound($aArray) - 1
 	If $iUBound = -1 Then Return SetError(5, 0, 0)
-	If $iEnd = Default Then $iEnd = 0
 	If $iEnd < 1 Or $iEnd > $iUBound Or $iEnd = Default Then $iEnd = $iUBound
 	If $iStart < 0 Or $iStart = Default Then $iStart = 0
-	If $iStart > $iEnd Then Return SetError(2, 0, 0)
-	Switch UBound($aArray, $UBOUND_DIMENSIONS)
-		Case 1
 			If $iPivot Then ; Switch algorithms as required
 				__ArrayDualPivotSort($aArray, $iStart, $iEnd)
-			Else
 				__ArrayQuickSort1D($aArray, $iStart, $iEnd)
-			EndIf
 			If $iDescending Then _ArrayReverse($aArray, $iStart, $iEnd)
-		Case 2
 			If $iPivot Then Return SetError(6, 0, 0) ; Error if 2D array and $iPivot
 			Local $iSubMax = UBound($aArray, $UBOUND_COLUMNS) - 1
 			If $iSubItem > $iSubMax Then Return SetError(3, 0, 0)
 			If $iDescending Then
 				$iDescending = -1
-			Else
 				$iDescending = 1
-			EndIf
 			__ArrayQuickSort2D($aArray, $iDescending, $iStart, $iEnd, $iSubItem, $iSubMax)
-		Case Else
 			Return SetError(4, 0, 0)
-	EndSwitch
-	Return 1
 EndFunc   ;==>_ArraySort
 Func __ArrayQuickSort1D(ByRef $aArray, Const ByRef $iStart, Const ByRef $iEnd)
 	If $iEnd <= $iStart Then Return
@@ -14100,74 +8799,37 @@ Func __ArrayQuickSort1D(ByRef $aArray, Const ByRef $iStart, Const ByRef $iEnd)
 					$vCur = $aArray[$j]
 					If ($vTmp >= $vCur And IsNumber($vCur)) Or (Not IsNumber($vCur) And StringCompare($vTmp, $vCur) >= 0) Then ExitLoop
 					$aArray[$j + 1] = $vCur
-				Next
-			Else
-				For $j = $i - 1 To $iStart Step -1
 					If (StringCompare($vTmp, $aArray[$j]) >= 0) Then ExitLoop
 					$aArray[$j + 1] = $aArray[$j]
-				Next
-			EndIf
 			$aArray[$j + 1] = $vTmp
-		Next
-		Return
-	EndIf
 	Local $L = $iStart, $R = $iEnd, $vPivot = $aArray[Int(($iStart + $iEnd) / 2)], $bNum = IsNumber($vPivot)
-	Do
 		If $bNum Then
 			While ($aArray[$L] < $vPivot And IsNumber($aArray[$L])) Or (Not IsNumber($aArray[$L]) And StringCompare($aArray[$L], $vPivot) < 0)
 				$L += 1
-			WEnd
 			While ($aArray[$R] > $vPivot And IsNumber($aArray[$R])) Or (Not IsNumber($aArray[$R]) And StringCompare($aArray[$R], $vPivot) > 0)
 				$R -= 1
-			WEnd
-		Else
 			While (StringCompare($aArray[$L], $vPivot) < 0)
-				$L += 1
-			WEnd
 			While (StringCompare($aArray[$R], $vPivot) > 0)
-				$R -= 1
-			WEnd
-		EndIf
 		If $L <= $R Then
 			$vTmp = $aArray[$L]
 			$aArray[$L] = $aArray[$R]
 			$aArray[$R] = $vTmp
 			$L += 1
 			$R -= 1
-		EndIf
 	Until $L > $R
 	__ArrayQuickSort1D($aArray, $iStart, $R)
 	__ArrayQuickSort1D($aArray, $L, $iEnd)
 EndFunc   ;==>__ArrayQuickSort1D
 Func __ArrayQuickSort2D(ByRef $aArray, Const ByRef $iStep, Const ByRef $iStart, Const ByRef $iEnd, Const ByRef $iSubItem, Const ByRef $iSubMax)
-	If $iEnd <= $iStart Then Return
 	Local $vTmp, $L = $iStart, $R = $iEnd, $vPivot = $aArray[Int(($iStart + $iEnd) / 2)][$iSubItem], $bNum = IsNumber($vPivot)
-	Do
-		If $bNum Then
 			While ($iStep * ($aArray[$L][$iSubItem] - $vPivot) < 0 And IsNumber($aArray[$L][$iSubItem])) Or (Not IsNumber($aArray[$L][$iSubItem]) And $iStep * StringCompare($aArray[$L][$iSubItem], $vPivot) < 0)
-				$L += 1
-			WEnd
 			While ($iStep * ($aArray[$R][$iSubItem] - $vPivot) > 0 And IsNumber($aArray[$R][$iSubItem])) Or (Not IsNumber($aArray[$R][$iSubItem]) And $iStep * StringCompare($aArray[$R][$iSubItem], $vPivot) > 0)
-				$R -= 1
-			WEnd
-		Else
 			While ($iStep * StringCompare($aArray[$L][$iSubItem], $vPivot) < 0)
-				$L += 1
-			WEnd
 			While ($iStep * StringCompare($aArray[$R][$iSubItem], $vPivot) > 0)
-				$R -= 1
-			WEnd
-		EndIf
-		If $L <= $R Then
 			For $i = 0 To $iSubMax
 				$vTmp = $aArray[$L][$i]
 				$aArray[$L][$i] = $aArray[$R][$i]
 				$aArray[$R][$i] = $vTmp
-			Next
-			$L += 1
-			$R -= 1
-		EndIf
-	Until $L > $R
 	__ArrayQuickSort2D($aArray, $iStep, $iStart, $R, $iSubItem, $iSubMax)
 	__ArrayQuickSort2D($aArray, $iStep, $L, $iEnd, $iSubItem, $iSubMax)
 EndFunc   ;==>__ArrayQuickSort2D
@@ -14182,52 +8844,35 @@ Func __ArrayDualPivotSort(ByRef $aArray, $iPivot_Left, $iPivot_Right, $bLeftMost
 				$j = $i
 				$iAi = $aArray[$i + 1]
 				While $iAi < $aArray[$j]
-					$aArray[$j + 1] = $aArray[$j]
 					$j -= 1
 					If $j + 1 = $iPivot_Left Then ExitLoop
-				WEnd
 				$aArray[$j + 1] = $iAi
 				$i += 1
-			WEnd
-		Else
 			While 1
 				If $iPivot_Left >= $iPivot_Right Then Return 1
 				$iPivot_Left += 1
 				If $aArray[$iPivot_Left] < $aArray[$iPivot_Left - 1] Then ExitLoop
-			WEnd
-			While 1
 				$k = $iPivot_Left
-				$iPivot_Left += 1
 				If $iPivot_Left > $iPivot_Right Then ExitLoop
 				$iA1 = $aArray[$k]
 				$iA2 = $aArray[$iPivot_Left]
 				If $iA1 < $iA2 Then
 					$iA2 = $iA1
 					$iA1 = $aArray[$iPivot_Left]
-				EndIf
 				$k -= 1
 				While $iA1 < $aArray[$k]
 					$aArray[$k + 2] = $aArray[$k]
 					$k -= 1
-				WEnd
 				$aArray[$k + 2] = $iA1
 				While $iA2 < $aArray[$k]
 					$aArray[$k + 1] = $aArray[$k]
-					$k -= 1
-				WEnd
 				$aArray[$k + 1] = $iA2
-				$iPivot_Left += 1
-			WEnd
 			$iLast = $aArray[$iPivot_Right]
 			$iPivot_Right -= 1
 			While $iLast < $aArray[$iPivot_Right]
 				$aArray[$iPivot_Right + 1] = $aArray[$iPivot_Right]
 				$iPivot_Right -= 1
-			WEnd
 			$aArray[$iPivot_Right + 1] = $iLast
-		EndIf
-		Return 1
-	EndIf
 	Local $iSeventh = BitShift($iLength, 3) + BitShift($iLength, 6) + 1
 	Local $iE1, $iE2, $iE3, $iE4, $iE5, $t
 	$iE3 = Ceiling(($iPivot_Left + $iPivot_Right) / 2)
@@ -14239,7 +8884,6 @@ Func __ArrayDualPivotSort(ByRef $aArray, $iPivot_Left, $iPivot_Right, $bLeftMost
 		$t = $aArray[$iE2]
 		$aArray[$iE2] = $aArray[$iE1]
 		$aArray[$iE1] = $t
-	EndIf
 	If $aArray[$iE3] < $aArray[$iE2] Then
 		$t = $aArray[$iE3]
 		$aArray[$iE3] = $aArray[$iE2]
@@ -14247,8 +8891,6 @@ Func __ArrayDualPivotSort(ByRef $aArray, $iPivot_Left, $iPivot_Right, $bLeftMost
 		If $t < $aArray[$iE1] Then
 			$aArray[$iE2] = $aArray[$iE1]
 			$aArray[$iE1] = $t
-		EndIf
-	EndIf
 	If $aArray[$iE4] < $aArray[$iE3] Then
 		$t = $aArray[$iE4]
 		$aArray[$iE4] = $aArray[$iE3]
@@ -14259,9 +8901,6 @@ Func __ArrayDualPivotSort(ByRef $aArray, $iPivot_Left, $iPivot_Right, $bLeftMost
 			If $t < $aArray[$iE1] Then
 				$aArray[$iE2] = $aArray[$iE1]
 				$aArray[$iE1] = $t
-			EndIf
-		EndIf
-	EndIf
 	If $aArray[$iE5] < $aArray[$iE4] Then
 		$t = $aArray[$iE5]
 		$aArray[$iE5] = $aArray[$iE4]
@@ -14275,10 +8914,6 @@ Func __ArrayDualPivotSort(ByRef $aArray, $iPivot_Left, $iPivot_Right, $bLeftMost
 				If $t < $aArray[$iE1] Then
 					$aArray[$iE2] = $aArray[$iE1]
 					$aArray[$iE1] = $t
-				EndIf
-			EndIf
-		EndIf
-	EndIf
 	Local $iLess = $iPivot_Left
 	Local $iGreater = $iPivot_Right
 	If (($aArray[$iE1] <> $aArray[$iE2]) And ($aArray[$iE2] <> $aArray[$iE3]) And ($aArray[$iE3] <> $aArray[$iE4]) And ($aArray[$iE4] <> $aArray[$iE5])) Then
@@ -14286,10 +8921,8 @@ Func __ArrayDualPivotSort(ByRef $aArray, $iPivot_Left, $iPivot_Right, $bLeftMost
 		Local $iPivot_2 = $aArray[$iE4]
 		$aArray[$iE2] = $aArray[$iPivot_Left]
 		$aArray[$iE4] = $aArray[$iPivot_Right]
-		Do
 			$iLess += 1
 		Until $aArray[$iLess] >= $iPivot_1
-		Do
 			$iGreater -= 1
 		Until $aArray[$iGreater] <= $iPivot_2
 		$k = $iLess
@@ -14303,19 +8936,14 @@ Func __ArrayDualPivotSort(ByRef $aArray, $iPivot_Left, $iPivot_Right, $bLeftMost
 				While $aArray[$iGreater] > $iPivot_2
 					$iGreater -= 1
 					If $iGreater + 1 = $k Then ExitLoop 2
-				WEnd
 				If $aArray[$iGreater] < $iPivot_1 Then
 					$aArray[$k] = $aArray[$iLess]
 					$aArray[$iLess] = $aArray[$iGreater]
 					$iLess += 1
-				Else
 					$aArray[$k] = $aArray[$iGreater]
-				EndIf
 				$aArray[$iGreater] = $iAk
 				$iGreater -= 1
-			EndIf
 			$k += 1
-		WEnd
 		$aArray[$iPivot_Left] = $aArray[$iLess - 1]
 		$aArray[$iLess - 1] = $iPivot_1
 		$aArray[$iPivot_Right] = $aArray[$iGreater + 1]
@@ -14324,99 +8952,49 @@ Func __ArrayDualPivotSort(ByRef $aArray, $iPivot_Left, $iPivot_Right, $bLeftMost
 		__ArrayDualPivotSort($aArray, $iGreater + 2, $iPivot_Right, False)
 		If ($iLess < $iE1) And ($iE5 < $iGreater) Then
 			While $aArray[$iLess] = $iPivot_1
-				$iLess += 1
-			WEnd
 			While $aArray[$iGreater] = $iPivot_2
-				$iGreater -= 1
-			WEnd
 			$k = $iLess
 			While $k <= $iGreater
 				$iAk = $aArray[$k]
 				If $iAk = $iPivot_1 Then
-					$aArray[$k] = $aArray[$iLess]
 					$aArray[$iLess] = $iAk
-					$iLess += 1
 				ElseIf $iAk = $iPivot_2 Then
 					While $aArray[$iGreater] = $iPivot_2
 						$iGreater -= 1
 						If $iGreater + 1 = $k Then ExitLoop 2
-					WEnd
 					If $aArray[$iGreater] = $iPivot_1 Then
 						$aArray[$k] = $aArray[$iLess]
 						$aArray[$iLess] = $iPivot_1
 						$iLess += 1
-					Else
 						$aArray[$k] = $aArray[$iGreater]
-					EndIf
 					$aArray[$iGreater] = $iAk
-					$iGreater -= 1
-				EndIf
 				$k += 1
-			WEnd
-		EndIf
 		__ArrayDualPivotSort($aArray, $iLess, $iGreater, False)
-	Else
 		Local $iPivot = $aArray[$iE3]
-		$k = $iLess
-		While $k <= $iGreater
 			If $aArray[$k] = $iPivot Then
-				$k += 1
-				ContinueLoop
-			EndIf
-			$iAk = $aArray[$k]
 			If $iAk < $iPivot Then
-				$aArray[$k] = $aArray[$iLess]
-				$aArray[$iLess] = $iAk
-				$iLess += 1
-			Else
 				While $aArray[$iGreater] > $iPivot
-					$iGreater -= 1
-				WEnd
 				If $aArray[$iGreater] < $iPivot Then
-					$aArray[$k] = $aArray[$iLess]
-					$aArray[$iLess] = $aArray[$iGreater]
-					$iLess += 1
-				Else
 					$aArray[$k] = $iPivot
-				EndIf
-				$aArray[$iGreater] = $iAk
-				$iGreater -= 1
-			EndIf
-			$k += 1
-		WEnd
 		__ArrayDualPivotSort($aArray, $iPivot_Left, $iLess - 1, True)
 		__ArrayDualPivotSort($aArray, $iGreater + 1, $iPivot_Right, False)
-	EndIf
 EndFunc   ;==>__ArrayDualPivotSort
 Func _ArraySwap(ByRef $aArray, $iIndex_1, $iIndex_2, $bCol = False, $iStart = -1, $iEnd = -1)
 	If $bCol = Default Then $bCol = False
-	If $iStart = Default Then $iStart = -1
-	If $iEnd = Default Then $iEnd = -1
-	If Not IsArray($aArray) Then Return SetError(1, 0, -1)
-	Local $iDim_1 = UBound($aArray, $UBOUND_ROWS) - 1
-	Local $iDim_2 = UBound($aArray, $UBOUND_COLUMNS) - 1
 	If $iDim_2 = -1 Then ; 1D array so force defaults
 		$bCol = False
 		$iStart = -1
 		$iEnd = -1
-	EndIf
 	If $iStart > $iEnd Then Return SetError(5, 0, -1)
 	If $bCol Then
 		If $iIndex_1 < 0 Or $iIndex_2 > $iDim_2 Then Return SetError(3, 0, -1)
 		If $iStart = -1 Then $iStart = 0
 		If $iEnd = -1 Then $iEnd = $iDim_1
-	Else
 		If $iIndex_1 < 0 Or $iIndex_2 > $iDim_1 Then Return SetError(3, 0, -1)
-		If $iStart = -1 Then $iStart = 0
 		If $iEnd = -1 Then $iEnd = $iDim_2
-	EndIf
-	Local $vTmp
-	Switch UBound($aArray, $UBOUND_DIMENSIONS)
-		Case 1
 			$vTmp = $aArray[$iIndex_1]
 			$aArray[$iIndex_1] = $aArray[$iIndex_2]
 			$aArray[$iIndex_2] = $vTmp
-		Case 2
 			If $iStart < -1 Or $iEnd < -1 Then Return SetError(4, 0, -1)
 			If $bCol Then
 				If $iStart > $iDim_1 Or $iEnd > $iDim_1 Then Return SetError(4, 0, -1)
@@ -14424,145 +9002,61 @@ Func _ArraySwap(ByRef $aArray, $iIndex_1, $iIndex_2, $bCol = False, $iStart = -1
 					$vTmp = $aArray[$j][$iIndex_1]
 					$aArray[$j][$iIndex_1] = $aArray[$j][$iIndex_2]
 					$aArray[$j][$iIndex_2] = $vTmp
-				Next
-			Else
 				If $iStart > $iDim_2 Or $iEnd > $iDim_2 Then Return SetError(4, 0, -1)
-				For $j = $iStart To $iEnd
 					$vTmp = $aArray[$iIndex_1][$j]
 					$aArray[$iIndex_1][$j] = $aArray[$iIndex_2][$j]
 					$aArray[$iIndex_2][$j] = $vTmp
-				Next
-			EndIf
-		Case Else
-			Return SetError(2, 0, -1)
-	EndSwitch
-	Return 1
 EndFunc   ;==>_ArraySwap
 Func _ArrayToClip(Const ByRef $aArray, $sDelim_Col = "|", $iStart_Row = -1, $iEnd_Row = -1, $sDelim_Row = @CRLF, $iStart_Col = -1, $iEnd_Col = -1)
 	Local $sResult = _ArrayToString($aArray, $sDelim_Col, $iStart_Row, $iEnd_Row, $sDelim_Row, $iStart_Col, $iEnd_Col)
-	If @error Then Return SetError(@error, 0, 0)
 	If ClipPut($sResult) Then Return 1
 	Return SetError(-1, 0, 0)
 EndFunc   ;==>_ArrayToClip
 Func _ArrayToString(Const ByRef $aArray, $sDelim_Col = "|", $iStart_Row = -1, $iEnd_Row = -1, $sDelim_Row = @CRLF, $iStart_Col = -1, $iEnd_Col = -1)
 	If $sDelim_Col = Default Then $sDelim_Col = "|"
-	If $sDelim_Row = Default Then $sDelim_Row = @CRLF
-	If $iStart_Row = Default Then $iStart_Row = -1
-	If $iEnd_Row = Default Then $iEnd_Row = -1
-	If $iStart_Col = Default Then $iStart_Col = -1
-	If $iEnd_Col = Default Then $iEnd_Col = -1
-	If Not IsArray($aArray) Then Return SetError(1, 0, -1)
-	Local $iDim_1 = UBound($aArray, $UBOUND_ROWS) - 1
-	If $iStart_Row = -1 Then $iStart_Row = 0
-	If $iEnd_Row = -1 Then $iEnd_Row = $iDim_1
-	If $iStart_Row < -1 Or $iEnd_Row < -1 Then Return SetError(3, 0, -1)
 	If $iStart_Row > $iDim_1 Or $iEnd_Row > $iDim_1 Then Return SetError(3, 0, "")
-	If $iStart_Row > $iEnd_Row Then Return SetError(4, 0, -1)
 	Local $sRet = ""
-	Switch UBound($aArray, $UBOUND_DIMENSIONS)
-		Case 1
 			For $i = $iStart_Row To $iEnd_Row
 				$sRet &= $aArray[$i] & $sDelim_Col
-			Next
 			Return StringTrimRight($sRet, StringLen($sDelim_Col))
-		Case 2
-			Local $iDim_2 = UBound($aArray, $UBOUND_COLUMNS) - 1
-			If $iStart_Col = -1 Then $iStart_Col = 0
-			If $iEnd_Col = -1 Then $iEnd_Col = $iDim_2
-			If $iStart_Col < -1 Or $iEnd_Col < -1 Then Return SetError(5, 0, -1)
-			If $iStart_Col > $iDim_2 Or $iEnd_Col > $iDim_2 Then Return SetError(5, 0, -1)
-			If $iStart_Col > $iEnd_Col Then Return SetError(6, 0, -1)
-			For $i = $iStart_Row To $iEnd_Row
 				For $j = $iStart_Col To $iEnd_Col
 					$sRet &= $aArray[$i][$j] & $sDelim_Col
-				Next
 				$sRet = StringTrimRight($sRet, StringLen($sDelim_Col)) & $sDelim_Row
-			Next
 			Return StringTrimRight($sRet, StringLen($sDelim_Row))
-		Case Else
-			Return SetError(2, 0, -1)
-	EndSwitch
-	Return 1
 EndFunc   ;==>_ArrayToString
 Func _ArrayTranspose(ByRef $aArray)
 	Switch UBound($aArray, 0)
-		Case 0
-			Return SetError(2, 0, 0)
-		Case 1
 			Local $aTemp[1][UBound($aArray)]
 			For $i = 0 To UBound($aArray) - 1
 				$aTemp[0][$i] = $aArray[$i]
-			Next
 			$aArray = $aTemp
-		Case 2
 			Local $iDim_1 = UBound($aArray, 1), $iDim_2 = UBound($aArray, 2)
 			If $iDim_1 <> $iDim_2 Then
 				Local $aTemp[$iDim_2][$iDim_1]
-				For $i = 0 To $iDim_1 - 1
-					For $j = 0 To $iDim_2 - 1
 						$aTemp[$j][$i] = $aArray[$i][$j]
-					Next
-				Next
 				$aArray = $aTemp
 			Else ; optimimal method for a square grid
 				Local $vElement
-				For $i = 0 To $iDim_1 - 1
 					For $j = $i + 1 To $iDim_2 - 1
 						$vElement = $aArray[$i][$j]
 						$aArray[$i][$j] = $aArray[$j][$i]
 						$aArray[$j][$i] = $vElement
-					Next
-				Next
-			EndIf
-		Case Else
-			Return SetError(1, 0, 0)
-	EndSwitch
-	Return 1
 EndFunc   ;==>_ArrayTranspose
 Func _ArrayTrim(ByRef $aArray, $iTrimNum, $iDirection = 0, $iStart = 0, $iEnd = 0, $iSubItem = 0)
-	If $iDirection = Default Then $iDirection = 0
-	If $iStart = Default Then $iStart = 0
-	If $iEnd = Default Then $iEnd = 0
-	If $iSubItem = Default Then $iSubItem = 0
-	If Not IsArray($aArray) Then Return SetError(1, 0, 0)
-	Local $iDim_1 = UBound($aArray, $UBOUND_ROWS) - 1
 	If $iEnd = 0 Then $iEnd = $iDim_1
 	If $iStart > $iEnd Then Return SetError(3, 0, -1)
 	If $iStart < 0 Or $iEnd < 0 Then Return SetError(3, 0, -1)
 	If $iStart > $iDim_1 Or $iEnd > $iDim_1 Then Return SetError(3, 0, -1)
-	If $iStart > $iEnd Then Return SetError(4, 0, -1)
-	Switch UBound($aArray, $UBOUND_DIMENSIONS)
-		Case 1
 			If $iDirection Then
 				For $i = $iStart To $iEnd
 					$aArray[$i] = StringTrimRight($aArray[$i], $iTrimNum)
-				Next
-			Else
-				For $i = $iStart To $iEnd
 					$aArray[$i] = StringTrimLeft($aArray[$i], $iTrimNum)
-				Next
-			EndIf
-		Case 2
-			Local $iDim_2 = UBound($aArray, $UBOUND_COLUMNS) - 1
 			If $iSubItem < 0 Or $iSubItem > $iDim_2 Then Return SetError(5, 0, -1)
-			If $iDirection Then
-				For $i = $iStart To $iEnd
 					$aArray[$i][$iSubItem] = StringTrimRight($aArray[$i][$iSubItem], $iTrimNum)
-				Next
-			Else
-				For $i = $iStart To $iEnd
 					$aArray[$i][$iSubItem] = StringTrimLeft($aArray[$i][$iSubItem], $iTrimNum)
-				Next
-			EndIf
-		Case Else
-			Return SetError(2, 0, 0)
-	EndSwitch
-	Return 1
 EndFunc   ;==>_ArrayTrim
 Func _ArrayUnique(Const ByRef $aArray, $iColumn = 0, $iBase = 0, $iCase = 0, $iCount = $ARRAYUNIQUE_COUNT, $iIntType = $ARRAYUNIQUE_AUTO)
-	If $iColumn = Default Then $iColumn = 0
 	If $iBase = Default Then $iBase = 0
-	If $iCase = Default Then $iCase = 0
 	If $iCount = Default Then $iCount = $ARRAYUNIQUE_COUNT
 	If UBound($aArray, $UBOUND_ROWS) = 0 Then Return SetError(1, 0, 0)
 	Local $iDims = UBound($aArray, $UBOUND_DIMENSIONS), $iNumColumns = UBound($aArray, $UBOUND_COLUMNS)
@@ -14577,60 +9071,37 @@ Func _ArrayUnique(Const ByRef $aArray, $iColumn = 0, $iBase = 0, $iCase = 0, $iC
 		If $iDims = 1 Then
 			$bInt = IsInt($aArray[$iBase])
 			$sVarType = VarGetType($aArray[$iBase])
-		Else
 			$bInt = IsInt($aArray[$iBase][$iColumn])
 			$sVarType = VarGetType($aArray[$iBase][$iColumn])
-		EndIf
 		If $bInt And $sVarType = "Int64" Then
 			$iIntType = $ARRAYUNIQUE_FORCE64
-		Else
 			$iIntType = $ARRAYUNIQUE_FORCE32
-		EndIf
-	EndIf
 	ObjEvent("AutoIt.Error", __ArrayUnique_AutoErrFunc)
 	Local $oDictionary = ObjCreate("Scripting.Dictionary")
 	$oDictionary.CompareMode = Number(Not $iCase)
 	Local $vElem, $sType, $vKey, $bCOMError = False
 	For $i = $iBase To UBound($aArray) - 1
-		If $iDims = 1 Then
 			$vElem = $aArray[$i]
-		Else
 			$vElem = $aArray[$i][$iColumn]
-		EndIf
 		Switch $iIntType
 			Case $ARRAYUNIQUE_FORCE32
 				$oDictionary.Item($vElem) ; Check if key exists - automatically created if not
-				If @error Then
 					$bCOMError = True ; Failed with an Int64, Ptr or Binary datatype
 					ExitLoop
-				EndIf
 			Case $ARRAYUNIQUE_FORCE64
 				$sType = VarGetType($vElem)
 				If $sType = "Int32" Then
 					$bCOMError = True ; Failed with an Int32 datatype
-					ExitLoop
 				EndIf ; Create key
 				$vKey = "#" & $sType & "#" & String($vElem)
 				If Not $oDictionary.Item($vKey) Then ; Check if key exists
 					$oDictionary($vKey) = $vElem ; Store actual value in dictionary
-				EndIf
 			Case $ARRAYUNIQUE_MATCH
-				$sType = VarGetType($vElem)
 				If StringLeft($sType, 3) = "Int" Then
 					$vKey = "#Int#" & String($vElem)
-				Else
 					$vKey = "#" & $sType & "#" & String($vElem)
-				EndIf
-				If Not $oDictionary.Item($vKey) Then ; Check if key exists
-					$oDictionary($vKey) = $vElem ; Store actual value in dictionary
-				EndIf
 			Case $ARRAYUNIQUE_DISTINCT
 				$vKey = "#" & VarGetType($vElem) & "#" & String($vElem)
-				If Not $oDictionary.Item($vKey) Then ; Check if key exists
-					$oDictionary($vKey) = $vElem ; Store actual value in dictionary
-				EndIf
-		EndSwitch
-	Next
 	Local $aValues, $j = 0
 	If $bCOMError Then ; Mismatch Int32/64
 		Return SetError(7, 0, 0)
@@ -14640,16 +9111,9 @@ Func _ArrayUnique(Const ByRef $aArray, $iColumn = 0, $iBase = 0, $iCase = 0, $iC
 			$aValues[$j] = $oDictionary($vKey)
 			If StringLeft($vKey, 5) = "#Ptr#" Then
 				$aValues[$j] = Ptr($aValues[$j])
-			EndIf
 			$j += 1
-		Next
-	Else
 		$aValues = $oDictionary.Keys()
-	EndIf
-	If $iCount Then
 		_ArrayInsert($aValues, 0, $oDictionary.Count)
-	EndIf
-	Return $aValues
 EndFunc   ;==>_ArrayUnique
 Func _Array1DToHistogram($aArray, $iSizing = 100)
 	If UBound($aArray, 0) > 1 Then Return SetError(1, 0, "")
@@ -14660,11 +9124,8 @@ Func _Array1DToHistogram($aArray, $iSizing = 100)
 		$t = IsNumber($t) ? Round($t) : 0
 		If $t < $iMin Then $iMin = $t
 		If $t > $iMax Then $iMax = $t
-	Next
 	Local $iRange = Int(Round(($iMax - $iMin) / 8)) * 8
 	Local $iSpaceRatio = 4
-	For $i = 0 To UBound($aArray) - 1
-		$t = $aArray[$i]
 		If $t Then
 			$n = Abs(Round(($iSizing * $t) / $iRange) / 8)
 			$aArray[$i] = ""
@@ -14672,21 +9133,12 @@ Func _Array1DToHistogram($aArray, $iSizing = 100)
 				If $iMin Then
 					$iOffset = Int(Abs(Round(($iSizing * $iMin) / $iRange) / 8) / 8 * $iSpaceRatio)
 					$aArray[$i] = __Array_StringRepeat(ChrW(0x20), $iOffset)
-				EndIf
-			Else
 				If $iMin <> $t Then
 					$iOffset = Int(Abs(Round(($iSizing * ($t - $iMin)) / $iRange) / 8) / 8 * $iSpaceRatio)
-					$aArray[$i] = __Array_StringRepeat(ChrW(0x20), $iOffset)
-				EndIf
-			EndIf
 			$aArray[$i] &= __Array_StringRepeat(ChrW(0x2588), Int($n / 8))
 			$n = Mod($n, 8)
 			If $n > 0 Then $aArray[$i] &= ChrW(0x2588 + 8 - $n)
 			$aArray[$i] &= ' ' & $t
-		Else
-			$aArray[$i] = ""
-		EndIf
-	Next
 	Return $aArray
 EndFunc   ;==>_Array1DToHistogram
 Func __Array_StringRepeat($sString, $iRepeatCount)
@@ -14697,17 +9149,11 @@ Func __Array_StringRepeat($sString, $iRepeatCount)
 		If BitAND($iRepeatCount, 1) Then $sResult &= $sString
 		$sString &= $sString
 		$iRepeatCount = BitShift($iRepeatCount, 1)
-	WEnd
 	Return $sString & $sResult
 EndFunc   ;==>__Array_StringRepeat
 Func __Array_ExeterInternal(ByRef $aArray, $iStart, $iSize, $sDelimiter, ByRef $aIdx, ByRef $aResult, ByRef $iCount)
 	If $iStart == $iSize - 1 Then
-		For $i = 0 To $iSize - 1
-			$aResult[$iCount] &= $aArray[$aIdx[$i]] & $sDelimiter
-		Next
 		If $sDelimiter <> "" Then $aResult[$iCount] = StringTrimRight($aResult[$iCount], StringLen($sDelimiter))
-		$iCount += 1
-	Else
 		Local $iTemp
 		For $i = $iStart To $iSize - 1
 			$iTemp = $aIdx[$i]
@@ -14716,73 +9162,39 @@ Func __Array_ExeterInternal(ByRef $aArray, $iStart, $iSize, $sDelimiter, ByRef $
 			__Array_ExeterInternal($aArray, $iStart + 1, $iSize, $sDelimiter, $aIdx, $aResult, $iCount)
 			$aIdx[$iStart] = $aIdx[$i]
 			$aIdx[$i] = $iTemp
-		Next
-	EndIf
 EndFunc   ;==>__Array_ExeterInternal
 Func __Array_Combinations($iN, $iR)
 	Local $i_Total = 1
 	For $i = $iR To 1 Step -1
 		$i_Total *= ($iN / $i)
 		$iN -= 1
-	Next
 	Return Round($i_Total)
 EndFunc   ;==>__Array_Combinations
 Func __Array_GetNext($iN, $iR, ByRef $iLeft, $iTotal, ByRef $aIdx)
 	If $iLeft == $iTotal Then
 		$iLeft -= 1
-		Return
-	EndIf
 	Local $i = $iR - 1
 	While $aIdx[$i] == $iN - $iR + $i
 		$i -= 1
-	WEnd
 	$aIdx[$i] += 1
 	For $j = $i + 1 To $iR - 1
 		$aIdx[$j] = $aIdx[$i] + $j - $i
-	Next
 	$iLeft -= 1
 EndFunc   ;==>__Array_GetNext
 Func __Array_MinMaxIndex(Const ByRef $aArray, $iCompNumeric, $iStart, $iEnd, $iSubItem, $fuComparison) ; Always swapped the comparison params around e.g. it was for min 100 > 1000 whereas 1000 < 100 makes more sense in a min function.
-	If $iCompNumeric = Default Then $iCompNumeric = 0
 	If $iCompNumeric <> 1 Then $iCompNumeric = 0
-	If $iStart = Default Then $iStart = 0
-	If $iEnd = Default Then $iEnd = 0
-	If $iSubItem = Default Then $iSubItem = 0
-	If Not IsArray($aArray) Then Return SetError(1, 0, -1)
-	Local $iDim_1 = UBound($aArray, $UBOUND_ROWS) - 1
 	If $iDim_1 < 0 Then Return SetError(1, 0, -1)
 	If $iEnd = -1 Then $iEnd = $iDim_1
 	If $iStart = -1 Then $iStart = 0
 	If $iStart < -1 Or $iEnd < -1 Then Return SetError(3, 0, -1)
-	If $iStart > $iDim_1 Or $iEnd > $iDim_1 Then Return SetError(3, 0, -1)
-	If $iStart > $iEnd Then Return SetError(4, 0, -1)
 	If $iDim_1 < 0 Then Return SetError(5, 0, -1)
 	Local $iMaxMinIndex = $iStart
-	Switch UBound($aArray, $UBOUND_DIMENSIONS)
-		Case 1
 			If $iCompNumeric Then
-				For $i = $iStart To $iEnd
 					If $fuComparison(Number($aArray[$i]), Number($aArray[$iMaxMinIndex])) Then $iMaxMinIndex = $i
-				Next
-			Else
-				For $i = $iStart To $iEnd
 					If $fuComparison($aArray[$i], $aArray[$iMaxMinIndex]) Then $iMaxMinIndex = $i
-				Next
-			EndIf
-		Case 2
 			If $iSubItem < 0 Or $iSubItem > UBound($aArray, $UBOUND_COLUMNS) - 1 Then Return SetError(6, 0, -1)
-			If $iCompNumeric Then
-				For $i = $iStart To $iEnd
 					If $fuComparison(Number($aArray[$i][$iSubItem]), Number($aArray[$iMaxMinIndex][$iSubItem])) Then $iMaxMinIndex = $i
-				Next
-			Else
-				For $i = $iStart To $iEnd
 					If $fuComparison($aArray[$i][$iSubItem], $aArray[$iMaxMinIndex][$iSubItem]) Then $iMaxMinIndex = $i
-				Next
-			EndIf
-		Case Else
-			Return SetError(2, 0, -1)
-	EndSwitch
 	Return $iMaxMinIndex
 EndFunc   ;==>__Array_MinMaxIndex
 Func __Array_GreaterThan($vValue1, $vValue2)
