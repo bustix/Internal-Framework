@@ -206,47 +206,66 @@ Func _findAndCombineAllIncludesToFile( $mainScriptFullPath, $scriptSearchFolderN
 	Local $aCS=StringSplit($szBuffer,"#cs",1), $aCE=StringSplit($szBuffer,"#ce",1)
 	If Not ($aCS[0] = $aCE[0]) Then Return SetError(-2,-2,"Error! unbalanced #comments")
 
-	Local $remBetween, $check, $ret, $needed_ce_occ = 0
+	Local $check, $begin
 
 	$check = StringSplit($szBuffer,"#cs",1)
-	While Not @error
+	$begin = $check[1]
+	;While Not @error
 
-		If IsArray($check) And $check[0] > 1 Then
-			$ret = $check[1]
+		If Not IsArray($check) Then Return SetError(-2,-2,"Error - should not happen?" )
 
-			If $check[0] > 2 Then ;more CS - check for CE
+		Local $full_string
+		$full_string = _ArrayToString($check,@CRLF,2)
 
-				For $x = 2 To $check[0]
-					$aCE=StringSplit($check[$x],"#ce",1)
-					If @error Then ;multiple cs
-						$needed_ce_occ += 1 ; how much extra times search for follwing CE
-						ContinueLoop
-					EndIf
+		Local $tmp
+		Local $count = 0
+		Local $aCE = StringSplit($full_string, "#ce", 1)
+		Local $encounter = $aCE[0]
 
+		$tmp = StringSplit($aCE[1], "#cs", 1 )
+		$count = $tmp[0]+1 ; $tmp[0] OPEN CS - +1 cause the first one -.-
 
+		Local $remove = ""
+		;For $i = 1 To $count
+		;	$remove &= $aCE[$i] & @CRLF
+		;Next
 
-				Next
+		While 1
 
-			EndIf
+			For $i = 1 To $count
+				$remove &= $aCE[$i] & @CRLF
+			Next
 
-
-
-			ContinueLoop
-		Else
-			ExitLoop
-		EndIf
-
-		$remBetween = 	StringSplit		($check[1],	"#ce",	1)
-
-
+			$full_string = _ArrayToString($aCS, @CRLF, $count)
 
 
+		WEnd
+		ConsoleWrite("!REMOVE:" &@CRLF& $remove )
 
-		$szBuffer	=	StringReplace	($szBuffer, $remBetween[1], "")
-		$check 		=	StringSplit		($szBuffer,	"#cs",	1)
-		ConsoleWrite($check[1])
+		Local $from_to 		= StringSplit($remove,@CRLF,1)
+		Local $current_file = StringSplit($szBuffer,@CRLF,1)
+		$check = ""
 
-	WEnd
+		For $i = 1 To $current_file[0]
+
+			For $x = 1 To $from_to[0]
+				If ($current_file[$i] = $from_to[$x]) Then
+					ConsoleWrite("HIT")
+					$current_file[$i] = ""
+				EndIf
+			Next
+
+			$check &= $current_file[$i] & @CRLF
+		Next
+
+
+		ConsoleWrite( $check )
+
+		$check = StringSplit($check, @CRLF, 1)
+
+		Exit
+
+	;WEnd
 
 	ConsoleWrite($szBuffer)
 
@@ -349,12 +368,12 @@ Func __fileWrite($f,$t)
 	Return FileClose($f)
 EndFunc
 
-Func __multiRem($a,$b=2)
+Func __multiRemToString($s,$l,$r)
 	Local $x
-	For $i = $b To $a[0]
-
+	For $i = 1 To $s[0]
+		If ($i <= $l) Or ($i >= $r) Then $x &= $s[$i]&@CRLF
 	Next
-	Return $a
+	Return $x
 EndFunc
 
 
