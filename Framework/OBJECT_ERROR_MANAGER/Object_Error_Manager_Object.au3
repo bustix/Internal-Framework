@@ -1,5 +1,5 @@
 #include-once
-#include "OBJECTTEMPLATE_Core.au3"
+#include "Object_Error_Manager_Core.au3"
 
 ;Global $oOBJECTTEMPLATE = _CreateOBJECTTEMPLATEObject() ;Object var to use in the main script - global initialiser
 

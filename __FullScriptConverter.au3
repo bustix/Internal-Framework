@@ -13,6 +13,7 @@ Local $excludes					=	"Framework\#.DEPRECATED|" & _
 									"Framework\MULTI_PROCESS\thread.au3|" & _
 									"Framework\MULTI_PROCESS\test|" & _
 									"Framework\MULTI_PROCESS\SingleTaskVsMultiTask(With-ping)|" & _
+									"Framework\MULTI_PROCESS\rh_self_run_test|" & _
 									"Framework\MULTI_PROCESS\Examples|" & _
 									"Framework\MULTI_PROCESS\BackUp|" & _
 									"Framework\MULTI_PROCESS\Autoit|" & _
@@ -36,34 +37,36 @@ Next
 
 
 Func _findAndCombineAllIncludesToFile( $mainScriptFullPath, $scriptSearchFolderNam=Default, $outPutScriptName=Default, $defaultIncludesPath=Default, $searchmask=Default, $EXCLUDE_FILES=Default, $EXCLUDE_BEFORE_SEARCH=Default, $EXCLUDE_FILES_DELIM=Default, $OVERWRITE=False )
-	Local $AutoItExe 			= @AutoItExe, $mainIncludes, $userIncludesq, $userIncludes, $fileread, $includeCarrier, $includeNameCarrier, $aTime = TimerInit()
 
-	Local $scriptMainDir		= StringLeft		($mainScriptFullPath,	StringInStr($mainScriptFullPath,"\",0,-1))
-	Local $mainScriptName		= StringTrimLeft	($mainScriptFullPath,	StringInStr($mainScriptFullPath,"\",0,-1))
-	If ($scriptSearchFolderNam	= Default)	Then	$scriptSearchFolderNam	=			$scriptMainDir
-	If Not (StringRight($scriptSearchFolderNam,1)="\") 							Then 	$scriptSearchFolderNam &= "\"
-	If ($EXCLUDE_FILES			= Default)	Then	$EXCLUDE_FILES			=	False										; MAINSCRIPTPATH + SCRIPTSEARCHFOLDER + EXCLUDE_FILES
-	If (($EXCLUDE_FILES <> False) And (StringRight($EXCLUDE_FILES,1)="|"))		Then	$EXCLUDE_FILES = StringTrimRight($EXCLUDE_FILES,1)			; safety check
-	If ($EXCLUDE_BEFORE_SEARCH	= Default)	Then	$EXCLUDE_BEFORE_SEARCH	=	True
-	If ($EXCLUDE_FILES_DELIM	= Default) 	Then	$EXCLUDE_FILES_DELIM	=	"|"
-	If ($searchmask				= Default) 	Then	$searchmask				= 	"*.au3"
-	If ($defaultIncludesPath 	= Default) 	Then	$defaultIncludesPath	= 	StringLeft($AutoItExe,		StringInStr($AutoItExe,"\",0,-1)-1) 	&	"\Include\"
-	If ($outPutScriptName 		= Default) 	Then	$outPutScriptName 		= 	StringLeft($mainScriptName,	StringInStr($mainScriptName,".",0,-1)-1)&	"_PLUS_ALL_INCLUDES.au3"
-	Local $outPutScriptPath		= $scriptMainDir 	& $outPutScriptName
-	Local $allScriptFiles		= _FileListToArrayRec( $scriptMainDir & $scriptSearchFolderNam, $searchmask, $FLTAR_FILES, 1, 0, 1 )
-	Local $defaultIncludes 		= _FileListToArrayRec( $defaultIncludesPath, $searchmask, $FLTAR_FILES )
+	#Region	---	FUNCTION HEADER AND DECLARATIONS	---
+		Local $AutoItExe 			= @AutoItExe, $mainIncludes, $userIncludesq, $userIncludes, $fileread, $includeCarrier, $includeNameCarrier, $aTime = TimerInit(), $includeNameFileFoundCarrier, $curName
 
-	ConsoleWrite( "![Starting conversion with following parameters]" & @CRLF & _
-					"- Main Script Name: 	" & $mainScriptName & @CRLF & _
-					"- Main Script Dir: 	" & $scriptMainDir & @CRLF & _
-					"- Search Folder Name:	" & $scriptSearchFolderNam & @CRLF & _
-					"- Default Includes P:	" & $defaultIncludesPath & @CRLF & _
-					"- Output Script Name:	" & $outPutScriptName & @CRLF & _
-					"- Search Mask:		" & $searchmask & @CRLF & _
-					"- Exclude:		" & $EXCLUDE_FILES & @CRLF & _
-					"- Exclude b4 search:	" & $EXCLUDE_BEFORE_SEARCH & @CRLF & _
-					"- Exclude delim:	" & $EXCLUDE_FILES_DELIM & @CRLF & @CRLF )
+		Local $scriptMainDir		= StringLeft		($mainScriptFullPath,	StringInStr($mainScriptFullPath,"\",0,-1))
+		Local $mainScriptName		= StringTrimLeft	($mainScriptFullPath,	StringInStr($mainScriptFullPath,"\",0,-1))
+		If ($scriptSearchFolderNam	= Default)	Then	$scriptSearchFolderNam	=			$scriptMainDir
+		If Not (StringRight($scriptSearchFolderNam,1)="\") 							Then 	$scriptSearchFolderNam &= "\"
+		If ($EXCLUDE_FILES			= Default)	Then	$EXCLUDE_FILES			=	False										; MAINSCRIPTPATH + SCRIPTSEARCHFOLDER + EXCLUDE_FILES
+		If (($EXCLUDE_FILES <> False) And (StringRight($EXCLUDE_FILES,1)="|"))		Then	$EXCLUDE_FILES = StringTrimRight($EXCLUDE_FILES,1)			; safety check
+		If ($EXCLUDE_BEFORE_SEARCH	= Default)	Then	$EXCLUDE_BEFORE_SEARCH	=	True
+		If ($EXCLUDE_FILES_DELIM	= Default) 	Then	$EXCLUDE_FILES_DELIM	=	"|"
+		If ($searchmask				= Default) 	Then	$searchmask				= 	"*.au3"
+		If ($defaultIncludesPath 	= Default) 	Then	$defaultIncludesPath	= 	StringLeft($AutoItExe,		StringInStr($AutoItExe,"\",0,-1)-1) 	&	"\Include\"
+		If ($outPutScriptName 		= Default) 	Then	$outPutScriptName 		= 	StringLeft($mainScriptName,	StringInStr($mainScriptName,".",0,-1)-1)&	"_PLUS_ALL_INCLUDES.au3"
+		Local $outPutScriptPath		= $scriptMainDir 	& $outPutScriptName
+		Local $allScriptFiles		= _FileListToArrayRec( $scriptMainDir & $scriptSearchFolderNam, $searchmask, $FLTAR_FILES, 1, 0, 1 )
+		Local $defaultIncludes 		= _FileListToArrayRec( $defaultIncludesPath, $searchmask, $FLTAR_FILES )
 
+		ConsoleWrite( "![Starting conversion with following parameters]" & @CRLF & _
+						"- Main Script Name: 	" & $mainScriptName & @CRLF & _
+						"- Main Script Dir: 	" & $scriptMainDir & @CRLF & _
+						"- Search Folder Name:	" & $scriptSearchFolderNam & @CRLF & _
+						"- Default Includes P:	" & $defaultIncludesPath & @CRLF & _
+						"- Output Script Name:	" & $outPutScriptName & @CRLF & _
+						"- Search Mask:		" & $searchmask & @CRLF & _
+						"- Exclude:		" & $EXCLUDE_FILES & @CRLF & _
+						"- Exclude b4 search:	" & $EXCLUDE_BEFORE_SEARCH & @CRLF & _
+						"- Exclude delim:	" & $EXCLUDE_FILES_DELIM & @CRLF & @CRLF )
+	#EndRegion
 ;read all files and gather all includes needet
 	Local $excluder=$EXCLUDE_FILES, $found_trigger=False, $filetrigger=Default, $curAtt, $stmp, $fsP, $tex
 	If StringInStr($excluder,$EXCLUDE_FILES_DELIM) Then $excluder = StringSplit($EXCLUDE_FILES,$EXCLUDE_FILES_DELIM)
@@ -74,7 +77,7 @@ Func _findAndCombineAllIncludesToFile( $mainScriptFullPath, $scriptSearchFolderN
 			For $c = 1 To $excluder[0]
 				$tex = $scriptMainDir & $excluder[$c]
 				$curAtt = FileGetAttrib($tex)
-				If $curAtt = "" Then ConsoleWrite( "![ERROR]: [" & $tex & "] is not existend. Please check filepath." & @CRLF )
+				If (($curAtt = "") And Not (FileExists($tex))) Then ConsoleWrite( "![ERROR]: [" & $tex & "] is not existend. Please check filepath." & @CRLF )
 				If ($curAtt = "D") Then ;directory - to compare directory we have to remove the name of the current file, cause the search is only returning files.
 					$stmp = StringLeft($fsP,StringLen($tex))
 				Else ; its no directoy
@@ -106,20 +109,44 @@ Func _findAndCombineAllIncludesToFile( $mainScriptFullPath, $scriptSearchFolderN
 ;ConsoleWrite( "![TRIGGER] - skipping: " & $i  & " (found_trigger:"&$found_trigger&")" & @CRLF & "- " & $stmp& @CRLF & "- " & $tex & @CRLF )
 			$found_trigger = False ; reset trigger & do nothing
 		Else ; no skip - continue
-			$curPath = $fsP;$scriptMainDir & $scriptSearchFolderNam & $allScriptFiles[$i]
+			$curPath 	= $fsP;$scriptMainDir & $scriptSearchFolderNam & $allScriptFiles[$i]
+			$curName	= StringTrimLeft( $curPath, StringInStr($fsP,"\",0,-1) )
 			$fileread = FileRead( $curPath )
+		#Region		---  FILTERING INCLUDES  ---
 
-
-			#Region  ---  testing ground  ---
-
-				;Local $a
-				;$a = StringRegExp($fileread, "#include (?:<[^>]+>|(['""])[^""']+\1)", 3) ; works for <> , not for " or ' includes
+				Local $a, $exp = "#include (?:<[^>]+>|['][^']+[']|[""][^""]+"")"
+				$a = StringRegExp($fileread, $exp, 3)
 				;ConsoleWrite( "regexp: " & $a & @CRLF & "@error: " & @error & @CRLF & "@extended: " & @extended & @CRLF )
-				;_ArrayDisplay($a)
-				;Exit
+			Local $t = "", $e = ""
+			For $regC = 0 To UBound($a)-1
 
-			#EndRegion
+				If (StringInStr($a[$regC],'"') Or StringInStr($a[$regC],"'")) Then ; user include
 
+					$t = _StringBetween( $a[$regC], '"', '"')
+					If StringInStr($a[$regC],"'") Then $t = _StringBetween( $a[$regC], "'", "'")
+					If (StringInStr($allScriptFiles[$i], "\")) Then $e = StringLeft($allScriptFiles[$i],StringInStr($allScriptFiles[$i],"\",0,-1))
+					If IsArray($t) Then
+						$t = $t[0]
+						$includeCarrier 	&= $scriptMainDir & $scriptSearchFolderNam & $e & $t & "|"
+						$includeNameCarrier &= $t & "|"
+						$includeNameFileFoundCarrier &= StringTrimLeft( $t, StringInStr($t,"\",0,-1) ) & "|"
+					EndIf
+				ElseIf (StringInStr($a[$regC], "<") And StringInStr($a[$regC],">")) Then ; main autoit includes
+
+					$t = _StringBetween( $a[$regC], '<', '>')
+					If IsArray($t) Then
+						$t = $t[0]
+						$includeCarrier 	&= $defaultIncludesPath & $t & "|"
+						$includeNameCarrier &= $t & "|"
+						$includeNameFileFoundCarrier &= StringTrimLeft( $t, StringInStr($t,"\",0,-1) ) & "|"
+					EndIf
+				EndIf
+			Next
+
+		#EndRegion
+
+		#Region 	--- DEPRECATED	---	 (FILTERING INCLUDES)
+#cs
 			$mainIncludes	= _StringBetween( $fileread, '#include <', '>' ) ; main autoit includes
 			$userIncludesq	= _StringBetween( $fileread, '#include "', '"' ) ; user includes "
 			$userIncludes	= _StringBetween( $fileread, "#include '", "'" ) ; user includes '
@@ -143,14 +170,45 @@ Func _findAndCombineAllIncludesToFile( $mainScriptFullPath, $scriptSearchFolderN
 					$includeNameCarrier &= $userIncludes[$x] & "|"
 				Next
 			EndIf
+
+#ce
+		#EndRegion
 		EndIf
 	Next
-	If (StringRight( $includeCarrier, 1 ) = "|") Then $includeCarrier = StringTrimRight($includeCarrier,1)
+
+;remove too much charackters from right side
+	If (StringRight( $includeCarrier, 1 ) = "|") 				Then $includeCarrier 				= StringTrimRight($includeCarrier,1)
+	If (StringRight( $includeNameFileFoundCarrier, 1 ) = "|") 	Then $includeNameFileFoundCarrier 	= StringTrimRight($includeNameFileFoundCarrier,1)
+
 ;remove duplicates
-	Local $includeCarrierArray 	= 	StringSplit( 	$includeCarrier, "|" )
-	$includeCarrierArray		=	_ArrayUnique($includeCarrierArray,0,1)
+	Local $includeCarrierArray 		= 	StringSplit( $includeCarrier, "|" )
+	Local $includeFFCarrierArray 	= 	StringSplit( $includeNameFileFoundCarrier, "|" )
+	;ConsoleWrite( "! INCLUDE CARRIER	: " & StringReplace($includeCarrier,"|",@CRLF) & @CRLF & "+ INCLUDE FFCARRIER	: " & $includeNameFileFoundCarrier & @CRLF )
+	;MsgBox(0, UBound($includeCarrierArray), UBound($includeFFCarrierArray))
+
+	_ArrayDisplay($includeCarrierArray)
+	$myarrayunique = __removeAllDuplicatesArr($includeCarrierArray)
+	_ArrayDisplay($includeCarrierArray)
+
+	$includeCarrierArray			=	_ArrayUnique($includeCarrierArray,0,1)
+	;$includeFFCarrierArray			=	_ArrayUnique($includeFFCarrierArray,0,1)
+
+	;ConsoleWrite( "! INCLUDE CARRIER	: " & StringReplace($includeCarrier,"|",@CRLF) & @CRLF & "+ INCLUDE FFCARRIER	: " & StringReplace($includeNameFileFoundCarrier,"|",@CRLF) & @CRLF )
+	;_ArrayDisplay($includeCarrierArray)
+	;_ArrayDisplay($includeFFCarrierArray)
+
+	;MsgBox(0, UBound($includeCarrierArray), UBound($includeFFCarrierArray))
+	Exit
+
+;create a path carrier for the include paths for not found includes
+	Local $path_carrier = $includeCarrierArray
+	For $i = 1 To $path_carrier[0]
+		$path_carrier[$i] = StringLeft($path_carrier[$i],StringInStr($path_carrier[$i],"\",0,-1)) ; get all paths and store em
+	Next
+	$path_carrier = _ArrayUnique($path_carrier,0,1)
+
 ;read all files to buffer
-	Local $r, $szBuffer = FileRead($mainScriptFullPath)&@CRLF&@CRLF, $h, $s, $rep=StringSplit($includeNameCarrier,"|"), $prefix = '#include', $count=0, $nfc=0
+	Local $r, $szBuffer = FileRead($mainScriptFullPath)&@CRLF&@CRLF, $h, $s, $rep=_ArrayUnique(StringSplit($includeNameCarrier,"|")), $prefix = '#include', $count=0, $nfc=0
 	Dim	$notfoundcount[$rep[0]+1][2]
 	For $i = 1 To $includeCarrierArray[0]
 		If FileExists($includeCarrierArray[$i]) Then
@@ -159,19 +217,37 @@ Func _findAndCombineAllIncludesToFile( $mainScriptFullPath, $scriptSearchFolderN
 			$r	=	FileRead($h,$s)
 			FileClose($h)
 			$r	=	StringReplace($r, '#include-once', '' )
-			For $x = 1 To $rep[0]
-				$r	=	StringReplace($r, $prefix & ' <'&$rep[$x]&'>', '', 0, 1 )
+;			For $x = 1 To $rep[0]
+;				$r	=	StringReplace($r, $prefix & ' <'&$rep[$x]&'>', '', 0, 1 )
 ;ConsoleWrite( "replace 1 : " & @error & " / " & @extended & " - " & $prefix & ' <'&$rep[$x]&'>' & @CRLF )
-				$r	=	StringReplace($r, $prefix & ' "'&$rep[$x]&'"', '', 0, 1  )
+;				$r	=	StringReplace($r, $prefix & ' "'&$rep[$x]&'"', '', 0, 1  )
 ;ConsoleWrite( "replace 2 : " & @error & " / " & @extended & " - " & $prefix & ' "'&$rep[$x]&'"' & @CRLF )
-				$r	=	StringReplace($r, $prefix & " '"&$rep[$x]&"'", '', 0, 1  )
+;				$r	=	StringReplace($r, $prefix & " '"&$rep[$x]&"'", '', 0, 1  )
 ;ConsoleWrite( "replace 3 : " & @error & " / " & @extended & " - " & $prefix & " '"&$rep[$x]&"'" & @CRLF )
-			Next
+;			Next
 			$szBuffer &= "; ### INCLUDE FROM :	" & $includeCarrierArray[$i] & @CRLF & @CRLF & $r & @CRLF
 		Else
 			$nfc += 1
 			$notfoundcount[$nfc][0] = $nfc
-			$notfoundcount[$nfc][1] = $includeCarrierArray[$i]
+			$notfoundcount[$nfc][1] = $includeCarrierArray[$i] & "	:[ - HAS BEEN INCLUDED IN FILE	- ]:	" & $includeFFCarrierArray[$i] ; not found - try to search again in all other available dir's
+
+			;MsgBox(0,"not found:", $notfoundcount[$nfc][1] & @CRLF & "searching now in: " &@CRLF & @CRLF & _ArrayToString($path_carrier,@CRLF) )
+			Local $tmp_not_found_name = StringTrimLeft($includeCarrierArray[$i],StringInStr($includeCarrierArray[$i],"\",0,-1))
+
+			For $search_other_paths = 1 To $path_carrier[0]
+
+				;MsgBox(0,FileExists( $path_carrier[$search_other_paths] & "" & $tmp_not_found_name),  $path_carrier[$search_other_paths] & "" & $tmp_not_found_name )
+
+				If FileExists( $path_carrier[$search_other_paths] & "" & $tmp_not_found_name ) Then ;found
+
+					$notfoundcount[$nfc][1] = $includeCarrierArray[$i] & "	:[ - HAS BEEN FOUND IN - ]:	" & $path_carrier[$search_other_paths]
+					ExitLoop
+				EndIf
+
+			Next
+
+
+
 			$szBuffer &= "; ### INCLUDE FROM : 	" & $includeCarrierArray[$i] & @CRLF & @CRLF & ";<FILE NOT FOUND>" & @CRLF & @CRLF
 ;~retry? with swapped pref
 		EndIf
@@ -180,28 +256,63 @@ Func _findAndCombineAllIncludesToFile( $mainScriptFullPath, $scriptSearchFolderN
 	$notfoundcount[0][0] = $nfc
 	$count = $includeCarrierArray[0]
 
-;clean code from comments and regions
+;clean code from includes, comments and regions
+#Region --- new method
+	Local $temp_buffer = StringSplit($szBuffer,@CRLF), $cur_line_stripped,$count=0
+
+	For $i = 1 To $temp_buffer[0]
+		$cur_line_stripped = StringStripWS($temp_buffer[$i],8)
+		$cur_line_stripped = StringLower(StringReplace($cur_line_stripped,@TAB,""))
+		If StringLeft($cur_line_stripped,1)=";" Then ;remove line
+			$temp_buffer[$i] = ""
+		Else
+			If StringLeft($cur_line_stripped,8)="#include" Then
+				$temp_buffer[$i] = ";" & $temp_buffer[$i] & "; REMOVED INCLUDE"
+				$count += 1
+			EndIf
+		EndIf
+	Next
+	Dim $nBuf = $temp_buffer
+	Local $c=0
+	For $i = 1 To $nBuf[0]
+		If ($temp_buffer[$i] <> "") Then
+			$nBuf[$c] = $temp_buffer[$i]
+			$c += 1
+		EndIf
+	Next
+	ReDim $nBuf[$c+1]
+	$temp_buffer = ""
+	$szBuffer = $nBuf
+	$szBuffer = _ArrayToString($szBuffer, @CRLF, 1)
+#EndRegion
+
+#Region --- old method
+#cs
 	Local $results, $tmp
 	$results	= _StringBetween( $szBuffer, '#include <', '>' ) ; main autoit includes
 	If IsArray($results) Then
 		$tmp		&= _ArrayToString( __addToEach($results, "#include <", ">" ), -1, 0 )
-		$count += UBound($results)-1
+		$count 		+= UBound($results)-1
 	EndIf
 ;If IsArray($results) Then _ArrayDisplay( $results, "1" )
 	$results	= _StringBetween( $szBuffer, '#include "', '"' ) ; user includes "
 	If IsArray($results) Then
 		$tmp		&= _ArrayToString( __addToEach($results, '#include "', '"' ), -1, 0 )
-		$count += UBound($results)-1
+		$count 		+= UBound($results)-1
 	EndIf
 ;If IsArray($results) Then _ArrayDisplay( $results, "2" )
 	$results	= _StringBetween( $szBuffer, "#include '", "'" ) ; user includes '
 	If IsArray($results) Then
 		$tmp		&= _ArrayToString( __addToEach($results, "#include '", "'" ), -1, 0 )
-		$count += UBound($results)-1
+		$count 		+= UBound($results)-1
 	EndIf
 ;If IsArray($results) Then _ArrayDisplay( $results, "3" )
 ;Exit
+#ce
+#EndRegion
 
+
+#cs
 
 	Local $aCS=StringSplit($szBuffer,"#cs",1), $aCE=StringSplit($szBuffer,"#ce",1)
 	If Not ($aCS[0] = $aCE[0]) Then Return SetError(-2,-2,"Error! unbalanced #comments")
@@ -226,10 +337,12 @@ Func _findAndCombineAllIncludesToFile( $mainScriptFullPath, $scriptSearchFolderN
 		$count = $tmp[0]+1 ; $tmp[0] OPEN CS - +1 cause the first one -.-
 
 		Local $remove = ""
-		;For $i = 1 To $count
-		;	$remove &= $aCE[$i] & @CRLF
-		;Next
+		For $i = 1 To $count
+			;$remove &= $aCE[$i] & @CRLF
+			$szBuffer = StringReplace($szBuffer, $aCE[$i],"",0,1)
 
+		Next
+		#cs
 		While 1
 
 			For $i = 1 To $count
@@ -240,7 +353,9 @@ Func _findAndCombineAllIncludesToFile( $mainScriptFullPath, $scriptSearchFolderN
 
 
 		WEnd
-		ConsoleWrite("!REMOVE:" &@CRLF& $remove )
+#ce
+
+		;ConsoleWrite("!REMOVE:" &@CRLF& $remove )
 
 		Local $from_to 		= StringSplit($remove,@CRLF,1)
 		Local $current_file = StringSplit($szBuffer,@CRLF,1)
@@ -250,7 +365,7 @@ Func _findAndCombineAllIncludesToFile( $mainScriptFullPath, $scriptSearchFolderN
 
 			For $x = 1 To $from_to[0]
 				If ($current_file[$i] = $from_to[$x]) Then
-					ConsoleWrite("HIT")
+					;ConsoleWrite("HIT")
 					$current_file[$i] = ""
 				EndIf
 			Next
@@ -259,18 +374,22 @@ Func _findAndCombineAllIncludesToFile( $mainScriptFullPath, $scriptSearchFolderN
 		Next
 
 
-		ConsoleWrite( $check )
+		;ConsoleWrite( $check )
+
+		$check = __removeAllSpecific($check,";")
+
+		;ConsoleWrite( $check )
 
 		$check = StringSplit($check, @CRLF, 1)
 
-		Exit
+
+
 
 	;WEnd
 
-	ConsoleWrite($szBuffer)
+	;ConsoleWrite($szBuffer)
 
-Exit
-
+;Exit
 
 
 	Local $cs, $ce, $t
@@ -336,12 +455,12 @@ ConsoleWrite( "!Searching for rest in: " & $lc[0] & " lines" & @CRLF & @CRLF )
 	Next
 	$szBuffer = $r
 
-
 	;$lc = _ArrayUnique($lc,0,1)
 	;$szBuffer = _ArrayToString($lc,@CRLF,1)
 
 ;get all function names and all sub functions
 
+#ce
 
 ;write new entire file
 	If (FileExists( $outPutScriptName ) And ($OVERWRITE = False)) Then
@@ -350,6 +469,74 @@ ConsoleWrite( "!Searching for rest in: " & $lc[0] & " lines" & @CRLF & @CRLF )
 	EndIf
 	__fileWrite($outPutScriptName,$szBuffer)
 	Return SetError(Round(TimerDiff($aTime)/1000), $count, $notfoundcount)
+EndFunc
+
+Func __removeAllDuplicatesArr($arr,$ub=0) ; CONTINUE HEREEEEEEEEEEEEEEEEEEEE
+	Local $start = 1
+	If Not $ub Then $size = $arr[0]
+	If $ub Then
+		$size	= UBound($arr)-1
+		$start	= 0
+	EndIf
+
+	Local $retArr[$size+1], $curCheck, $dont_add_again[$size+1], $c=0, $addNOW = 0
+	For $i = $start To $size
+
+		;$curCheck = $arr[$i]
+
+		If $c = 0 Then
+			$retArr[$c] = $arr[$i]
+			$dont_add_again[$c] = $arr[$i]
+			$c += 1
+
+		Else
+
+			$addNOW = 1
+			For $full_loop = $start To $size
+				If ($full_loop <> $i) Then
+					If ($dont_add_again[$c-1] = $arr[$full_loop]) Then
+						$addNOW = 0
+						ExitLoop
+					EndIf
+				EndIf
+			Next
+
+				ConsoleWrite( "! $I("&$i&") - $C("&$c&") - ADDNOW="&$addNOW&":	" & $dont_add_again[$c-1] &" = "& $arr[$i] & @CRLF)
+
+			If ($addNOW = 1) Then
+				ConsoleWrite( "! ADDING:	" & $dont_add_again[$c-1] &" = "& $arr[$full_loop] & @CRLF)
+				$retArr[$c] = $arr[$i]
+				$dont_add_again[$c] = $arr[$i]
+				$c += 1
+			EndIf
+
+		EndIf
+
+	Next
+	ReDim $retArr[$c]
+	Return $retArr
+
+EndFunc
+
+Func __removeAllSpecific($str, $r)
+	Local $t = StringSplit($str,@CRLF),$c
+	Local $n[$t[0]+1]
+	If @error Then Return -1
+
+	For $i = 1 To $t[0]
+		$c = StringStripWS($t[$i],8)
+		If (StringLeft($t[$i],StringLen($r)) = $r ) Then $t[$i] = ""
+	Next
+	;rebuild
+	Local $cleanCount = 0
+	For $i = 1 To $t[0]
+		If ($t[$i] <> "") Then
+			$n[$cleanCount]=$t[$i]
+			$cleanCount += 1
+		EndIf
+	Next
+	ReDim $n[$cleanCount+1]
+	Return _ArrayToString($n,@CRLF)
 EndFunc
 
 Func __addToEach($a, $l, $r, $base=0)
